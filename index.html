@@ -27,10 +27,12 @@ a{color:#7c3aed}a:hover{color:#2563eb}
 </style>
 </helmet>
 <div id="app-shell" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;background:#f6e7f0">
+<sc-if value="{{ showDevBar }}" hint-placeholder-val="{{ true }}">
 <div dir="rtl" style="flex:none;height:58px;display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap">
 <span style="font:700 12px Cairo,sans-serif;color:#64748b;margin-left:6px">المعاينة:</span>
 <sc-for list="{{ devices }}" as="d" hint-placeholder-count="4"><button onClick="{{ d.onClick }}" style="height:34px;padding:0 12px;border-radius:10px;border:1px solid {{ d.border }};background:{{ d.bg }};color:{{ d.fg }};font:700 12.5px Cairo,sans-serif">{{ d.label }}</button></sc-for>
 </div>
+</sc-if>
 <div dir="ltr" style="position:relative;flex:none;width:{{ stageW }};height:{{ stageH }}">
 <div style="position:absolute;left:0;top:0;width:{{ devW }};height:{{ devH }};transform:scale({{ frameScale }});transform-origin:0 0;background:{{ bezelBg }};border-radius:{{ bezelR }}px;padding:{{ bezelPad }}px;box-shadow:{{ bezelSh }}">
 <div dir="rtl" style="position:relative;width:100%;height:100%;border-radius:{{ screenR }}px;overflow:hidden;background:#fdf6fa;display:flex;flex-direction:column">
@@ -1207,17 +1209,18 @@ class Component extends DCLogic {
     let top = nav[nav.length - 1] || { s: 'home' };
     if ((top.s === 'exam' || top.s === 'result') && (!this.state.examRun || this.state.examRun.done !== (top.s === 'result'))) top = { s: 'exams' };
     const DEV = { phone: [390, 844], 'tablet-portrait': [834, 1194], 'tablet-landscape': [1194, 834] };
-    const dev = this.state.device || this.props.device || 'tablet-landscape';
+    const hosted = /github\.io$/i.test(location.hostname) || /[?&]app\b/.test(location.search);
+    const dev = hosted ? 'fit' : (this.state.device || this.props.device || 'tablet-landscape');
     const fr = DEV[dev]; const vw = this.state.vw || window.innerWidth, vh = this.state.vh || window.innerHeight;
     const appW = fr ? fr[0] : vw; const isPhone = appW < 700, isWide = appW >= 1024, isTablet = !isPhone;
     const pd = fr ? (isPhone ? 10 : 14) : 0;
     const sc = fr ? Math.min(1, (vw - 32) / (fr[0] + pd * 2), (vh - 76) / (fr[1] + pd * 2)) : 1;
     Object.assign(base, {
-      isPhone, isWide, isTablet, framed: !!fr,
+      isPhone, isWide, isTablet, framed: !!fr, showDevBar: !hosted,
       devices: [['tablet-landscape', 'تابلت بالعرض'], ['tablet-portrait', 'تابلت بالطول'], ['phone', 'هاتف'], ['fit', 'ملء الشاشة']].map(([k, label]) => { const on = dev === k;
         return { label, onClick: () => this.setState({ device: k }), bg: on ? '#9d174d' : '#fff', fg: on ? '#fff' : '#334155', border: on ? '#9d174d' : '#f0d5e3' }; }),
-      stageW: fr ? Math.round((fr[0] + pd * 2) * sc) + 'px' : '100vw', stageH: fr ? Math.round((fr[1] + pd * 2) * sc) + 'px' : 'calc(100vh - 58px)',
-      devW: fr ? (fr[0] + pd * 2) + 'px' : '100vw', devH: fr ? (fr[1] + pd * 2) + 'px' : 'calc(100vh - 58px)', frameScale: sc,
+      stageW: fr ? Math.round((fr[0] + pd * 2) * sc) + 'px' : '100vw', stageH: fr ? Math.round((fr[1] + pd * 2) * sc) + 'px' : (hosted ? '100dvh' : 'calc(100vh - 58px)'),
+      devW: fr ? (fr[0] + pd * 2) + 'px' : '100vw', devH: fr ? (fr[1] + pd * 2) + 'px' : (hosted ? '100dvh' : 'calc(100vh - 58px)'), frameScale: sc,
       bezelBg: fr ? '#0b1222' : 'transparent', bezelR: fr ? (isPhone ? 52 : 40) : 0, bezelPad: pd, bezelSh: fr ? '0 40px 80px -30px rgba(15,23,42,.55)' : 'none', screenR: fr ? (isPhone ? 42 : 26) : 0,
       statusH: isPhone ? 46 : 26, statusBg: isPhone ? '#fdf6fa' : '#fff',
       sideW: isWide ? 256 : 92, sidePadX: isWide ? 14 : 8, sideJustify: isWide ? 'flex-start' : 'center',
