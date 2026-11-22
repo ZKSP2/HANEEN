@@ -17,7 +17,7 @@
 
 ## الرفع على GitHub Pages
 
-1. ارفعي كل اللي جوه فولدر HANEEN على ريبو HANEEN (مكان الملفات القديمة).
+1. ارفع كل اللي جوه فولدر HANEEN على ريبو HANEEN (مكان الملفات القديمة).
 2. Settings ← Pages ← Deploy from a branch ← `main` / `root`.
 3. اللينكات:
    - الرئيسية: `https://zksp2.github.io/HANEEN/`
