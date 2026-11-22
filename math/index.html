@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<script src="./image-slot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&amp;family=Nunito:wght@600;700;800;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f6e7f0;font-family:Nunito,Cairo,sans-serif;color:#3b0a2a;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box;scrollbar-width:none}*::-webkit-scrollbar{width:0;height:0;display:none}
+button{font-family:inherit;cursor:pointer}
+input{font-family:inherit}
+a{color:#7c3aed}a:hover{color:#2563eb}
+@keyframes hm-fall{to{transform:translateY(960px) rotate(720deg)}}
+@keyframes hm-pop{from{transform:scale(.6);opacity:0}}
+@keyframes hm-pulse{0%,100%{box-shadow:0 0 0 0 rgba(236,72,153,.5)}50%{box-shadow:0 0 0 12px rgba(236,72,153,0)}}
+@keyframes hm-toast{from{transform:translateY(-16px);opacity:0}}
+@media print{#app-shell{display:none !important}#print-doc{display:block !important}body{background:#fff}}
+</style>
+</helmet>
+<div id="app-shell" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;background:#f6e7f0">
+<sc-if value="{{ showDevBar }}" hint-placeholder-val="{{ true }}">
+<div dir="rtl" style="flex:none;height:58px;display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap">
+<span style="font:700 12px Cairo,sans-serif;color:#64748b;margin-left:6px">المعاينة:</span>
+<sc-for list="{{ devices }}" as="d" hint-placeholder-count="4"><button onClick="{{ d.onClick }}" style="height:34px;padding:0 12px;border-radius:10px;border:1px solid {{ d.border }};background:{{ d.bg }};color:{{ d.fg }};font:700 12.5px Cairo,sans-serif">{{ d.label }}</button></sc-for>
+</div>
+</sc-if>
+<div dir="ltr" style="position:relative;flex:none;width:{{ stageW }};height:{{ stageH }}">
+<div style="position:absolute;left:0;top:0;width:{{ devW }};height:{{ devH }};transform:scale({{ frameScale }});transform-origin:0 0;background:{{ bezelBg }};border-radius:{{ bezelR }}px;padding:{{ bezelPad }}px;box-shadow:{{ bezelSh }}">
+<div dir="rtl" style="position:relative;width:100%;height:100%;border-radius:{{ screenR }}px;overflow:hidden;background:#fdf6fa;display:flex;flex-direction:column">
+
+<sc-if value="{{ framed }}" hint-placeholder-val="{{ true }}">
+<div style="flex:none;height:{{ statusH }}px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;direction:ltr;font:800 13px Nunito,sans-serif;color:#3b0a2a;background:{{ statusBg }}">
+<span>9:41</span>
+<sc-if value="{{ isPhone }}"><span style="width:110px;height:30px;background:#0b1222;border-radius:20px"></span></sc-if>
+<span style="width:24px;height:12px;border:2px solid #3b0a2a;border-radius:4px;padding:1px;display:flex"><span style="flex:1;background:#3b0a2a;border-radius:1px"></span></span>
+</div>
+</sc-if>
+
+<div style="flex:1;min-height:0;display:flex;flex-direction:{{ shellDir }}">
+<sc-if value="{{ isTablet }}" hint-placeholder-val="{{ true }}">
+<div style="flex:none;width:{{ sideW }}px;background:#fff;border-left:1px solid #f3e3ec;display:flex;flex-direction:column;gap:4px;padding:18px {{ sidePadX }}px">
+<div style="display:flex;align-items:center;gap:10px;padding:0 6px 18px;justify-content:{{ sideJustify }}">
+<img src="assets/haneen-avatar.png" alt="حنين" style="flex:none;width:46px;height:46px;border-radius:50%;object-fit:cover;border:2.5px solid #fff;box-shadow:0 0 0 2px #f9a8d4">
+<sc-if value="{{ isWide }}"><div style="display:flex;flex-direction:column"><span style="font:900 16px Cairo,sans-serif;color:#0f172a">ماث حنين</span><span style="font:600 11px Cairo,sans-serif;color:#64748b">الصف الثاني · الفصل الأول</span></div></sc-if>
+</div>
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+<button onClick="{{ t.onClick }}" style="display:flex;flex-direction:{{ navDir }};align-items:center;gap:{{ navGap }}px;padding:{{ navPad }};border-radius:12px;border:0;background:{{ t.side }};color:{{ t.color }};font:700 {{ navFs }}px Cairo,sans-serif;text-align:right;width:100%"><sc-if value="{{ t.isHome }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"></path><path d="M5 10v10h14V10"></path></svg></sc-if><sc-if value="{{ t.isCheat }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 21h4"></path><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"></path></svg></sc-if><sc-if value="{{ t.isCompare }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7.5" height="16" rx="2"></rect><rect x="13.5" y="4" width="7.5" height="16" rx="2"></rect></svg></sc-if><sc-if value="{{ t.isExams }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h3"></path></svg></sc-if><sc-if value="{{ t.isParent }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></sc-if><span>{{ t.label }}</span></button>
+</sc-for>
+<div style="flex:1"></div>
+<sc-if value="{{ isWide }}">
+<div style="background:#fdf8fb;border:1px solid #f8eaf2;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font:800 12.5px Cairo,sans-serif;color:#0f172a">التقدّم العام</span><span style="font:900 13px Nunito,sans-serif;color:#9d174d;direction:ltr">{{ overallPct }}%</span></div>
+<div style="display:flex"><span style="flex:1;height:6px;border-radius:6px;background:#f8eaf2;display:flex;overflow:hidden"><span style="width:{{ overallPct }}%;background:#ec4899;border-radius:6px"></span></span></div>
+<div style="display:flex;justify-content:space-between;font:700 11.5px Cairo,sans-serif;color:#64748b"><span>⭐ {{ stars }} نجمة</span><span>{{ modeShort }}</span></div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<div style="flex:1;min-width:0;min-height:0;display:flex;flex-direction:column">
+<sc-if value="{{ showTop }}" hint-placeholder-val="{{ false }}">
+<div style="flex:none;display:flex;align-items:center;gap:12px;padding:{{ topPad }};background:#fff;border-bottom:1px solid #f3e3ec">
+<sc-if value="{{ showBack }}"><button onClick="{{ back }}" aria-label="رجوع" style="flex:none;width:40px;height:40px;border-radius:12px;border:1px solid #f3e3ec;background:#fff;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></button></sc-if>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px">
+<sc-if value="{{ hasCrumb }}"><span dir="auto" style="font:700 11.5px Nunito,Cairo,sans-serif;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;unicode-bidi:plaintext;text-align:start">{{ crumb }}</span></sc-if>
+<span dir="auto" style="font:800 {{ topFs }}px/1.3 Nunito,Cairo,sans-serif;color:#3b0a2a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;unicode-bidi:plaintext;text-align:start">{{ headerTitle }}</span>
+</div>
+<span style="flex:none;display:flex;align-items:center;gap:4px;height:34px;padding:0 12px;border-radius:17px;background:#fdf2f8;color:#9d174d;font:900 13px Nunito,sans-serif;direction:ltr">⭐ {{ stars }}</span>
+</div>
+</sc-if>
+
+<div ref="{{ scrollRef }}" style="flex:1;overflow-y:auto;overflow-x:hidden">
+<div style="max-width:1160px;margin:0 auto;padding:{{ pad }}">
+
+<sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+<div style="padding:140px 30px;text-align:center;font:700 15px/1.7 Cairo,sans-serif;color:#64748b">{{ loadingText }}</div>
+</sc-if>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:26px">
+<div style="position:relative;overflow:hidden;border-radius:26px;background:linear-gradient(120deg,#fdf2f8 0%,#f5f3ff 100%);border:1px solid #f3e3ec;padding:{{ heroPad }};display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+<span style="position:absolute;width:220px;height:220px;border-radius:50%;background:#fce7f3;left:-60px;top:-90px"></span>
+<span style="position:absolute;width:120px;height:120px;border-radius:50%;background:#ede9fe;left:120px;bottom:-70px"></span>
+<sc-if value="{{ isPhone }}"><img src="assets/haneen-avatar.png" alt="حنين" style="position:relative;flex:none;width:76px;height:76px;border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:0 10px 22px -10px rgba(157,23,77,.5)"></sc-if>
+<sc-if value="{{ isTablet }}"><img src="assets/haneen-portrait.png" alt="حنين" style="position:relative;flex:none;width:132px;height:164px;border-radius:24px;object-fit:cover;object-position:center 20%;border:5px solid #fff;box-shadow:0 14px 30px -14px rgba(157,23,77,.55)"></sc-if>
+<div style="position:relative;flex:1;min-width:190px;display:flex;flex-direction:column;gap:6px">
+<span style="font:700 12.5px Cairo,sans-serif;color:#9d174d">الصف الثاني الابتدائي · الفصل الدراسي الأول ٢٠٢٦/٢٠٢٧</span>
+<span style="font:900 {{ helloFs }}px/1.25 Cairo,sans-serif;color:#3b0a2a">مرحبًا يا حنين</span>
+<span style="font:600 14px/1.6 Cairo,sans-serif;color:#6b4a5e">مستعدة لمذاكرة الماث اليوم؟</span>
+<span style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+<span style="height:30px;padding:0 12px;border-radius:15px;background:#fff;display:flex;align-items:center;gap:6px;font:800 12.5px Cairo,sans-serif;color:#9d174d;box-shadow:0 1px 2px rgba(157,23,77,.08)">⭐ {{ stars }} نجمة</span>
+<span style="height:30px;padding:0 12px;border-radius:15px;background:#fff;display:flex;align-items:center;gap:6px;font:800 12.5px Cairo,sans-serif;color:#7c3aed;box-shadow:0 1px 2px rgba(124,58,237,.08)">✓ {{ overall.d }} سؤالًا</span>
+</span>
+</div>
+<div style="position:relative;display:flex;padding:4px;background:rgba(255,255,255,.7);border-radius:14px;gap:4px;width:{{ modeW }}">
+<button onClick="{{ setKid }}" style="flex:1;height:40px;padding:0 16px;border-radius:11px;border:0;background:{{ modeKidBg }};color:{{ modeKidFg }};font:800 13px Cairo,sans-serif;box-shadow:{{ modeKidSh }};white-space:nowrap">وضع حنين</button>
+<button onClick="{{ setParent }}" style="flex:1;height:40px;padding:0 16px;border-radius:11px;border:0;background:{{ modeParBg }};color:{{ modeParFg }};font:800 13px Cairo,sans-serif;box-shadow:{{ modeParSh }};white-space:nowrap">وضع وليّ الأمر</button>
+</div>
+</div>
+<div style="font:600 12.5px/1.7 Cairo,sans-serif;color:#475569;background:#fff;border:1px solid #f3e3ec;border-radius:14px;padding:10px 14px;margin-top:-12px">{{ modeHelp }}</div>
+
+<div style="display:grid;grid-template-columns:{{ heroCols }};gap:16px">
+<button onClick="{{ cont.open }}" style="text-align:right;border:0;border-radius:22px;padding:22px;background:linear-gradient(135deg,#db2777,#9333ea);color:#fff;display:flex;flex-direction:column;gap:16px;min-height:170px">
+<span style="display:flex;align-items:center;gap:12px"><span style="flex:none;width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,.14);display:grid;place-items:center;font-size:26px">{{ cont.emoji }}</span><span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:700 12.5px Cairo,sans-serif;color:#fbcfe8">{{ cont.kicker }}</span><span dir="auto" style="font:900 19px/1.35 Nunito,Cairo,sans-serif;unicode-bidi:plaintext;text-align:start">{{ cont.title }}</span></span></span>
+<span style="flex:1"></span>
+<span style="display:flex;align-items:center;gap:12px"><span style="flex:1;height:7px;border-radius:7px;background:rgba(255,255,255,.18);display:flex;overflow:hidden"><span style="width:{{ cont.pct }}%;background:#f9a8d4;border-radius:7px"></span></span><span style="font:900 12px Nunito,sans-serif;direction:ltr">{{ cont.pct }}%</span><span style="flex:none;height:38px;padding:0 16px;border-radius:12px;background:#ec4899;display:flex;align-items:center;font:800 13px Cairo,sans-serif">{{ cont.cta }}</span></span>
+</button>
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:20px;display:flex;align-items:center;gap:18px">
+<div style="flex:none;width:96px;height:96px;border-radius:50%;background:conic-gradient(#ec4899 {{ overall.deg }}deg, #f8eaf2 0);display:grid;place-items:center"><div style="width:76px;height:76px;border-radius:50%;background:#fff;display:grid;place-items:center;direction:ltr"><span style="font:900 21px Nunito,sans-serif;color:#0f172a">{{ overall.pct }}%</span></div></div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
+<div style="font:800 16px/1.4 Cairo,sans-serif;color:#0f172a">{{ overall.headline }}</div>
+<sc-for list="{{ books }}" as="b" hint-placeholder-count="2"><div style="display:flex;flex-direction:column;gap:4px"><div style="display:flex;justify-content:space-between;font:700 12px Cairo,sans-serif;color:#475569"><span>{{ b.emoji }} {{ b.title }}</span><span style="font-family:Nunito;direction:ltr">{{ b.pct }}%</span></div><div style="display:flex"><span style="flex:1;height:6px;border-radius:6px;background:#f8eaf2;display:flex;overflow:hidden"><span style="width:{{ b.pct }}%;background:{{ b.color }};border-radius:6px"></span></span></div></div></sc-for>
+<div style="font:600 12px Cairo,sans-serif;color:#64748b">أنهيتِ {{ overall.d }} من {{ overall.t }} سؤالًا</div>
+</div>
+</div>
+</div>
+
+<button onClick="{{ goExams }}" style="text-align:right;background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:18px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<span style="flex:none;width:56px;height:56px;border-radius:17px;background:#fce7f3;display:grid;place-items:center;font-size:28px">📝</span>
+<span style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:3px"><span style="font:900 17px Cairo,sans-serif;color:#3b0a2a">سلسلة امتحانات الماث</span><span style="font:600 12.5px/1.6 Cairo,sans-serif;color:#6b4a5e">{{ examsCount }} امتحانًا على نمط كتاب المدرسة وكتاب التقييمات، ونموذج جديد في كل محاولة.</span></span>
+<span style="flex:none;height:42px;padding:0 20px;border-radius:21px;background:#db2777;color:#fff;display:flex;align-items:center;font:800 14px Cairo,sans-serif">ابدئي التدريب</span>
+</button>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:800 18px Cairo,sans-serif;color:#0f172a">كتب الوزارة</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px">
+<sc-for list="{{ books }}" as="b" hint-placeholder-count="2">
+<button onClick="{{ b.open }}" style="text-align:right;background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:18px;display:flex;align-items:center;gap:14px">
+<span style="flex:none;width:56px;height:56px;border-radius:16px;background:{{ b.soft }};display:grid;place-items:center;font-size:28px">{{ b.emoji }}</span>
+<span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:5px">
+<span style="font:800 16px/1.35 Cairo,sans-serif;color:#0f172a">{{ b.title }}</span>
+<span style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="font:800 9.5px Nunito,sans-serif;letter-spacing:.3px;padding:2px 7px;border-radius:6px;background:{{ b.soft }};color:{{ b.color }};direction:ltr">{{ b.badge }}</span><span style="font:600 11.5px Cairo,sans-serif;color:#64748b">{{ b.kind }}</span></span>
+<span style="display:flex;align-items:center;gap:8px"><span style="flex:1;height:6px;border-radius:6px;background:#f8eaf2;display:flex;overflow:hidden"><span style="width:{{ b.pct }}%;background:{{ b.color }};border-radius:6px"></span></span><span style="font:800 11px Nunito,sans-serif;color:#64748b;direction:ltr">{{ b.pct }}%</span></span>
+</span>
+</button>
+</sc-for>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px"><div style="font:800 18px Cairo,sans-serif;color:#0f172a">الوحدات</div><div style="display:flex;gap:12px;font:700 11.5px Cairo,sans-serif;color:#64748b"><span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:3px;background:#7c3aed"></span>كتاب المدرسة</span><span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:3px;background:#ec4899"></span>كتاب التقييمات</span></div></div>
+<div style="display:grid;grid-template-columns:{{ gridCols }};gap:12px">
+<sc-for list="{{ grid }}" as="g" hint-placeholder-count="9">
+<button onClick="{{ g.open }}" style="text-align:right;background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:14px;display:flex;flex-direction:column;gap:10px;min-height:{{ tileH }}px">
+<span style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+<span style="width:40px;height:40px;border-radius:12px;background:{{ g.soft }};display:grid;place-items:center;font-size:20px">{{ g.emoji }}</span>
+<span style="font:900 11px Nunito,sans-serif;letter-spacing:.3px;color:{{ g.color }};direction:ltr">CH {{ g.num }}</span>
+</span>
+<span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 13.5px/1.45 Cairo,sans-serif;color:#0f172a">{{ g.ar }}</span><sc-if value="{{ isTablet }}"><span dir="ltr" style="font:700 11px Nunito,sans-serif;color:#94a3b8;text-align:right">{{ g.name }}</span></sc-if></span>
+<span style="display:flex;flex-direction:column;gap:4px">
+<span style="display:flex"><span style="flex:1;height:4px;border-radius:4px;background:#f8eaf2;display:flex;overflow:hidden"><span style="width:{{ g.bookPct }}%;background:#7c3aed;border-radius:4px"></span></span></span>
+<span style="display:flex"><span style="flex:1;height:4px;border-radius:4px;background:#f8eaf2;display:flex;overflow:hidden"><span style="width:{{ g.assessPct }}%;background:#ec4899;border-radius:4px"></span></span></span>
+</span>
+</button>
+</sc-for>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:800 18px Cairo,sans-serif;color:#0f172a">مصادر إضافية</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<sc-for list="{{ chips }}" as="ch" hint-placeholder-count="3"><button onClick="{{ ch.onClick }}" style="height:34px;padding:0 13px;border-radius:17px;border:1px solid {{ ch.border }};background:{{ ch.bg }};color:{{ ch.fg }};font:800 12px Nunito,Cairo,sans-serif">{{ ch.label }}</button></sc-for>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px">
+<sc-for list="{{ extras }}" as="src" hint-placeholder-count="3">
+<button onClick="{{ src.open }}" style="text-align:right;background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:14px;display:flex;gap:12px;align-items:center">
+<span style="flex:none;width:44px;height:44px;border-radius:13px;background:{{ src.soft }};display:grid;place-items:center;font-size:20px">📎</span>
+<span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:5px">
+<span style="font:800 14px/1.4 Cairo,sans-serif;color:#0f172a">{{ src.title }}</span>
+<span style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="font:800 9.5px Nunito,sans-serif;letter-spacing:.3px;padding:2px 7px;border-radius:6px;background:{{ src.soft }};color:{{ src.color }};direction:ltr">{{ src.badge }}</span><span style="font:600 11px Cairo,sans-serif;color:#64748b">{{ src.kind }}</span></span>
+<span style="display:flex;align-items:center;gap:8px"><span style="flex:1;height:5px;border-radius:5px;background:#f8eaf2;display:flex;overflow:hidden"><span style="width:{{ src.pct }}%;background:{{ src.color }};border-radius:5px"></span></span><span style="font:800 10.5px Nunito,sans-serif;color:#64748b;direction:ltr">{{ src.pct }}%</span></span>
+</span>
+</button>
+</sc-for>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+<button onClick="{{ goCheat }}" style="text-align:right;background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:16px;display:flex;align-items:center;gap:12px"><span style="flex:none;width:44px;height:44px;border-radius:13px;background:#f5f3ff;display:grid;place-items:center;font-size:20px">💡</span><span style="display:flex;flex-direction:column;gap:2px"><span style="font:800 14px Cairo,sans-serif;color:#0f172a">القواعد المهمة</span><span style="font:600 12px Cairo,sans-serif;color:#64748b">مراجعة سريعة قبل الامتحان</span></span></button>
+<button onClick="{{ goCompare }}" style="text-align:right;background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:16px;display:flex;align-items:center;gap:12px"><span style="flex:none;width:44px;height:44px;border-radius:13px;background:#fdf2f8;display:grid;place-items:center;font-size:20px">📊</span><span style="display:flex;flex-direction:column;gap:2px"><span style="font:800 14px Cairo,sans-serif;color:#0f172a">الفرق بين الكتابين</span><span style="font:600 12px Cairo,sans-serif;color:#64748b">مقارنة وخريطة للصفحات</span></span></button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPart }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<span style="flex:none;width:60px;height:60px;border-radius:18px;background:{{ part.soft }};display:grid;place-items:center;font-size:30px">{{ part.emoji }}</span>
+<div style="flex:1;min-width:220px;display:flex;flex-direction:column;gap:4px"><span style="font:900 22px/1.35 Cairo,sans-serif;color:#0f172a">{{ part.title }}</span><span dir="ltr" style="font:700 12px/1.5 Nunito,sans-serif;color:#64748b;text-align:right">{{ part.flow }}</span></div>
+<div style="display:flex;align-items:center;gap:10px;min-width:180px"><span style="flex:1;height:7px;border-radius:7px;background:#f8eaf2;display:flex;overflow:hidden"><span style="width:{{ part.pct }}%;background:{{ part.color }};border-radius:7px"></span></span><span style="font:900 13px Nunito,sans-serif;color:#3b0a2a;direction:ltr">{{ part.pct }}%</span></div>
+</div>
+<sc-for list="{{ part.notes }}" as="n" hint-placeholder-count="0"><div style="grid-column:1/-1;background:#fffbeb;border:1px solid #fde68a;border-radius:16px;padding:11px 13px;display:flex;flex-direction:column;gap:3px"><span style="font:800 11px Cairo,sans-serif;color:#92400e">⚠️ ملاحظة لوليّ الأمر</span><span style="font:600 12.5px/1.8 Cairo,sans-serif;color:#78350f"><sc-for list="{{ n.segs }}" as="s"><sc-if value="{{ s.b }}"><b style="font-weight:800;color:#78350f">{{ s.t }}</b></sc-if><sc-if value="{{ s.n }}"><span>{{ s.t }}</span></sc-if></sc-for></span></div></sc-for>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px">
+<sc-for list="{{ part.rows }}" as="r" hint-placeholder-count="6">
+<button onClick="{{ r.open }}" style="text-align:right;background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:14px;display:flex;gap:12px;align-items:center">
+<span style="flex:none;width:50px;height:50px;border-radius:15px;background:{{ r.soft }};display:grid;place-items:center;font-size:24px">{{ r.emoji }}</span>
+<span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+<span style="display:flex;justify-content:space-between;gap:6px"><span style="font:900 11px Nunito,sans-serif;color:{{ r.color }};direction:ltr">{{ r.kicker }}</span><span style="font:700 11px Nunito,sans-serif;color:#64748b;direction:ltr">{{ r.pages }}</span></span>
+<span style="font:800 14.5px/1.35 Cairo,sans-serif;color:#0f172a">{{ r.ar }}</span>
+<span dir="ltr" style="font:700 11.5px Nunito,sans-serif;color:#94a3b8;text-align:right">{{ r.name }}</span>
+<span style="display:flex;align-items:center;gap:8px"><span style="flex:1;height:5px;border-radius:5px;background:#f8eaf2;display:flex;overflow:hidden"><span style="width:{{ r.pct }}%;background:{{ r.color }};border-radius:5px"></span></span><span style="font:800 10.5px Nunito,sans-serif;color:#64748b;direction:ltr">{{ r.doneTxt }}</span></span>
+</span>
+</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isChapter }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:18px">
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:20px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<span style="flex:none;width:64px;height:64px;border-radius:19px;background:{{ chap.soft }};display:grid;place-items:center;font-size:32px">{{ chap.emoji }}</span>
+<div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:2px">
+<span style="font:900 12px Nunito,sans-serif;color:{{ chap.color }};direction:ltr;text-align:right">{{ chap.kicker }} · {{ chap.pages }}</span>
+<span style="font:900 23px/1.3 Cairo,sans-serif;color:#0f172a">{{ chap.ar }}</span>
+<span dir="ltr" style="font:700 13px Nunito,sans-serif;color:#64748b;text-align:right">{{ chap.name }}</span>
+</div>
+<sc-if value="{{ chap.hasTwin }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;padding:4px;background:#f9eef4;border-radius:13px;gap:4px;width:{{ twinW }}">
+<button onClick="{{ chap.goBook }}" style="flex:1;height:38px;padding:0 14px;border-radius:10px;border:0;background:{{ chap.bookBg }};color:{{ chap.bookFg }};font:800 12.5px Cairo,sans-serif;box-shadow:{{ chap.bookSh }};white-space:nowrap">📘 كتاب المدرسة</button>
+<button onClick="{{ chap.goAssess }}" style="flex:1;height:38px;padding:0 14px;border-radius:10px;border:0;background:{{ chap.assessBg }};color:{{ chap.assessFg }};font:800 12.5px Cairo,sans-serif;box-shadow:{{ chap.assessSh }};white-space:nowrap">📙 كتاب التقييمات</button>
+</div>
+</sc-if>
+</div>
+<div style="display:flex;align-items:center;gap:10px"><span style="flex:1;height:8px;border-radius:8px;background:#f8eaf2;display:flex;overflow:hidden"><span style="width:{{ chap.pct }}%;background:{{ chap.color }};border-radius:8px"></span></span><span style="font:900 13px Nunito,sans-serif;color:#3b0a2a;direction:ltr">{{ chap.pct }}%</span></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">
+<sc-for list="{{ chap.lessons }}" as="l" hint-placeholder-count="4">
+<button onClick="{{ l.open }}" style="text-align:right;background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:16px;display:flex;align-items:center;gap:14px">
+<span style="flex:none;width:52px;height:52px;border-radius:50%;background:{{ l.fill }};border:3px solid {{ l.ring }};display:grid;place-items:center;font:900 18px Nunito,sans-serif;color:{{ l.numFg }}">{{ l.mark }}</span>
+<span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+<span dir="ltr" style="font:800 14px/1.35 Nunito,Cairo,sans-serif;color:#3b0a2a;text-align:right">{{ l.title }}</span>
+<span style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span style="font:700 11.5px Nunito,sans-serif;color:#64748b;direction:ltr">{{ l.meta }}</span><span style="font:900 13px Nunito,sans-serif;letter-spacing:1px;color:#f59e0b;direction:ltr">{{ l.stars }}</span></span>
+<span style="display:flex"><span style="flex:1;height:4px;border-radius:4px;background:#f8eaf2;display:flex;overflow:hidden"><span style="width:{{ l.pct }}%;background:{{ l.ring }};border-radius:4px"></span></span></span>
+</span>
+</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isLesson }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:18px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<span style="flex:none;width:52px;height:52px;border-radius:16px;background:{{ les.soft }};display:grid;place-items:center;font-size:26px">{{ les.emoji }}</span>
+<div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:3px">
+<span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font:800 9.5px Nunito,sans-serif;letter-spacing:.3px;padding:2px 7px;border-radius:6px;background:{{ les.badgeSoft }};color:{{ les.badgeColor }};direction:ltr">{{ les.badge }}</span><span dir="auto" style="font:800 12px Nunito,Cairo,sans-serif;color:{{ les.color }};unicode-bidi:plaintext">{{ les.chName }}</span></span>
+<span dir="auto" style="font:900 21px/1.3 Nunito,Cairo,sans-serif;color:#3b0a2a;unicode-bidi:plaintext;text-align:start">{{ les.title }}</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px;min-width:170px">
+<span style="display:flex;justify-content:space-between;font:800 12px Nunito,Cairo,sans-serif;color:#475569"><span style="direction:ltr">{{ les.pages }}</span><span style="direction:ltr">{{ les.doneTxt }}</span></span>
+<span style="display:flex"><span style="flex:1;height:7px;border-radius:7px;background:#f8eaf2;display:flex;overflow:hidden"><span style="width:{{ les.pct }}%;background:{{ les.color }};border-radius:7px"></span></span></span>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:{{ lessonCols }};gap:16px;align-items:start">
+<div style="display:flex;flex-direction:column;gap:12px;position:{{ asidePos }};top:0">
+<sc-if value="{{ les.hasExplain }}" hint-placeholder-val="{{ false }}">
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);overflow:hidden">
+<button onClick="{{ les.toggleExplain }}" style="width:100%;border:0;background:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;text-align:right;border-bottom:1px solid {{ les.exDivider }}">
+<span style="flex:none;width:38px;height:38px;border-radius:12px;background:{{ les.soft }};display:grid;place-items:center;font-size:18px">📖</span>
+<span style="flex:1;display:flex;flex-direction:column;gap:1px"><span style="font:900 14px Cairo,sans-serif;color:{{ les.color }}">{{ les.exLabel }}</span><span style="font:600 12.5px/1.6 Cairo,sans-serif;color:#334155">{{ les.exIdea }}</span></span>
+<span style="font:900 18px Nunito,sans-serif;color:{{ les.color }}">{{ les.exChevron }}</span>
+</button>
+<sc-if value="{{ les.exOpen }}" hint-placeholder-val="{{ false }}">
+<div style="padding:14px 16px 16px;display:flex;flex-direction:column;gap:11px">
+<sc-for list="{{ les.exSteps }}" as="st" hint-placeholder-count="3"><div style="display:flex;gap:10px;align-items:flex-start"><span style="flex:none;width:24px;height:24px;border-radius:8px;background:{{ les.soft }};color:{{ les.color }};display:grid;place-items:center;font:900 12px Nunito,sans-serif">{{ st.n }}</span><span style="font:600 14px/1.8 Cairo,Nunito,sans-serif;color:#1e293b">{{ st.t }}</span></div></sc-for>
+<sc-if value="{{ les.hasTip }}"><div style="background:#fdf2f8;border-radius:12px;padding:8px 11px;font:700 12.5px/1.7 Cairo,sans-serif;color:#9d174d">انتبهي: {{ les.exTip }}</div></sc-if>
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font:800 11.5px Cairo,sans-serif;color:#64748b">مثال:</span><span dir="ltr" style="font:900 15px Nunito,sans-serif;color:#3b0a2a;background:#f9eef4;padding:5px 11px;border-radius:10px">{{ les.exEx }}</span></div>
+<button onClick="{{ les.listen }}" style="height:46px;border-radius:13px;border:0;background:#9d174d;color:#fff;font:800 14px Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg><span>حصة شرح الدرس مع الأستاذ يوسف</span></button>
+</div>
+</sc-if>
+</div>
+</sc-if>
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:14px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:center;gap:12px"><span style="flex:none;width:38px;height:38px;border-radius:12px;background:#f9eef4;display:grid;place-items:center;font-size:18px">📖</span><span style="flex:1;min-width:0;font:900 14px/1.5 Cairo,Nunito,sans-serif;color:#0f172a">{{ les.pageRef }}</span></div>
+</div>
+<sc-for list="{{ les.notes }}" as="n" hint-placeholder-count="0">
+<sc-if value="{{ n.isRule }}"><div style="grid-column:1/-1;background:#f5f3ff;border:1px solid #ede9fe;border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:4px"><span style="font:800 12px Cairo,sans-serif;color:#7c3aed">💡 تذكّري</span><span style="font:600 14px/1.8 Cairo,Nunito,sans-serif;color:#9d174d"><sc-for list="{{ n.segs }}" as="s"><sc-if value="{{ s.b }}"><b style="font-weight:800;color:#7c3aed">{{ s.t }}</b></sc-if><sc-if value="{{ s.n }}"><span>{{ s.t }}</span></sc-if></sc-for></span></div></sc-if>
+<sc-if value="{{ n.isWarn }}"><div style="grid-column:1/-1;background:#fffbeb;border:1px solid #fde68a;border-radius:16px;padding:11px 13px;display:flex;flex-direction:column;gap:3px"><span style="font:800 11px Cairo,sans-serif;color:#92400e">⚠️ ملاحظة لوليّ الأمر</span><span style="font:600 12.5px/1.8 Cairo,sans-serif;color:#78350f"><sc-for list="{{ n.segs }}" as="s"><sc-if value="{{ s.b }}"><b style="font-weight:800;color:#78350f">{{ s.t }}</b></sc-if><sc-if value="{{ s.n }}"><span>{{ s.t }}</span></sc-if></sc-for></span></div></sc-if>
+</sc-for>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+<sc-if value="{{ les.hasTabs }}" hint-placeholder-val="{{ false }}">
+<div dir="ltr" style="display:flex;gap:6px;overflow-x:auto;padding:4px;background:#f6e7f0;border-radius:14px;position:sticky;top:0;z-index:2">
+<sc-for list="{{ les.tabs }}" as="t" hint-placeholder-count="3"><button onClick="{{ t.onClick }}" style="flex:{{ tabFlex }};height:38px;padding:0 14px;border-radius:11px;border:0;background:{{ t.bg }};color:{{ t.fg }};font:800 13px Nunito,Cairo,sans-serif;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:{{ t.sh }}">{{ t.label }}<span style="font:900 10px Nunito,sans-serif;opacity:.7">{{ t.count }}</span></button></sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ les.hasSecTitle }}" hint-placeholder-val="{{ false }}"><div dir="auto" style="font:800 15px/1.4 Nunito,Cairo,sans-serif;color:#3b0a2a;unicode-bidi:plaintext;text-align:start;padding:2px 2px 0">{{ les.secTitle }}</div></sc-if>
+<sc-if value="{{ les.hasStaticGraph }}" hint-placeholder-val="{{ false }}">
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 2px rgba(15,23,42,.04),0 6px 16px -10px rgba(15,23,42,.14)">
+<div style="font:800 13.5px/1.7 Cairo,sans-serif;color:#334155">انظري إلى الرسم البياني، ثم أجيبي عن الأسئلة.</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ les.staticGroups }}" as="g" hint-placeholder-count="1">
+<div dir="ltr" style="background:#fdf8fb;border-radius:18px;padding:10px 10px 12px;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font:900 11px Nunito,sans-serif;letter-spacing:.4px;color:#64748b">GRAPH</span><sc-if value="{{ g.hasLabel }}"><span style="font:800 12.5px Nunito,sans-serif;color:#334155">{{ g.label }}</span></sc-if></div>
+<div style="display:flex;align-items:flex-end;border-bottom:2px solid #cbd5e1;padding:0 2px 5px">
+<sc-for list="{{ g.cols }}" as="c"><div style="flex:1;display:flex;flex-direction:column-reverse;align-items:center;gap:3px;min-height:{{ g.h }}px"><sc-for list="{{ c.dots }}" as="d"><span style="flex:none;width:{{ g.dot }}px;height:{{ g.dot }}px;border-radius:50%;border:2px solid {{ c.color }};background:{{ c.fill }}"></span></sc-for></div></sc-for>
+</div>
+<div style="display:flex;padding:0 2px">
+<sc-for list="{{ g.cols }}" as="c"><div style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px"><sc-if value="{{ c.isSwatch }}"><span style="width:18px;height:18px;border-radius:6px;background:{{ c.swatch }}"></span></sc-if><sc-if value="{{ c.isIcon }}"><span style="font-size:19px;line-height:22px">{{ c.icon }}</span></sc-if><span style="font:800 9.5px/1.2 Nunito,sans-serif;color:#475569;text-align:center;overflow-wrap:anywhere">{{ c.name }}</span></div></sc-for>
+</div>
+<span style="font:900 11px Nunito,sans-serif;letter-spacing:.4px;color:#64748b;margin-top:2px">CHART</span>
+<div style="display:flex;border:1.5px solid #f3e3ec;border-radius:12px;overflow:hidden;background:#fff">
+<sc-for list="{{ g.cols }}" as="c"><div style="flex:1;min-width:0;display:flex;flex-direction:column;border-right:1px solid #f8eaf2"><span style="height:26px;display:grid;place-items:center;background:#f9eef4;font-size:14px">{{ c.head }}</span><span style="height:44px;display:grid;place-items:center"><sc-if value="{{ c.cell.plain }}"><span style="font:900 17px Nunito,sans-serif;color:#0f172a">{{ c.cell.t }}</span></sc-if><sc-if value="{{ c.cell.shown }}"><span style="font:900 17px Nunito,sans-serif;color:#059669">{{ c.cell.t }}</span></sc-if><sc-if value="{{ c.cell.hidden }}"><span style="width:30px;height:26px;border-radius:8px;background:#f9eef4;border:2px dashed #cbd5e1"></span></sc-if><sc-if value="{{ c.cell.isInput }}"><input value="{{ c.cell.val }}" onChange="{{ c.cell.onChange }}" aria-label="العدد" autoComplete="off" style="width:40px;height:32px;padding:0;border-radius:9px;border:2px solid {{ c.cell.border }};background:{{ c.cell.bg }};font:900 16px Nunito,sans-serif;color:{{ c.cell.fg }};text-align:center;outline:none"></sc-if></span></div></sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<div style="display:grid;grid-template-columns:{{ qCols }};gap:12px;align-items:start">
+<sc-for list="{{ les.items }}" as="it" hint-placeholder-count="4">
+<sc-if value="{{ it.isLabel }}"><div dir="ltr" style="grid-column:1/-1;text-align:left;font:900 13px Nunito,sans-serif;color:{{ it.color }};padding:6px 2px 0">{{ it.label }}</div></sc-if>
+<sc-if value="{{ it.isRule }}"><div style="grid-column:1/-1;background:#f5f3ff;border:1px solid #ede9fe;border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:4px"><span style="font:800 12px Cairo,sans-serif;color:#7c3aed">💡 تذكّري</span><span style="font:600 14px/1.8 Cairo,Nunito,sans-serif;color:#9d174d"><sc-for list="{{ it.segs }}" as="s"><sc-if value="{{ s.b }}"><b style="font-weight:800;color:#7c3aed">{{ s.t }}</b></sc-if><sc-if value="{{ s.n }}"><span>{{ s.t }}</span></sc-if></sc-for></span></div></sc-if>
+<sc-if value="{{ it.isWarn }}"><div style="grid-column:1/-1;background:#fffbeb;border:1px solid #fde68a;border-radius:16px;padding:11px 13px;display:flex;flex-direction:column;gap:3px"><span style="font:800 11px Cairo,sans-serif;color:#92400e">⚠️ ملاحظة لوليّ الأمر</span><span style="font:600 12.5px/1.8 Cairo,sans-serif;color:#78350f"><sc-for list="{{ it.segs }}" as="s"><sc-if value="{{ s.b }}"><b style="font-weight:800;color:#78350f">{{ s.t }}</b></sc-if><sc-if value="{{ s.n }}"><span>{{ s.t }}</span></sc-if></sc-for></span></div></sc-if>
+<sc-if value="{{ it.isGraph }}">
+<div style="grid-column:1/-1;background:#fff;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px;border:1.5px solid {{ it.cardBorder }};box-shadow:0 1px 2px rgba(15,23,42,.04),0 6px 16px -10px rgba(15,23,42,.14)">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+<button onClick="{{ it.toggleDone }}" style="display:flex;align-items:center;gap:6px;height:32px;padding:0 8px 0 11px;border-radius:16px;border:1.5px solid {{ it.doneBorder }};background:{{ it.doneBg }};color:{{ it.doneFg }};font:800 12px Cairo,sans-serif"><span style="width:18px;height:18px;border-radius:6px;border:2px solid {{ it.doneFg }};background:{{ it.boxBg }};color:#fff;display:grid;place-items:center;font:900 11px Nunito,sans-serif">{{ it.tick }}</span>أنهيتُه</button>
+<span dir="ltr" style="display:flex;align-items:center;gap:6px"><span style="flex:none;width:34px;height:34px;border-radius:50%;background:{{ it.color }};color:#fff;display:grid;place-items:center;font:900 15px Nunito,sans-serif">{{ it.qNum }}</span><span style="font:800 9px Nunito,sans-serif;letter-spacing:.3px;color:{{ it.badgeColor }};background:{{ it.badgeSoft }};padding:3px 6px;border-radius:6px">{{ it.badge }}</span></span>
+</div>
+<div style="font:700 13.5px/1.7 Cairo,sans-serif;color:#334155">{{ it.graphHint }}</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ it.groups }}" as="g" hint-placeholder-count="1">
+<div dir="ltr" style="background:#fdf8fb;border-radius:18px;padding:10px 10px 12px;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font:900 11px Nunito,sans-serif;letter-spacing:.4px;color:#64748b">GRAPH</span><sc-if value="{{ g.hasLabel }}"><span style="font:800 12.5px Nunito,sans-serif;color:#334155">{{ g.label }}</span></sc-if></div>
+<div style="display:flex;align-items:flex-end;border-bottom:2px solid #cbd5e1;padding:0 2px 5px">
+<sc-for list="{{ g.cols }}" as="c"><div style="flex:1;display:flex;flex-direction:column-reverse;align-items:center;gap:3px;min-height:{{ g.h }}px"><sc-for list="{{ c.dots }}" as="d"><span style="flex:none;width:{{ g.dot }}px;height:{{ g.dot }}px;border-radius:50%;border:2px solid {{ c.color }};background:{{ c.fill }}"></span></sc-for></div></sc-for>
+</div>
+<div style="display:flex;padding:0 2px">
+<sc-for list="{{ g.cols }}" as="c"><div style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px"><sc-if value="{{ c.isSwatch }}"><span style="width:18px;height:18px;border-radius:6px;background:{{ c.swatch }}"></span></sc-if><sc-if value="{{ c.isIcon }}"><span style="font-size:19px;line-height:22px">{{ c.icon }}</span></sc-if><span style="font:800 9.5px/1.2 Nunito,sans-serif;color:#475569;text-align:center;overflow-wrap:anywhere">{{ c.name }}</span></div></sc-for>
+</div>
+<span style="font:900 11px Nunito,sans-serif;letter-spacing:.4px;color:#64748b;margin-top:2px">CHART</span>
+<div style="display:flex;border:1.5px solid #f3e3ec;border-radius:12px;overflow:hidden;background:#fff">
+<sc-for list="{{ g.cols }}" as="c"><div style="flex:1;min-width:0;display:flex;flex-direction:column;border-right:1px solid #f8eaf2"><span style="height:26px;display:grid;place-items:center;background:#f9eef4;font-size:14px">{{ c.head }}</span><span style="height:44px;display:grid;place-items:center"><sc-if value="{{ c.cell.plain }}"><span style="font:900 17px Nunito,sans-serif;color:#0f172a">{{ c.cell.t }}</span></sc-if><sc-if value="{{ c.cell.shown }}"><span style="font:900 17px Nunito,sans-serif;color:#059669">{{ c.cell.t }}</span></sc-if><sc-if value="{{ c.cell.hidden }}"><span style="width:30px;height:26px;border-radius:8px;background:#f9eef4;border:2px dashed #cbd5e1"></span></sc-if><sc-if value="{{ c.cell.isInput }}"><input value="{{ c.cell.val }}" onChange="{{ c.cell.onChange }}" aria-label="العدد" autoComplete="off" style="width:40px;height:32px;padding:0;border-radius:9px;border:2px solid {{ c.cell.border }};background:{{ c.cell.bg }};font:900 16px Nunito,sans-serif;color:{{ c.cell.fg }};text-align:center;outline:none"></sc-if></span></div></sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{ it.isBad }}"><div style="font:700 12.5px/1.6 Cairo,sans-serif;color:#b91c1c;background:#fef2f2;border-radius:12px;padding:8px 11px">بعض الأعداد ليست صحيحة بعد. عُدّي الدوائر مرة أخرى بهدوء.</div></sc-if>
+<sc-if value="{{ it.isOk }}"><div style="font:800 12.5px/1.6 Cairo,sans-serif;color:#047857;background:#ecfdf5;border-radius:12px;padding:8px 11px">إجابة صحيحة! أحسنتِ يا حنين ⭐</div></sc-if>
+<div style="display:flex;gap:8px">
+<sc-if value="{{ it.canCheck }}"><button onClick="{{ it.check }}" style="flex:1.1;height:46px;border-radius:23px;border:0;background:#db2777;color:#fff;font:800 14.5px Cairo,sans-serif;box-shadow:0 6px 14px -8px #db2777">تحقّقي ✓</button></sc-if>
+<button onClick="{{ it.explain }}" style="flex:1;height:46px;border-radius:23px;border:1.5px solid #e9d5ff;background:#faf5ff;color:#7e22ce;font:800 13.5px Cairo,sans-serif">اشرح لي</button>
+<sc-if value="{{ it.showReveal }}"><button onClick="{{ it.toggleReveal }}" style="flex:.8;height:46px;border-radius:23px;border:0;background:transparent;color:#9d174d;font:800 12.5px Cairo,sans-serif;text-decoration:underline">{{ it.revealLabel }}</button></sc-if>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ it.isQ }}">
+<div style="background:#fff;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px;border:1.5px solid {{ it.cardBorder }};box-shadow:0 1px 2px rgba(16,24,40,.04)">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+<button onClick="{{ it.toggleDone }}" style="display:flex;align-items:center;gap:6px;height:32px;padding:0 8px 0 11px;border-radius:16px;border:1.5px solid {{ it.doneBorder }};background:{{ it.doneBg }};color:{{ it.doneFg }};font:800 12px Cairo,sans-serif"><span style="width:18px;height:18px;border-radius:6px;border:2px solid {{ it.doneFg }};background:{{ it.boxBg }};color:#fff;display:grid;place-items:center;font:900 11px Nunito,sans-serif">{{ it.tick }}</span>أنهيتُه</button>
+<span dir="ltr" style="display:flex;align-items:center;gap:6px">
+<span style="flex:none;width:34px;height:34px;border-radius:50%;background:{{ it.color }};color:#fff;display:grid;place-items:center;font:900 15px Nunito,sans-serif">{{ it.qNum }}</span>
+<span style="font:800 9px Nunito,sans-serif;letter-spacing:.3px;color:{{ it.badgeColor }};background:{{ it.badgeSoft }};padding:3px 6px;border-radius:6px">{{ it.badge }}</span>
+</span>
+</div>
+<sc-if value="{{ it.hasScope }}"><span style="align-self:flex-start;font:800 11.5px Cairo,sans-serif;padding:4px 10px;border-radius:9px;background:{{ it.scopeBg }};color:{{ it.scopeFg }}">{{ it.scopeLabel }}</span></sc-if>
+<sc-if value="{{ it.answerOnly }}"><div style="background:#fdf8fb;border:1px dashed #cbd5e1;border-radius:14px;padding:10px 12px;font:700 13px/1.75 Cairo,sans-serif;color:#475569">نص السؤال {{ it.qNo }}غير مكتوب في ملف المذاكرة؛ فالملف يحتوي على الإجابات فقط. اقرئي السؤال من ورقة الامتحان الأصلية، ثم اكتبي إجابتك هنا.</div></sc-if>
+<div dir="ltr" style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ it.rows }}" as="r"><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 6px;padding:{{ r.pad }};background:{{ r.bg }};border-radius:14px;font:700 18px/1.5 Nunito,Cairo,sans-serif;color:#3b0a2a"><sc-if value="{{ r.hasLabel }}"><span style="flex:none;width:28px;height:28px;border-radius:50%;background:{{ it.soft }};color:{{ it.color }};display:grid;place-items:center;font:900 13px Nunito,sans-serif">{{ r.label }}</span></sc-if><sc-for list="{{ r.segs }}" as="s"><sc-if value="{{ s.plain }}"><span>{{ s.t }}</span></sc-if><sc-if value="{{ s.ptok }}"><span><sc-for list="{{ s.toks }}" as="w"><sc-if value="{{ w.isWord }}"><span onClick="{{ w.onClick }}" style="cursor:pointer;border-bottom:2px dotted #f9a8d4">{{ w.t }}</span></sc-if><sc-if value="{{ w.isTxt }}"><span>{{ w.t }}</span></sc-if></sc-for></span></sc-if><sc-if value="{{ s.shown }}"><span style="font-weight:900;color:#059669;background:#ecfdf5;border-radius:9px;padding:2px 9px">{{ s.t }}</span></sc-if><sc-if value="{{ s.hidden }}"><span style="display:inline-block;width:{{ s.w }}px;height:38px;border-radius:12px;background:#fdf2f8;border:2px dashed #f9a8d4"></span></sc-if><sc-if value="{{ s.isInput }}"><input value="{{ s.val }}" onChange="{{ s.onChange }}" placeholder="?" aria-label="الإجابة" autoComplete="off" style="width:{{ s.w }}px;height:40px;padding:0 8px;border-radius:12px;border:2px solid {{ s.border }};background:{{ s.bg }};font:900 18px Nunito,sans-serif;color:{{ s.fg }};text-align:center;outline:none"></sc-if></sc-for></div></sc-for>
+</div>
+<sc-if value="{{ it.isBad }}"><div style="font:700 12.5px/1.6 Cairo,sans-serif;color:#b91c1c;background:#fef2f2;border-radius:12px;padding:8px 11px">الإجابة ليست صحيحة بعد. حاولي مرة أخرى، أو استمعي إلى الشرح.</div></sc-if>
+<sc-if value="{{ it.isOk }}"><div style="font:800 12.5px/1.6 Cairo,sans-serif;color:#047857;background:#ecfdf5;border-radius:12px;padding:8px 11px">إجابة صحيحة! أحسنتِ يا حنين ⭐</div></sc-if>
+<div style="display:flex;gap:8px">
+<sc-if value="{{ it.canCheck }}"><button onClick="{{ it.check }}" style="flex:1.1;height:46px;border-radius:23px;border:0;background:#db2777;color:#fff;font:800 14.5px Cairo,sans-serif;box-shadow:0 6px 14px -8px #db2777">تحقّقي ✓</button></sc-if>
+<button onClick="{{ it.explain }}" style="flex:1;height:46px;border-radius:23px;border:1.5px solid #e9d5ff;background:#faf5ff;color:#7e22ce;font:800 13.5px Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg>اشرح لي</button>
+<sc-if value="{{ it.showReveal }}"><button onClick="{{ it.toggleReveal }}" style="flex:.8;height:46px;border-radius:23px;border:0;background:transparent;color:#9d174d;font:800 12.5px Cairo,sans-serif;text-decoration:underline">{{ it.revealLabel }}</button></sc-if>
+</div>
+</div>
+</sc-if>
+</sc-for>
+</div>
+<sc-if value="{{ les.hasNext }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ les.next }}" style="align-self:flex-start;min-width:220px;height:50px;padding:0 22px;border-radius:14px;border:0;background:#3b0a2a;color:#fff;font:800 15px Cairo,Nunito,sans-serif;display:flex;align-items:center;justify-content:center;gap:10px"><span dir="auto">{{ les.nextLabel }}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"></polyline></svg></button>
+</sc-if>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isExams }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:18px">
+<div style="position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(120deg,#fdf2f8,#f5f3ff);border:1px solid #f3e3ec;padding:22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+<span style="flex:none;width:64px;height:64px;border-radius:20px;background:#fff;display:grid;place-items:center;font-size:32px;box-shadow:0 8px 18px -10px rgba(157,23,77,.4)">📝</span>
+<div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:4px"><span style="font:900 24px Cairo,sans-serif;color:#3b0a2a">سلسلة امتحانات الماث</span><span style="font:600 13px/1.7 Cairo,sans-serif;color:#6b4a5e">أسئلة على نمط كتاب المدرسة وكتاب التقييمات. كل محاولة جديدة تعطيكِ أرقامًا جديدة، فتتدربين أكثر.</span></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<sc-for list="{{ exl.stats }}" as="st" hint-placeholder-count="3"><div style="min-width:92px;background:#fff;border-radius:16px;padding:10px 14px;display:flex;flex-direction:column;gap:2px;box-shadow:0 1px 2px rgba(157,23,77,.08)"><span style="font:900 20px Nunito,sans-serif;color:{{ st.color }};direction:ltr;text-align:right">{{ st.v }}</span><span style="font:700 11.5px Cairo,sans-serif;color:#6b4a5e">{{ st.l }}</span></div></sc-for>
+</div>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<sc-for list="{{ exl.filters }}" as="ch" hint-placeholder-count="5"><button onClick="{{ ch.onClick }}" style="height:38px;padding:0 15px;border-radius:19px;border:1px solid {{ ch.border }};background:{{ ch.bg }};color:{{ ch.fg }};font:800 12.5px Cairo,sans-serif;display:flex;align-items:center;gap:6px"><span>{{ ch.label }}</span><span style="font:800 10.5px Nunito,sans-serif;opacity:.7">{{ ch.n }}</span></button></sc-for>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px">
+<sc-for list="{{ exl.items }}" as="e" hint-placeholder-count="6">
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:16px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:flex-start;gap:12px">
+<span style="flex:none;width:46px;height:46px;border-radius:14px;background:{{ e.soft }};color:{{ e.color }};display:grid;place-items:center;font:900 16px Nunito,sans-serif">{{ e.no }}</span>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font:800 14.5px/1.45 Cairo,sans-serif;color:#3b0a2a">{{ e.title }}</span><span style="font:700 11.5px Nunito,Cairo,sans-serif;color:#8a6a7d">{{ e.meta }}</span></div>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+<span style="height:26px;padding:0 10px;border-radius:13px;background:{{ e.stBg }};color:{{ e.stFg }};display:flex;align-items:center;font:800 11.5px Cairo,sans-serif">{{ e.status }}</span>
+<span style="font:900 13px Nunito,sans-serif;letter-spacing:1px;color:#f59e0b;direction:ltr">{{ e.stars }}</span>
+</div>
+<button onClick="{{ e.start }}" style="height:44px;border-radius:22px;border:0;background:{{ e.btnBg }};color:{{ e.btnFg }};font:800 13.5px Cairo,sans-serif">{{ e.cta }}</button>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isExam }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px;max-width:860px;margin:0 auto;width:100%">
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+<div style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:2px"><span style="font:700 12px Nunito,Cairo,sans-serif;color:#9d174d">{{ ex.scope }}</span><span style="font:900 18px/1.4 Cairo,sans-serif;color:#3b0a2a">{{ ex.title }}</span></div>
+<span style="flex:none;height:40px;padding:0 14px;border-radius:20px;background:{{ ex.timerBg }};color:{{ ex.timerFg }};display:flex;align-items:center;gap:7px;font:900 16px Nunito,sans-serif;direction:ltr"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2M9 2h6"></path></svg>{{ ex.timer }}</span>
+</div>
+<div style="display:flex;align-items:center;gap:10px"><span style="font:800 12px Cairo,sans-serif;color:#6b4a5e;white-space:nowrap">السؤال {{ ex.pos }} من {{ ex.n }}</span><span style="flex:1;height:7px;border-radius:7px;background:#f8eaf2;display:flex;overflow:hidden"><span style="width:{{ ex.pct }}%;background:#db2777;border-radius:7px"></span></span></div>
+<div dir="ltr" style="display:flex;gap:6px;flex-wrap:wrap">
+<sc-for list="{{ ex.dots }}" as="d" hint-placeholder-count="10"><button onClick="{{ d.onClick }}" style="width:32px;height:32px;border-radius:10px;border:1.5px solid {{ d.border }};background:{{ d.bg }};color:{{ d.fg }};font:900 12px Nunito,sans-serif">{{ d.n }}</button></sc-for>
+</div>
+</div>
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:22px;display:flex;flex-direction:column;gap:16px;min-height:280px">
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+<span style="flex:none;width:40px;height:40px;border-radius:50%;background:#db2777;color:#fff;display:grid;place-items:center;font:900 17px Nunito,sans-serif">{{ ex.pos }}</span>
+<span style="height:26px;padding:0 10px;border-radius:13px;background:{{ ex.q.srcBg }};color:{{ ex.q.srcFg }};display:flex;align-items:center;font:800 11.5px Cairo,sans-serif">{{ ex.q.src }}</span>
+<span style="height:26px;padding:0 10px;border-radius:13px;background:{{ ex.q.soft }};color:{{ ex.q.color }};display:flex;align-items:center;font:800 11.5px Nunito,Cairo,sans-serif">{{ ex.q.ch }}</span>
+</div>
+<sc-if value="{{ ex.q.hasGraph }}"><sc-for list="{{ ex.q.groups }}" as="g" hint-placeholder-count="1">
+<div dir="ltr" style="background:#fdf8fb;border-radius:18px;padding:10px 10px 12px;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font:900 11px Nunito,sans-serif;letter-spacing:.4px;color:#64748b">GRAPH</span><sc-if value="{{ g.hasLabel }}"><span style="font:800 12.5px Nunito,sans-serif;color:#334155">{{ g.label }}</span></sc-if></div>
+<div style="display:flex;align-items:flex-end;border-bottom:2px solid #cbd5e1;padding:0 2px 5px">
+<sc-for list="{{ g.cols }}" as="c"><div style="flex:1;display:flex;flex-direction:column-reverse;align-items:center;gap:3px;min-height:{{ g.h }}px"><sc-for list="{{ c.dots }}" as="d"><span style="flex:none;width:{{ g.dot }}px;height:{{ g.dot }}px;border-radius:50%;border:2px solid {{ c.color }};background:{{ c.fill }}"></span></sc-for></div></sc-for>
+</div>
+<div style="display:flex;padding:0 2px">
+<sc-for list="{{ g.cols }}" as="c"><div style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px"><sc-if value="{{ c.isSwatch }}"><span style="width:18px;height:18px;border-radius:6px;background:{{ c.swatch }}"></span></sc-if><sc-if value="{{ c.isIcon }}"><span style="font-size:19px;line-height:22px">{{ c.icon }}</span></sc-if><span style="font:800 9.5px/1.2 Nunito,sans-serif;color:#475569;text-align:center;overflow-wrap:anywhere">{{ c.name }}</span></div></sc-for>
+</div>
+<span style="font:900 11px Nunito,sans-serif;letter-spacing:.4px;color:#64748b;margin-top:2px">CHART</span>
+<div style="display:flex;border:1.5px solid #f3e3ec;border-radius:12px;overflow:hidden;background:#fff">
+<sc-for list="{{ g.cols }}" as="c"><div style="flex:1;min-width:0;display:flex;flex-direction:column;border-right:1px solid #f8eaf2"><span style="height:26px;display:grid;place-items:center;background:#f9eef4;font-size:14px">{{ c.head }}</span><span style="height:44px;display:grid;place-items:center"><sc-if value="{{ c.cell.plain }}"><span style="font:900 17px Nunito,sans-serif;color:#0f172a">{{ c.cell.t }}</span></sc-if><sc-if value="{{ c.cell.shown }}"><span style="font:900 17px Nunito,sans-serif;color:#059669">{{ c.cell.t }}</span></sc-if><sc-if value="{{ c.cell.hidden }}"><span style="width:30px;height:26px;border-radius:8px;background:#f9eef4;border:2px dashed #cbd5e1"></span></sc-if><sc-if value="{{ c.cell.isInput }}"><input value="{{ c.cell.val }}" onChange="{{ c.cell.onChange }}" aria-label="العدد" autoComplete="off" style="width:40px;height:32px;padding:0;border-radius:9px;border:2px solid {{ c.cell.border }};background:{{ c.cell.bg }};font:900 16px Nunito,sans-serif;color:{{ c.cell.fg }};text-align:center;outline:none"></sc-if></span></div></sc-for>
+</div>
+</div>
+</sc-for></sc-if>
+<div dir="ltr" style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 6px;font:700 21px/1.6 Nunito,Cairo,sans-serif;color:#3b0a2a"><sc-for list="{{ ex.q.segs }}" as="s"><sc-if value="{{ s.plain }}"><span>{{ s.t }}</span></sc-if><sc-if value="{{ s.ptok }}"><span><sc-for list="{{ s.toks }}" as="w"><sc-if value="{{ w.isWord }}"><span onClick="{{ w.onClick }}" style="cursor:pointer;border-bottom:2px dotted #f9a8d4">{{ w.t }}</span></sc-if><sc-if value="{{ w.isTxt }}"><span>{{ w.t }}</span></sc-if></sc-for></span></sc-if><sc-if value="{{ s.shown }}"><span style="font-weight:900;color:#059669;background:#ecfdf5;border-radius:9px;padding:2px 9px">{{ s.t }}</span></sc-if><sc-if value="{{ s.slot }}"><span style="min-width:56px;height:40px;padding:0 10px;border-radius:12px;border:2px dashed {{ s.border }};background:{{ s.bg }};display:inline-grid;place-items:center;font:900 18px Nunito,sans-serif;color:#9d174d">{{ s.t }}</span></sc-if><sc-if value="{{ s.isInput }}"><input value="{{ s.val }}" onChange="{{ s.onChange }}" placeholder="?" aria-label="الإجابة" autoComplete="off" style="width:{{ s.w }}px;height:44px;padding:0 8px;border-radius:12px;border:2px solid {{ s.border }};background:#fff;font:900 19px Nunito,sans-serif;color:#3b0a2a;text-align:center;outline:none"></sc-if></sc-for></div>
+<sc-if value="{{ ex.q.hasChoices }}"><div dir="ltr" style="display:flex;gap:10px;flex-wrap:wrap"><sc-for list="{{ ex.q.choices }}" as="c"><button onClick="{{ c.onClick }}" style="min-width:76px;height:52px;padding:0 18px;border-radius:16px;border:2px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};font:900 18px Nunito,sans-serif">{{ c.label }}</button></sc-for></div></sc-if>
+</div>
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+<sc-if value="{{ ex.hasPrev }}"><button onClick="{{ ex.prev }}" style="height:50px;padding:0 20px;border-radius:25px;border:1.5px solid #f3e3ec;background:#fff;color:#6b4a5e;font:800 14px Cairo,sans-serif">السابق</button></sc-if>
+<span style="flex:1"></span>
+<button onClick="{{ ex.submit }}" style="height:50px;padding:0 20px;border-radius:25px;border:1.5px solid {{ ex.subBorder }};background:{{ ex.subBg }};color:{{ ex.subFg }};font:800 14px Cairo,sans-serif">{{ ex.subLabel }}</button>
+<sc-if value="{{ ex.hasNext }}"><button onClick="{{ ex.next }}" style="height:50px;padding:0 26px;border-radius:25px;border:0;background:#db2777;color:#fff;font:800 15px Cairo,sans-serif;box-shadow:0 8px 18px -10px #db2777">التالي</button></sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isResult }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px;max-width:900px;margin:0 auto;width:100%">
+<div style="position:relative;overflow:hidden;border-radius:26px;background:linear-gradient(120deg,#fdf2f8,#f5f3ff);border:1px solid #f3e3ec;padding:24px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+<div style="position:relative;flex:none;width:120px;height:120px;border-radius:50%;background:conic-gradient({{ res.color }} {{ res.deg }}deg, #fff 0);display:grid;place-items:center"><div style="width:96px;height:96px;border-radius:50%;background:#fdf6fa;display:grid;place-items:center;direction:ltr"><span style="font:900 26px Nunito,sans-serif;color:#3b0a2a">{{ res.pct }}%</span></div></div>
+<div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:6px">
+<span style="font:900 13px Nunito,sans-serif;letter-spacing:3px;color:#f59e0b;direction:ltr;text-align:right">{{ res.stars }}</span>
+<span style="font:900 24px/1.3 Cairo,sans-serif;color:#3b0a2a">{{ res.msg }}</span>
+<span style="font:600 13.5px/1.7 Cairo,sans-serif;color:#6b4a5e">{{ res.sub }}</span>
+</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<button onClick="{{ res.retry }}" style="height:46px;padding:0 20px;border-radius:23px;border:0;background:#db2777;color:#fff;font:800 14px Cairo,sans-serif">نموذج جديد من الامتحان</button>
+<button onClick="{{ res.backList }}" style="height:46px;padding:0 20px;border-radius:23px;border:1.5px solid #f3e3ec;background:#fff;color:#6b4a5e;font:800 14px Cairo,sans-serif">كل الامتحانات</button>
+</div>
+</div>
+<div style="font:800 18px Cairo,sans-serif;color:#3b0a2a">مراجعة الإجابات</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px">
+<sc-for list="{{ res.items }}" as="it" hint-placeholder-count="6">
+<div style="background:#fff;border:1.5px solid {{ it.border }};border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:center;gap:8px"><span style="flex:none;width:30px;height:30px;border-radius:50%;background:{{ it.dot }};color:#fff;display:grid;place-items:center;font:900 13px Nunito,sans-serif">{{ it.n }}</span><span style="font:800 12.5px Cairo,sans-serif;color:{{ it.fg }}">{{ it.verdict }}</span><span style="flex:1"></span><span style="font:700 11px Nunito,sans-serif;color:#8a6a7d">{{ it.ch }}</span></div>
+<div dir="ltr" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 5px;font:700 16px/1.6 Nunito,Cairo,sans-serif;color:#3b0a2a"><sc-for list="{{ it.segs }}" as="s"><sc-if value="{{ s.plain }}"><span>{{ s.t }}</span></sc-if><sc-if value="{{ s.ptok }}"><span><sc-for list="{{ s.toks }}" as="w"><sc-if value="{{ w.isWord }}"><span onClick="{{ w.onClick }}" style="cursor:pointer;border-bottom:2px dotted #f9a8d4">{{ w.t }}</span></sc-if><sc-if value="{{ w.isTxt }}"><span>{{ w.t }}</span></sc-if></sc-for></span></sc-if><sc-if value="{{ s.shown }}"><span style="font-weight:900;color:#059669;background:#ecfdf5;border-radius:9px;padding:2px 9px">{{ s.t }}</span></sc-if><sc-if value="{{ s.slot }}"><span style="min-width:56px;height:40px;padding:0 10px;border-radius:12px;border:2px dashed {{ s.border }};background:{{ s.bg }};display:inline-grid;place-items:center;font:900 18px Nunito,sans-serif;color:#9d174d">{{ s.t }}</span></sc-if><sc-if value="{{ s.isInput }}"><input value="{{ s.val }}" onChange="{{ s.onChange }}" placeholder="?" aria-label="الإجابة" autoComplete="off" style="width:{{ s.w }}px;height:44px;padding:0 8px;border-radius:12px;border:2px solid {{ s.border }};background:#fff;font:900 19px Nunito,sans-serif;color:#3b0a2a;text-align:center;outline:none"></sc-if></sc-for></div>
+<sc-if value="{{ it.wrong }}"><div style="font:700 12.5px/1.6 Cairo,sans-serif;color:#b91c1c;background:#fef2f2;border-radius:10px;padding:7px 10px">إجابتك: <span dir="ltr" style="font-family:Nunito">{{ it.mine }}</span></div></sc-if>
+<sc-if value="{{ it.wrong }}"><button onClick="{{ it.explain }}" style="height:40px;border-radius:20px;border:1.5px solid #e9d5ff;background:#faf5ff;color:#7e22ce;font:800 13px Cairo,sans-serif">اشرح لي يا أستاذ يوسف</button></sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCompare }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font:900 24px Cairo,sans-serif;color:#0f172a">الفرق بين الكتابين</div>
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);overflow:hidden">
+<sc-if value="{{ isTablet }}"><div style="display:grid;grid-template-columns:{{ cmpCols }};gap:0;background:#fdf8fb;border-bottom:1px solid #f3e3ec;font:800 12.5px Cairo,sans-serif"><span style="padding:12px 16px;color:#475569">البند</span><span style="padding:12px 16px;color:#7c3aed">📘 كتاب المدرسة</span><span style="padding:12px 16px;color:#db2777">📙 كتاب التقييمات</span></div></sc-if>
+<sc-for list="{{ cmp.rows }}" as="r" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:{{ cmpCols }};border-bottom:1px solid #f8eaf2">
+<span style="padding:12px 16px;font:800 13.5px Cairo,sans-serif;color:#0f172a">{{ r.label }}</span>
+<span style="padding:{{ cmpCellPad }};font:600 13px/1.75 Cairo,Nunito,sans-serif;color:#9d174d"><sc-if value="{{ isPhone }}"><b style="display:block;font:800 11px Cairo,sans-serif;color:#7c3aed">📘 كتاب المدرسة</b></sc-if>{{ r.book }}</span>
+<span style="padding:{{ cmpCellPad }};font:600 13px/1.75 Cairo,Nunito,sans-serif;color:#831843"><sc-if value="{{ isPhone }}"><b style="display:block;font:800 11px Cairo,sans-serif;color:#db2777">📙 كتاب التقييمات</b></sc-if>{{ r.assess }}</span>
+</div>
+</sc-for>
+</div>
+<div style="display:grid;grid-template-columns:{{ cmpSplit }};gap:16px;align-items:start">
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="font:800 18px Cairo,sans-serif;color:#0f172a">خريطة الوحدات والصفحات</div>
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);overflow:hidden">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 80px 92px;gap:6px;padding:11px 14px;background:#fdf8fb;border-bottom:1px solid #f3e3ec;font:800 11.5px Cairo,sans-serif;color:#475569"><span>الوحدة</span><span style="color:#7c3aed">📘 المدرسة</span><span style="color:#db2777">📙 التقييمات</span></div>
+<sc-for list="{{ cmp.map }}" as="m" hint-placeholder-count="9">
+<button onClick="{{ m.open }}" style="width:100%;border:0;border-bottom:1px solid #f9eef4;background:#fff;display:grid;grid-template-columns:minmax(0,1fr) 80px 92px;gap:6px;padding:10px 14px;text-align:right;align-items:center">
+<span style="display:flex;align-items:center;gap:9px;min-width:0"><span style="flex:none;width:28px;height:28px;border-radius:9px;background:{{ m.soft }};display:grid;place-items:center;font-size:14px">{{ m.emoji }}</span><span style="font:800 13px/1.35 Cairo,sans-serif;color:#0f172a">{{ m.ar }}</span></span>
+<span style="font:700 11.5px Nunito,sans-serif;color:#7c3aed;direction:ltr;text-align:right">{{ m.book }}</span>
+<span style="font:700 11.5px/1.35 Nunito,sans-serif;color:#db2777;direction:ltr;text-align:right">{{ m.assess }}</span>
+</button>
+</sc-for>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="font:800 18px Cairo,sans-serif;color:#0f172a">فروق ينبغي الانتباه إليها</div>
+<sc-for list="{{ cmp.diffs }}" as="d" hint-placeholder-count="4"><div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:13px 15px;font:600 13.5px/1.85 Cairo,Nunito,sans-serif;color:#334155"><sc-for list="{{ d }}" as="s"><sc-if value="{{ s.b }}"><b style="font-weight:800;color:#0f172a">{{ s.t }}</b></sc-if><sc-if value="{{ s.n }}"><span>{{ s.t }}</span></sc-if></sc-for></div></sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCheat }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;flex-direction:column;gap:4px"><div style="font:900 24px Cairo,sans-serif;color:#0f172a">أهم القواعد قبل الامتحان</div><div style="font:600 13px/1.7 Cairo,sans-serif;color:#64748b">قاعدة في كل بطاقة. اضغطي على السماعة ليقرأها الأستاذ يوسف.</div></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px">
+<sc-for list="{{ cheat }}" as="c" hint-placeholder-count="8">
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:14px;display:flex;gap:12px;align-items:center">
+<span style="flex:none;width:32px;height:32px;border-radius:10px;background:#f5f3ff;color:#7c3aed;display:grid;place-items:center;font:900 13px Nunito,sans-serif">{{ c.n }}</span>
+<span style="flex:1;font:600 14px/1.85 Cairo,Nunito,sans-serif;color:#334155"><sc-for list="{{ c.segs }}" as="s"><sc-if value="{{ s.b }}"><b style="font-weight:800;color:#7c3aed">{{ s.t }}</b></sc-if><sc-if value="{{ s.n }}"><span>{{ s.t }}</span></sc-if></sc-for></span>
+<button onClick="{{ c.speak }}" aria-label="استمعي" style="flex:none;width:40px;height:40px;border-radius:12px;border:1px solid #f3e3ec;background:#fff;color:#7c3aed;display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg></button>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isParent }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font:900 24px Cairo,sans-serif;color:#0f172a">لوحة وليّ الأمر</div>
+<div style="display:grid;grid-template-columns:{{ parCols }};gap:16px;align-items:start">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="font:800 13px Cairo,sans-serif;color:#64748b">طريقة عرض التطبيق</div>
+<sc-for list="{{ par.modes }}" as="m" hint-placeholder-count="2">
+<button onClick="{{ m.onClick }}" style="text-align:right;width:100%;border:1.5px solid {{ m.border }};background:#fff;border-radius:18px;padding:16px;display:flex;gap:12px;align-items:flex-start">
+<span style="flex:none;width:22px;height:22px;border-radius:50%;border:2px solid {{ m.dotBorder }};display:grid;place-items:center;margin-top:2px"><span style="width:10px;height:10px;border-radius:50%;background:{{ m.dot }}"></span></span>
+<span style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font:900 15px Cairo,sans-serif;color:#0f172a">{{ m.title }}</span><span style="font:600 12.5px/1.75 Cairo,sans-serif;color:#475569">{{ m.desc }}</span></span>
+</button>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="font:800 13px Cairo,sans-serif;color:#64748b">التقدّم حسب المصدر</div>
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:6px 16px">
+<sc-for list="{{ par.progress }}" as="p" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;gap:6px;padding:11px 0;border-bottom:1px solid #f9eef4">
+<div style="display:flex;justify-content:space-between;gap:8px"><span style="font:700 13px Cairo,sans-serif;color:#0f172a">{{ p.title }}</span><span style="font:800 12px Nunito,sans-serif;color:#64748b;direction:ltr">{{ p.txt }}</span></div>
+<span style="display:flex"><span style="flex:1;height:6px;border-radius:6px;background:#f8eaf2;display:flex;overflow:hidden"><span style="width:{{ p.pct }}%;background:{{ p.color }};border-radius:6px"></span></span></span>
+</div>
+</sc-for>
+</div>
+</div>
+<button onClick="{{ par.reset }}" style="height:46px;border-radius:13px;border:1px solid #fecaca;background:{{ par.resetBg }};color:#b91c1c;font:800 13.5px Cairo,sans-serif">{{ par.resetLabel }}</button>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="font:800 13px Cairo,sans-serif;color:#64748b">صوت الأستاذ يوسف</div>
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px">
+<sc-if value="{{ vo.none }}"><div style="font:600 12.5px/1.7 Cairo,sans-serif;color:#6b4a5e">لا يوجد صوت عربي مثبّت في هذا المتصفح. على آيفون وآيباد: الإعدادات ← تسهيلات الاستخدام ← المحتوى المنطوق ← الأصوات ← العربية، ثم نزّلي صوتًا مثل «Majed» أو «Laila». على أندرويد: ثبّتي حزمة اللغة العربية في «Google Text-to-Speech».</div></sc-if>
+<div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ vo.voices }}" as="v" hint-placeholder-count="0"><button onClick="{{ v.onClick }}" style="height:36px;padding:0 12px;border-radius:11px;border:1px solid {{ v.border }};background:{{ v.bg }};color:{{ v.fg }};font:700 12px Nunito,Cairo,sans-serif">{{ v.label }}</button></sc-for></div>
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font:700 12.5px Cairo,sans-serif;color:#6b4a5e">السرعة:</span><sc-for list="{{ vo.rates }}" as="r" hint-placeholder-count="3"><button onClick="{{ r.onClick }}" style="height:34px;padding:0 14px;border-radius:17px;border:1px solid {{ r.border }};background:{{ r.bg }};color:{{ r.fg }};font:800 12px Cairo,sans-serif">{{ r.label }}</button></sc-for></div>
+<button onClick="{{ vo.phToggle }}" style="height:42px;border-radius:21px;border:1.5px solid #f9a8d4;background:{{ vo.phBg }};color:{{ vo.phFg }};font:800 13px Cairo,sans-serif">{{ vo.phLabel }}</button>
+<div style="font:600 12px/1.7 Cairo,sans-serif;color:#6b4a5e">عند التفعيل يقرأ الأستاذ كل كلمة إنجليزية صوتًا صوتًا ثم يدمجها (c · a · t → cat). ويمكن لحنين الضغط على أي كلمة إنجليزية في السؤال لتسمعها بالفونيكس.</div>
+<button onClick="{{ vo.test }}" style="height:44px;border-radius:22px;border:1.5px solid #e9d5ff;background:#faf5ff;color:#7e22ce;font:800 13.5px Cairo,sans-serif">جرّبي الصوت</button>
+</div>
+<div style="font:800 13px Cairo,sans-serif;color:#64748b">الطباعة</div>
+<div style="background:#fff;border:1px solid #f3e3ec;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:16px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{ prn.sources }}" as="ps" hint-placeholder-count="4"><button onClick="{{ ps.onClick }}" style="height:36px;padding:0 12px;border-radius:11px;border:1px solid {{ ps.border }};background:{{ ps.bg }};color:{{ ps.fg }};font:800 12.5px Cairo,sans-serif">{{ ps.label }}</button></sc-for>
+</div>
+<div style="display:flex;padding:4px;background:#f9eef4;border-radius:13px;gap:4px">
+<button onClick="{{ prn.setQ }}" style="flex:1;height:40px;border-radius:10px;border:0;background:{{ prn.qBg }};color:{{ prn.qFg }};font:800 13px Cairo,sans-serif">الأسئلة فقط</button>
+<button onClick="{{ prn.setA }}" style="flex:1;height:40px;border-radius:10px;border:0;background:{{ prn.aBg }};color:{{ prn.aFg }};font:800 13px Cairo,sans-serif">مع الإجابات</button>
+</div>
+<button onClick="{{ prn.doPrint }}" style="height:48px;border-radius:13px;border:0;background:#9d174d;color:#fff;font:800 14.5px Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"></path><rect x="4" y="9" width="16" height="8" rx="2"></rect><path d="M7 14h10v7H7z"></path></svg><span>طباعة ({{ prn.count }} سؤالًا)</span></button>
+<div dir="ltr" style="background:#fff;border:1px solid #f3e3ec;border-radius:8px;padding:18px 16px;display:flex;flex-direction:column;gap:6px;max-height:380px;overflow:hidden;position:relative">
+<sc-for list="{{ prn.preview }}" as="r" hint-placeholder-count="6">
+<sc-if value="{{ r.isH1 }}"><div dir="auto" style="font:900 15px/1.35 Cairo,Nunito,sans-serif;color:#0f172a">{{ r.text }}</div></sc-if>
+<sc-if value="{{ r.isH2 }}"><div style="font:800 12.5px Nunito,Cairo,sans-serif;color:{{ r.color }};margin-top:6px">{{ r.text }}</div></sc-if>
+<sc-if value="{{ r.isH3 }}"><div style="font:800 11px Nunito,Cairo,sans-serif;color:#475569;margin-top:2px">{{ r.text }}</div></sc-if>
+<sc-if value="{{ r.isItem }}"><div style="font:600 11.5px/1.7 Nunito,Cairo,sans-serif;color:#0f172a"><sc-for list="{{ r.segs }}" as="s"><sc-if value="{{ s.plain }}"><span>{{ s.t }}</span></sc-if><sc-if value="{{ s.ptok }}"><span><sc-for list="{{ s.toks }}" as="w"><sc-if value="{{ w.isWord }}"><span onClick="{{ w.onClick }}" style="cursor:pointer;border-bottom:2px dotted #f9a8d4">{{ w.t }}</span></sc-if><sc-if value="{{ w.isTxt }}"><span>{{ w.t }}</span></sc-if></sc-for></span></sc-if><sc-if value="{{ s.shown }}"><b style="color:#059669">{{ s.t }}</b></sc-if><sc-if value="{{ s.hidden }}"><span style="display:inline-block;min-width:{{ s.w }}px;border-bottom:1px solid #64748b;height:12px;margin:0 2px"></span></sc-if></sc-for></div></sc-if>
+</sc-for>
+<div style="position:absolute;left:0;right:0;bottom:0;height:80px;background:linear-gradient(rgba(255,255,255,0),#fff)"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+</div>
+
+<sc-if value="{{ isPhone }}" hint-placeholder-val="{{ false }}">
+<div style="flex:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:6px 6px {{ tabPadB }}px;background:#fff;border-top:1px solid #f3e3ec">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+<button onClick="{{ t.onClick }}" style="border:0;background:none;height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:{{ t.color }};font:800 11px Cairo,sans-serif"><span style="width:46px;height:30px;border-radius:15px;background:{{ t.pill }};display:grid;place-items:center"><sc-if value="{{ t.isHome }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"></path><path d="M5 10v10h14V10"></path></svg></sc-if><sc-if value="{{ t.isCheat }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 21h4"></path><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"></path></svg></sc-if><sc-if value="{{ t.isCompare }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7.5" height="16" rx="2"></rect><rect x="13.5" y="4" width="7.5" height="16" rx="2"></rect></svg></sc-if><sc-if value="{{ t.isExams }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h3"></path></svg></sc-if><sc-if value="{{ t.isParent }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></sc-if></span><span>{{ t.label }}</span></button>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</div>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+<div dir="rtl" style="position:absolute;top:70px;left:50%;transform:translateX(-50%);z-index:25;background:#3b0a2a;color:#fff;border-radius:14px;padding:10px 18px;font:800 13.5px Cairo,sans-serif;box-shadow:0 10px 24px -10px rgba(15,23,42,.5);white-space:nowrap;animation:hm-toast .25s ease-out">{{ toastText }}</div>
+</sc-if>
+
+<sc-if value="{{ phFloat }}" hint-placeholder-val="{{ false }}"><div dir="rtl" style="position:absolute;left:50%;bottom:96px;transform:translateX(-50%);z-index:26;background:#fff;border:1px solid #f3e3ec;border-radius:20px;padding:12px 14px;box-shadow:0 18px 40px -16px rgba(157,23,77,.45);display:flex;flex-direction:column;gap:6px;max-width:92%"><span style="font:800 11.5px Cairo,sans-serif;color:#7e22ce">اقرئي معي بالفونيكس 🔤</span><sc-if value="{{ phShow }}" hint-placeholder-val="{{ false }}"><div dir="ltr" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#faf5ff;border-radius:14px;padding:10px 12px"><span style="font:800 11px Cairo,sans-serif;color:#7e22ce;margin-right:4px">Phonics</span><sc-for list="{{ phChips }}" as="c"><span style="min-width:34px;height:38px;padding:0 9px;border-radius:11px;display:grid;place-items:center;background:{{ c.bg }};color:{{ c.fg }};font:900 20px Nunito,sans-serif;text-decoration:{{ c.dec }}">{{ c.g }}</span></sc-for><span style="font:900 20px Nunito,sans-serif;color:#9d174d;margin-left:6px">→ {{ phWord }}</span></div></sc-if></div></sc-if>
+<sc-if value="{{ tutorOpen }}" hint-placeholder-val="{{ false }}">
+<div dir="rtl" style="position:absolute;inset:0;z-index:20;background:{{ tutorDim }};display:flex;align-items:center;justify-content:center">
+<div style="width:{{ tutorW }};height:{{ tutorH }};background:#fdf6fa;border-radius:{{ tutorR }}px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 60px -20px rgba(15,23,42,.45);padding-top:{{ tutorPadTop }}px">
+<div style="flex:none;display:flex;align-items:center;gap:12px;padding:12px 18px;background:#fff;border-bottom:1px solid #f3e3ec">
+<span style="flex:none;width:40px;height:40px;border-radius:12px;background:#fdf2f8;display:grid;place-items:center;font-size:21px">👨‍🏫</span>
+<div style="flex:1;min-width:0"><div style="font:900 16px Cairo,sans-serif;color:#0f172a">حصة مع الأستاذ يوسف</div><div style="font:600 12px Cairo,sans-serif;color:#64748b">{{ tutor.status }}</div></div>
+<button onClick="{{ closeTutor }}" aria-label="إغلاق" style="width:40px;height:40px;border-radius:12px;border:1px solid #f3e3ec;background:#fff;display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:16px 18px;display:grid;grid-template-columns:{{ tutorCols }};gap:16px;align-content:start">
+<div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+<div style="background:#3b1350;border:9px solid #f472b6;border-radius:22px;padding:14px 14px 16px;display:flex;flex-direction:column;gap:12px;box-shadow:inset 0 0 44px rgba(0,0,0,.38),0 12px 26px -14px rgba(15,23,42,.55)">
+<div dir="auto" style="font:700 14.5px/1.7 Nunito,Cairo,sans-serif;color:#f5e8ff;unicode-bidi:plaintext;text-align:start">{{ tutor.q }}</div>
+<sc-if value="{{ tutor.hasBoard }}" hint-placeholder-val="{{ false }}">
+<div dir="ltr" style="align-self:center;display:flex;flex-direction:column;padding:4px 0">
+<div style="display:flex"><span style="width:34px"></span><sc-for list="{{ tutor.cols }}" as="c"><span style="width:52px;text-align:center;font:800 11px Nunito,sans-serif;color:#d8b4fe">{{ c.label }}</span></sc-for></div>
+<div style="display:flex"><span style="width:34px"></span><sc-for list="{{ tutor.cols }}" as="c"><span style="width:52px;height:26px;text-align:center;font:900 18px/26px Nunito,sans-serif;color:#fbbf24">{{ c.above }}</span></sc-for></div>
+<div style="display:flex"><span style="width:34px"></span><sc-for list="{{ tutor.cols }}" as="c"><span style="width:52px;height:54px;display:grid;place-items:center;border-radius:14px 14px 0 0;background:{{ c.bg }};border:2px dashed {{ c.ring }};border-bottom:0"><sc-if value="{{ c.strike }}"><span style="font:800 32px Nunito,sans-serif;color:#a78bba;text-decoration:line-through">{{ c.top }}</span></sc-if><sc-if value="{{ c.plainTop }}"><span style="font:800 32px Nunito,sans-serif;color:#fdf8fb">{{ c.top }}</span></sc-if></span></sc-for></div>
+<div style="display:flex"><span style="width:34px;display:grid;place-items:center;font:800 30px Nunito,sans-serif;color:#fdf8fb">{{ tutor.op }}</span><sc-for list="{{ tutor.cols }}" as="c"><span style="width:52px;height:54px;display:grid;place-items:center;background:{{ c.bg }};border-left:2px dashed {{ c.ring }};border-right:2px dashed {{ c.ring }};font:800 32px Nunito,sans-serif;color:#fdf8fb">{{ c.bot }}</span></sc-for></div>
+<div style="height:3px;background:#f5e8ff;border-radius:2px;margin:0 0 0 34px;opacity:.9"></div>
+<div style="display:flex"><span style="width:34px"></span><sc-for list="{{ tutor.cols }}" as="c"><span style="width:52px;height:56px;display:grid;place-items:center;border-radius:0 0 14px 14px;background:{{ c.bg }};border:2px dashed {{ c.ring }};border-top:0;font:900 32px Nunito,sans-serif;color:#86efac">{{ c.res }}</span></sc-for></div>
+</div>
+</sc-if>
+<sc-if value="{{ tutor.hasBoardText }}" hint-placeholder-val="{{ false }}"><div dir="auto" style="font:800 20px/1.8 Nunito,Cairo,sans-serif;color:#fefce8;text-align:center;padding:6px 4px;unicode-bidi:plaintext">{{ tutor.boardText }}</div></sc-if>
+</div>
+<div style="display:flex;gap:10px;align-items:flex-start">
+{{ tutorAvatar }}
+<div style="flex:1;min-width:0;background:#fff;border-radius:6px 22px 22px 22px;padding:13px 15px;display:flex;flex-direction:column;gap:8px;box-shadow:0 1px 2px rgba(15,23,42,.05),0 8px 20px -12px rgba(15,23,42,.18)">
+<div style="font:900 12px Cairo,sans-serif;color:#9d174d">الأستاذ يوسف</div>
+<div style="font:700 16.5px/1.9 Cairo,Nunito,sans-serif;color:#0f172a">{{ tutor.text }}</div>
+<sc-if value="{{ phShow }}" hint-placeholder-val="{{ false }}"><div dir="ltr" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#faf5ff;border-radius:14px;padding:10px 12px"><span style="font:800 11px Cairo,sans-serif;color:#7e22ce;margin-right:4px">Phonics</span><sc-for list="{{ phChips }}" as="c"><span style="min-width:34px;height:38px;padding:0 9px;border-radius:11px;display:grid;place-items:center;background:{{ c.bg }};color:{{ c.fg }};font:900 20px Nunito,sans-serif;text-decoration:{{ c.dec }}">{{ c.g }}</span></sc-for><span style="font:900 20px Nunito,sans-serif;color:#9d174d;margin-left:6px">→ {{ phWord }}</span></div></sc-if><sc-if value="{{ tutor.think }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;background:#fdf2f8;color:#9d174d;border-radius:12px;padding:5px 11px;font:800 12px Cairo,sans-serif">🤔 فكّري قليلًا قبل أن أجيب…</div></sc-if>
+</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+<div style="background:#fff;border-radius:20px;padding:8px;display:flex;flex-direction:column;gap:2px;box-shadow:0 1px 2px rgba(15,23,42,.04),0 4px 12px -6px rgba(15,23,42,.1)">
+<div style="font:800 12px Cairo,sans-serif;color:#64748b;padding:6px 8px 4px">خطوات الشرح</div>
+<sc-for list="{{ tutor.list }}" as="s" hint-placeholder-count="4"><button onClick="{{ s.onClick }}" style="width:100%;border:0;background:{{ s.bg }};border-radius:12px;padding:8px;display:flex;gap:10px;align-items:flex-start;text-align:right"><span style="flex:none;width:22px;height:22px;border-radius:7px;background:{{ s.dotBg }};color:{{ s.dotFg }};display:grid;place-items:center;font:900 11px Nunito,sans-serif">{{ s.mark }}</span><span style="font:600 13px/1.75 Cairo,Nunito,sans-serif;color:{{ s.fg }}">{{ s.t }}</span></button></sc-for>
+</div>
+<sc-if value="{{ tutor.noVoice }}"><div style="font:600 11.5px/1.7 Cairo,sans-serif;color:#64748b;text-align:center">لا يتوفر صوت عربي في هذا المتصفح، لذلك يظهر كلام الأستاذ مكتوبًا ويتقدّم تلقائيًا.</div></sc-if>
+<sc-if value="{{ tutor.canAI }}"><button onClick="{{ tutor.askAI }}" style="height:46px;border-radius:14px;border:1.5px solid #f3e3ec;background:#fff;color:#9d174d;font:800 13.5px Cairo,sans-serif">{{ tutor.aiLabel }}</button></sc-if>
+</div>
+</div>
+<div dir="ltr" style="flex:none;display:flex;align-items:center;justify-content:center;gap:16px;padding:12px 16px 18px;background:#fff;border-top:1px solid #f8eaf2">
+<button onClick="{{ tutor.replay }}" aria-label="من البداية" style="width:46px;height:46px;border-radius:15px;border:0;background:#f9eef4;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"></path><polyline points="3 3 3 9 9 9"></polyline></svg></button>
+<button onClick="{{ tutor.prev }}" aria-label="السابق" style="width:46px;height:46px;border-radius:15px;border:0;background:#f9eef4;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"></polyline></svg></button>
+<button onClick="{{ tutor.playPause }}" aria-label="تشغيل" style="width:66px;height:66px;border-radius:50%;border:0;background:#ec4899;display:grid;place-items:center;box-shadow:0 10px 22px -10px #ec4899">
+<sc-if value="{{ tutor.playing }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{ tutor.paused }}"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"></path></svg></sc-if>
+</button>
+<button onClick="{{ tutor.next }}" aria-label="التالي" style="width:46px;height:46px;border-radius:15px;border:0;background:#f9eef4;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></button>
+<span style="width:46px"></span>
+</div>
+</div>
+</div>
+</sc-if>
+
+{{ celebrateEl }}
+
+</div>
+</div>
+</div>
+</div>
+
+<sc-if value="{{ isParent }}" hint-placeholder-val="{{ false }}">
+<div id="print-doc" dir="ltr" style="display:none;padding:0 8mm;font-family:Nunito,Cairo,sans-serif;color:#000">
+<sc-for list="{{ prn.rows }}" as="r" hint-placeholder-count="0">
+<sc-if value="{{ r.isH1 }}"><div dir="auto" style="font:900 18pt/1.35 Cairo,Nunito,sans-serif;margin:14pt 0 4pt;break-after:avoid">{{ r.text }}</div></sc-if>
+<sc-if value="{{ r.isH2 }}"><div style="font:800 14pt Nunito,Cairo,sans-serif;color:{{ r.color }};margin:10pt 0 2pt;break-after:avoid">{{ r.text }}</div></sc-if>
+<sc-if value="{{ r.isH3 }}"><div style="font:800 12pt Nunito,Cairo,sans-serif;margin:6pt 0 2pt;break-after:avoid">{{ r.text }}</div></sc-if>
+<sc-if value="{{ r.isItem }}"><div style="font:600 12pt/1.8 Nunito,Cairo,sans-serif;break-inside:avoid"><sc-for list="{{ r.segs }}" as="s"><sc-if value="{{ s.plain }}"><span>{{ s.t }}</span></sc-if><sc-if value="{{ s.ptok }}"><span><sc-for list="{{ s.toks }}" as="w"><sc-if value="{{ w.isWord }}"><span onClick="{{ w.onClick }}" style="cursor:pointer;border-bottom:2px dotted #f9a8d4">{{ w.t }}</span></sc-if><sc-if value="{{ w.isTxt }}"><span>{{ w.t }}</span></sc-if></sc-for></span></sc-if><sc-if value="{{ s.shown }}"><b style="color:#047857">{{ s.t }}</b></sc-if><sc-if value="{{ s.hidden }}"><span style="display:inline-block;min-width:{{ s.w }}px;border-bottom:1px solid #000;height:14pt;margin:0 3px"></span></sc-if></sc-for></div></sc-if>
+</sc-for>
+</div>
+</sc-if>
+
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;device&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;tablet-landscape&quot;,&quot;tablet-portrait&quot;,&quot;phone&quot;,&quot;fit&quot;],&quot;default&quot;:&quot;tablet-landscape&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const BADGES = {
+  'MOE-BOOK':   { c: '#7c3aed', soft: '#ede9fe', kind: '🏛️ رسمي · المرجع الأساسي' },
+  'MOE-ASSESS': { c: '#db2777', soft: '#fce7f3', kind: '🏛️ رسمي · أقرب إلى شكل الامتحان' },
+  'EXT-NOTES':  { c: '#a21caf', soft: '#fae8ff', kind: '📎 خارجي · مذكرات' },
+  'EXT-REVIEW': { c: '#0f766e', soft: '#ccfbf1', kind: '📎 خارجي · مراجعات' },
+  'EXT-TEST':   { c: '#be123c', soft: '#ffe4e6', kind: '📎 خارجي · اختبارات' },
+};
+const CH = { 1: '#9333ea', 2: '#db2777', 3: '#e11d48', 4: '#c2410c', 5: '#7c3aed', 6: '#be185d', 7: '#0e7490', 8: '#6d28d9', 9: '#0f766e' };
+const EMO = /\p{Extended_Pictographic}\uFE0F?/gu;
+const KEY = 'haneenMath.v2';
+const COLN = ['الآحاد', 'العشرات', 'المئات', 'الآلاف'];
+const COLL = ['O', 'T', 'H', 'Th'];
+const ICON = { Car: '🚗', Motorcycle: '🏍️', Train: '🚆', Airplane: '✈️', Boat: '⛵', Banana: '🍌', Strawberry: '🍓', Orange: '🍊', Grape: '🍇', Grapes: '🍇', Apple: '🍎', Camel: '🐪', Crocodile: '🐊', Lion: '🦁', Goat: '🐐', Giraffe: '🦒', Tomato: '🍅', Corn: '🌽', Eggplant: '🍆', 'Green Pepper': '🫑', Potato: '🥔', Onion: '🧅', Park: '🌳', Zoo: '🦓', Aquarium: '🐠', Museum: '🏛️', Pyramid: '🔺', Dog: '🐕', Cat: '🐈', Rabbit: '🐇', Lizard: '🦎', Parakeet: '🦜', Pencil: '✏️', Sharpener: '🔧', Book: '📘', Eraser: '🧽', Bear: '🧸', Ball: '⚽', Robot: '🤖' };
+const COLORS = { Red: '#ef4444', Blue: '#3b82f6', Yellow: '#facc15', Green: '#22c55e', Purple: '#a855f7' };
+const PH_G = ['igh', 'sh', 'ch', 'th', 'ph', 'wh', 'ck', 'ng', 'qu', 'ee', 'ea', 'oo', 'ai', 'ay', 'oa', 'ow', 'ou', 'ar', 'or', 'er', 'ir', 'ur', 'll', 'ss', 'ff', 'tt', 'pp', 'nn', 'mm', 'dd', 'bb', 'gg', 'zz'];
+const PH_S = { a: 'ah', b: 'buh', c: 'kuh', d: 'duh', e: 'eh', f: 'fff', g: 'guh', h: 'huh', i: 'ih', j: 'juh', k: 'kuh', l: 'lll', m: 'mmm', n: 'nnn', o: 'aw', p: 'puh', q: 'kuh', r: 'rrr', s: 'sss', t: 'tuh', u: 'uh', v: 'vvv', w: 'wuh', x: 'ks', y: 'yuh', z: 'zzz',
+  igh: 'eye', sh: 'shh', ch: 'chuh', th: 'thh', ph: 'fff', wh: 'wuh', ck: 'kuh', ng: 'ng', qu: 'kwuh', ee: 'ee', ea: 'ee', oo: 'oo', ai: 'ay', ay: 'ay', oa: 'oh', ow: 'ow', ou: 'ow', ar: 'ar', or: 'or', er: 'er', ir: 'er', ur: 'er',
+  ll: 'lll', ss: 'sss', ff: 'fff', tt: 'tuh', pp: 'puh', nn: 'nnn', mm: 'mmm', dd: 'duh', bb: 'buh', gg: 'guh', zz: 'zzz' };
+const PH_LONG = { a: 'ay', e: 'ee', i: 'eye', o: 'oh', u: 'you' };
+const SIGHT = new Set('a the of is are was were to do does you your said have give many what who there they their one two hour hours minute minutes i he she we be me his has as by'.split(' '));
+const UNITS = new Set(['cm', 'mm', 'dL', 'mL', 'L', 'AM', 'PM', 'A', 'M', 'P']);
+function phonicsParts(word) {
+  const w = word.toLowerCase(); const parts = []; let i = 0;
+  while (i < w.length) { const g = PH_G.find(x => w.startsWith(x, i)) || w[i]; parts.push({ g: word.slice(i, i + g.length), sound: PH_S[g] || g, silent: false }); i += g.length; }
+  const n = parts.length;
+  if (n >= 3 && /^[^aeiou]+$/.test(parts[n - 2].g.toLowerCase()) && parts[n - 1].g.toLowerCase() === 'e' && /^[aeiou]$/.test((parts[n - 3].g || '').toLowerCase())) {
+    parts[n - 1].silent = true; parts[n - 1].sound = null; parts[n - 3].sound = PH_LONG[parts[n - 3].g.toLowerCase()];
+  }
+  return parts;
+}
+const ORD = ['أولًا', 'ثانيًا', 'ثالثًا', 'رابعًا', 'خامسًا'];
+const A1 = ['صفر', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة', 'عشرة', 'أحد عشر', 'اثنا عشر', 'ثلاثة عشر', 'أربعة عشر', 'خمسة عشر', 'ستة عشر', 'سبعة عشر', 'ثمانية عشر', 'تسعة عشر'];
+const A10 = ['', '', 'عشرون', 'ثلاثون', 'أربعون', 'خمسون', 'ستون', 'سبعون', 'ثمانون', 'تسعون'];
+const A100 = ['', 'مئة', 'مئتان', 'ثلاثمئة', 'أربعمئة', 'خمسمئة', 'ستمئة', 'سبعمئة', 'ثمانمئة', 'تسعمئة'];
+function numAr(n) { if (n === 1000) return 'ألف'; if (n < 20) return A1[n]; if (n < 100) { const o = n % 10, t = Math.floor(n / 10); return o ? A1[o] + ' و' + A10[t] : A10[t]; } const h = Math.floor(n / 100), r = n % 100; return A100[h] + (r ? ' و' + numAr(r) : ''); }
+
+let PHR = [];
+const fx = (t) => { for (const [a, b] of PHR) t = t.split(a).join(b); return t; };
+function segs(text) { return fx(text).replace(/`/g, '').split(/\*\*(.+?)\*\*/).map((t, i) => ({ t, a: i % 2 === 1 })).filter(s => s.t !== ''); }
+function clean(t) { return fx(t).replace(/`[^`]*`/g, '').replace(EMO, '').replace(/\s+/g, ' ').trim(); }
+function cells(line) { return line.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim()); }
+const iso = (t) => t.replace(/[\u2066-\u2069]/g, '').replace(/[\d(][\dA-Za-z +−\-=×<>(),:]*[\dA-Za-z)]|\d/g, m => '\u2066' + m + '\u2069');
+function bsegs(arr) { return arr.map(s => ({ t: iso(s.t), b: s.a, n: !s.a })); }
+const plain = (t) => t.replace(/\*\*/g, '');
+const norm = (s) => String(s).toLowerCase().replace(/[\u0660-\u0669]/g, d => String(d.charCodeAt(0) - 0x660)).replace(/[−–]/g, '-').replace(/[\s,]/g, '');
+
+class Component extends DCLogic {
+  state = { data: null, err: null, done: {}, reveal: {}, mode: 'kid', nav: [{ s: 'home' }], filter: 'ALL', printSrc: 0, printAns: false,
+    ans: {}, checked: {}, tutor: null, ph: null, celebrate: null, toast: null, last: null, exOpen: {}, confirmReset: false, aiBusy: false, device: null, vw: 0, vh: 0, examRun: null, examRes: {}, exFilter: 'all', now: Date.now(), confirmSubmit: false };
+  scrollRef = React.createRef();
+
+  componentDidMount() {
+    try {
+      const sv = JSON.parse(localStorage.getItem(KEY) || '{}');
+      this.setState({ done: sv.done || {}, mode: sv.mode || 'kid', nav: sv.nav && sv.nav.length ? sv.nav : [{ s: 'home' }], last: sv.last || null });
+    } catch (e) {}
+    try { this.setState({ examRes: JSON.parse(localStorage.getItem('haneenMath.exams') || '{}') }); } catch (e) {}
+    import('./exam-gen.js').then(m => { this.exg = m; this.forceUpdate(); });
+    this._tick = setInterval(() => { const run = this.state.examRun; if (run && !run.done) { this.setState({ now: Date.now() }); const def = this.exg && this.exg.EXAMS.find(e => e.id === run.id); if (def && Date.now() - run.start > def.minutes * 60000) this.submitExam(); } }, 1000);
+    this._onR = () => this.setState({ vw: window.innerWidth, vh: window.innerHeight }); window.addEventListener('resize', this._onR); this._onR();
+    Promise.all([
+      fetch('uploads/Haneen_Math_Term1_Solved.md').then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); }),
+      import('./haneen-content.js'),
+    ]).then(([md, content]) => { PHR = content.PHRASES; this.content = content; this.setState({ data: this.parse(md, content) }); })
+      .catch(e => this.setState({ err: String(e) }));
+    if (window.speechSynthesis) {
+      const score = (x) => (/natural|neural|online|premium|enhanced/i.test(x.name) ? 4 : 0) + (/google/i.test(x.name) ? 2 : 0) + (/^ar[-_]EG/i.test(x.lang) ? 1 : 0) + (/maged|majed|hamed|shakir|naayf|tarik|male/i.test(x.name) ? 1 : 0);
+      try { const vp = JSON.parse(localStorage.getItem('haneenMath.voice') || '{}'); this.voicePref = vp.name || null; this.voiceRate = vp.rate || 0.8; this.phonicsOn = vp.phonics !== false; } catch (e) { this.voiceRate = 0.8; }
+      const load = () => { const v = speechSynthesis.getVoices(); this.arVoices = v.filter(x => /^ar/i.test(x.lang)).sort((p, q) => score(q) - score(p));
+        this.arVoice = this.arVoices.find(x => x.name === this.voicePref) || this.arVoices[0] || null;
+        const es = (x) => (/natural|neural|online|premium|enhanced/i.test(x.name) ? 4 : 0) + (/google/i.test(x.name) ? 2 : 0) + (/^en[-_]US/i.test(x.lang) ? 2 : /^en[-_]GB/i.test(x.lang) ? 1 : 0) + (/samantha|aria|jenny|zira|female/i.test(x.name) ? 1 : 0);
+        this.enVoice = v.filter(x => /^en/i.test(x.lang)).sort((p, q) => es(q) - es(p))[0] || null; this.forceUpdate(); };
+      speechSynthesis.onvoiceschanged = load; load();
+    }
+  }
+  componentWillUnmount() { this.stopSpeech(); clearInterval(this._tick); window.removeEventListener('resize', this._onR); }
+  componentDidUpdate() {
+    const s = this.state;
+    const k = JSON.stringify(s.nav[s.nav.length - 1]);
+    if (k !== this._k) { this._k = k; if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; }
+    const p = this._saved || {};
+    if (p.done !== s.done || p.mode !== s.mode || p.nav !== s.nav || p.last !== s.last) {
+      this._saved = { done: s.done, mode: s.mode, nav: s.nav, last: s.last };
+      try { localStorage.setItem(KEY, JSON.stringify(this._saved)); } catch (e) {}
+    }
+  }
+
+  parse(md, content) {
+    const parts = []; let P = null, C = null, L = null, S = null, lastCode = null;
+    let inCmp = false, h = '';
+    const mapRows = [];
+    const rewrite = (raw) => {
+      const p = plain(raw);
+      const hit = content.NOTE_REWRITES.find(([k]) => p.includes(k) || raw.includes(k));
+      return hit ? segs(hit[1]) : segs(raw);
+    };
+    const ensureL = () => {
+      if (!L) { L = { title: C.name, pages: C.pagesOwn || '', notes: C.notes.splice(0), sections: [], implicit: true, code: null }; C.lessons.push(L); S = null; }
+    };
+    for (const raw of md.split('\n')) {
+      const line = raw.trim();
+      if (!line || line === '---') continue;
+      if (line.startsWith('## ✅')) break;
+      if (/^# /.test(line)) {
+        if (!/الجزء/.test(line)) continue;
+        const badge = (line.match(/`([A-Z]+-[A-Z]+)`/) || [])[1] || null;
+        P = { title: clean(line.slice(2)), badge, emoji: (line.match(EMO) || ['📎'])[0], chapters: [], notes: [] };
+        parts.push(P); C = L = S = null; continue;
+      }
+      if (!P) {
+        if (line.startsWith('## ')) { inCmp = line.includes('📊'); h = 'main'; continue; }
+        if (!inCmp) continue;
+        if (line.startsWith('### ')) { h = line.includes('خريطة') ? 'map' : 'other'; continue; }
+        if (line.startsWith('|') && h === 'map') { const c = cells(line); if (!c.every(x => /^:?-+:?$/.test(x))) mapRows.push(c); }
+        continue;
+      }
+      if (line.startsWith('## ')) {
+        const t = line.slice(3);
+        const num = (t.match(/Chapter (\d+)/) || [])[1];
+        const badge = (t.match(/`([A-Z]+-[A-Z]+)`/) || [])[1] || P.badge;
+        const pg = (t.match(/\(p\. ([^)]+)\)/) || [])[1] || '';
+        C = { name: clean(t.replace(/^Chapter \d+ — /, '').replace(/\(p\. [^)]+\)/, '')), num: num ? +num : null, emoji: (t.match(EMO) || ['📄'])[0],
+          badge, sub: '', pagesOwn: pg ? 'p. ' + pg : '', lessons: [], notes: [] };
+        P.chapters.push(C); L = S = null; lastCode = null; continue;
+      }
+      if (line.startsWith('### ')) {
+        if (!C) continue;
+        const t = line.slice(4);
+        const pg = (t.match(/\(p\. ([^)]+)\)/) || [])[1] || '';
+        let code = null;
+        if (P.badge === 'MOE-BOOK') code = (t.match(/^(\d-\d+)/) || [])[1] || null;
+        else if (P.badge === 'MOE-ASSESS' && C.num) { const m = t.match(/Lessons? (\d+)/); code = m ? C.num + '-' + m[1] : (lastCode || C.num + '-1'); }
+        if (code) lastCode = code;
+        L = { title: clean(t.replace(/\(p\. [^)]+\)/, '')), pages: pg ? 'p. ' + pg : '', notes: [], sections: [], code, isBook: P.badge === 'MOE-BOOK' };
+        C.lessons.push(L); S = null; continue;
+      }
+      if (line.startsWith('>')) {
+        const txt = line.replace(/^>\s*/, '');
+        const n = { type: txt.startsWith('💡') ? 'rule' : 'warn', segs: rewrite(txt.replace(/^(💡|⚠️)\s*/, '').replace(/^\*\*ملاحظة للماما:\*\*\s*/, '')) };
+        if (S) S.items.push({ note: n }); else if (L) L.notes.push(n); else if (C) C.notes.push(n); else P.notes.push(n);
+        continue;
+      }
+      if (line.startsWith('|')) continue;
+      const bm = line.match(/^\*\*(.+?)\*\*(.*)$/);
+      if (bm && C) {
+        if (!L && bm[2].trim()) { C.sub = fx(plain(line)); continue; }
+        ensureL();
+        S = { title: fx(bm[1]), items: [] }; L.sections.push(S); continue;
+      }
+      if (line.startsWith('- ') && C) {
+        ensureL();
+        if (!S) { S = { title: '', items: [] }; L.sections.push(S); }
+        const t = line.slice(2);
+        if (/^\(?\d+\)$/.test(t)) S.items.push({ label: t }); else S.items.push({ q: segs(t) });
+      }
+    }
+    parts.forEach((P, pi) => {
+      P.qids = [];
+      P.chapters.forEach(C => {
+        C.qids = [];
+        C.lessons.forEach(L => {
+          L.qids = [];
+          const shorts = L.sections.map(s => s.title.split(/ \(| — /)[0] || 'Questions');
+          L.sections.forEach((S, si) => {
+            S.short = shorts.filter(x => x === shorts[si]).length > 1 ? S.title.replace(/\s*\(.*$/, '') : shorts[si];
+            let n = 0; S.qids = [];
+            S.items.forEach(it => { if (it.q) { it.n = ++n; it.id = [pi, C.name, L.title, S.title, n].join('|'); S.qids.push(it.id); } });
+            L.qids.push(...S.qids);
+          });
+          C.qids.push(...L.qids);
+        });
+        P.qids.push(...C.qids);
+      });
+    });
+    const pages = {};
+    mapRows.slice(1).forEach(r => { const m = r[0].match(/^(\d+)\.\s*(.*)$/); if (m) pages[+m[1]] = { name: clean(m[2]), emoji: (r[0].match(EMO) || [''])[0], book: r[1], assess: r[2] }; });
+    return { parts, pages, bookP: parts.findIndex(p => p.badge === 'MOE-BOOK'), assessP: parts.findIndex(p => p.badge === 'MOE-ASSESS') };
+  }
+
+  stats(ids) { const t = ids.length; let d = 0; for (const id of ids) if (this.state.done[id]) d++; return { t, d, pct: t ? Math.round(d / t * 100) : 0 }; }
+  colorOf(C) { return C.num ? CH[C.num] : (C.badge && C.badge.startsWith('EXT') ? BADGES[C.badge].c : '#0f766e'); }
+  arOf(C) { return C.num && this.content ? this.content.CH_AR[C.num] : C.name; }
+  push(e) { this.setState(s => ({ nav: [...s.nav, e] })); }
+  replaceTop(e) { this.setState(s => ({ nav: [...s.nav.slice(0, -1), e] })); }
+  openLesson(p, c, l, replace) {
+    const e = { s: 'lesson', p, c, l, sec: 0 };
+    this.setState(s => ({ nav: replace ? [...s.nav.slice(0, -1), e] : [...s.nav, e], last: { p, c, l } }));
+  }
+  openChapter(p, c, replace) {
+    const C = this.state.data.parts[p].chapters[c];
+    if (C.lessons.length === 1) this.openLesson(p, c, 0, replace);
+    else replace ? this.replaceTop({ s: 'chapter', p, c }) : this.push({ s: 'chapter', p, c });
+  }
+  showToast(text) { clearTimeout(this._toastT); this.setState({ toast: text }); this._toastT = setTimeout(() => this.setState({ toast: null }), 1800); }
+  markDone(id, val, S, L) {
+    this.setState(s => { const m = { ...s.done }; if (val) m[id] = 1; else delete m[id]; return { done: m }; }, () => {
+      if (val && S && S.qids.length > 1 && S.qids.every(q => this.state.done[q])) {
+        this.setState({ celebrate: { text: 'أنهيتِ جميع أسئلة «' + S.short + '» في درس ' + L.title + '.' } });
+      }
+    });
+  }
+  explainFor(L) { return L && L.code && this.content ? this.content.EXPLAIN[L.code] : null; }
+
+  // ---------- tutor (voice explanation) ----------
+  toSpeech(t) {
+    return t.replace(/[\u2066-\u2069]/g, '').replace(EMO, '').replace(/حنين/g, 'حَنِين').replace(/يوسف/g, 'يُوسُف')
+      .replace(/(\d{1,2}):(\d{2})/g, (m, h, mi) => numAr(+h) + (+mi ? ' و' + numAr(+mi) + ' دقيقة' : ''))
+      .replace(/−|(?<=\d)\s*-\s*(?=\d)/g, ' ناقص ').replace(/\+/g, ' زائد ').replace(/=/g, ' يساوي ')
+      .replace(/>/g, ' أكبر من ').replace(/</g, ' أصغر من ').replace(/[←→]/g, '، ').replace(/[()]/g, ' ')
+      .replace(/\bcm\b/g, 'سنتيمتر').replace(/\bmm\b/g, 'مليمتر').replace(/\bdL\b/g, 'ديسيلتر').replace(/\bmL\b/g, 'مليلتر').replace(/\bL\b/g, 'لتر')
+      .replace(/\bAM\b/g, 'صباحًا').replace(/\bPM\b/g, 'مساءً').replace(/◯/g, 'دائرة')
+      .replace(/\b(\d+)\s*hours?\b/gi, '$1 ساعة').replace(/\bhours?\b/gi, 'ساعة').replace(/\bminutes?\b/gi, 'دقيقة').replace(/\bdays?\b/gi, 'يوم').replace(/\bnoon\b/gi, 'الظهر')
+      .replace(/\bGraphs?\b/g, 'الرسم البياني').replace(/\bCharts?\b/g, 'الجدول').replace(/\bOnes\b/g, 'الآحاد').replace(/\bTens\b/g, 'العشرات').replace(/\bHundreds\b/g, 'المئات')
+      .replace(/\btens\b/g, 'عشرات').replace(/\bhundreds\b/g, 'مئات').replace(/\bones\b/g, 'آحاد').replace(/\bpounds?\b/gi, 'جنيه').replace(/\bChapter\b/g, 'الوحدة')
+      .replace(/\d{1,3}(,\d{3})?/g, m => { const v = +m.replace(/,/g, ''); return v <= 1000 ? numAr(v) : m; })
+      .replace(/\s+/g, ' ').trim();
+  }
+  setVoice(name, rate) {
+    if (name !== undefined) { this.voicePref = name; this.arVoice = (this.arVoices || []).find(x => x.name === name) || this.arVoice; }
+    if (rate !== undefined) this.voiceRate = rate;
+    try { localStorage.setItem('haneenMath.voice', JSON.stringify({ name: this.voicePref, rate: this.voiceRate, phonics: this.phonicsOn !== false })); } catch (e) {}
+    this.forceUpdate();
+  }
+  enSpeech(t) {
+    return t.replace(/[\u2066-\u2069]/g, '').replace(/\bAM\b/g, 'A.M.').replace(/\bPM\b/g, 'P.M.')
+      .replace(/(\d)\s*[−-]\s*(?=\d)/g, '$1 minus ').replace(/−/g, ' minus ').replace(/\+/g, ' plus ').replace(/=/g, ' equals ').replace(/×/g, ' times ')
+      .replace(/>/g, ' is greater than ').replace(/</g, ' is less than ').replace(/[()]/g, ' ')
+      .replace(/\bcm\b/g, 'centimeters').replace(/\bmm\b/g, 'millimeters').replace(/\bdL\b/g, 'deciliters').replace(/\bmL\b/g, 'milliliters').replace(/\bL\b/g, 'liters')
+      .replace(/\s+/g, ' ').trim();
+  }
+  speechRuns(text) {
+    const t = text.replace(/[\u2066-\u2069]/g, '').replace(EMO, '');
+    const re = /(?:[\d(][\d\s+−\-=×<>(),:]*)?[A-Za-z][A-Za-z\d\s+−\-=×<>(),:'.]*[A-Za-z\d)]|[A-Za-z]/g;
+    const runs = []; let last = 0, m;
+    const pushAr = (s) => { s.split(/(?<=[.،؛:!?؟])\s+/).forEach(x => { const y = this.toSpeech(x); if (y.replace(/[\s.,،؛:!?؟]/g, '')) runs.push({ en: false, t: y }); }); };
+    while ((m = re.exec(t))) { if (m.index > last) pushAr(t.slice(last, m.index)); const y = this.enSpeech(m[0]); if (y) runs.push({ en: true, t: y, raw: m[0] }); last = m.index + m[0].length; }
+    if (last < t.length) pushAr(t.slice(last));
+    return runs;
+  }
+  isPhonicsWord(w, force) {
+    if (w.length < 2 || UNITS.has(w) || SIGHT.has(w.toLowerCase())) return false;
+    if (force) return w.length <= 12;
+    return w.length <= 8 && !/^[A-Z]/.test(w);
+  }
+  toks(t) { return t.split(/([A-Za-z]{2,})/).filter(x => x !== '').map(x => /^[A-Za-z]{2,}$/.test(x) ? { t: x, isWord: true, onClick: () => this.sayWord(x) } : { t: x, isTxt: true }); }
+  sayWord(w) {
+    if (!window.speechSynthesis) return;
+    if (!this.state.tutor) { this._tok = (this._tok || 0) + 1; this.stopSpeech(); }
+    else speechSynthesis.cancel();
+    this.speakRuns(w, () => setTimeout(() => this.setState({ ph: null }), 900), true);
+  }
+  speakRuns(text, onDone, force) {
+    const runs = this.speechRuns(text); const q = [];
+    const phon = force || this.phonicsOn !== false;
+    runs.forEach(r => {
+      if (!r.en || !phon) { q.push({ en: r.en, t: r.t }); return; }
+      r.raw.split(/([A-Za-z]+)/).forEach(tok => {
+        if (!tok.trim()) return;
+        if (/^[A-Za-z]+$/.test(tok) && this.isPhonicsWord(tok, force)) {
+          const parts = phonicsParts(tok);
+          parts.forEach((pp, k) => { if (pp.sound) q.push({ en: true, t: pp.sound, rate: 0.62, ph: { word: tok, parts, k } }); });
+          q.push({ en: true, t: tok, ph: { word: tok, parts, k: -1 }, gap: true });
+        } else { const y = this.enSpeech(tok); if (y) q.push({ en: true, t: y }); }
+      });
+    });
+    if (!q.length) { onDone && onDone(); return; }
+    q.forEach((it, i) => {
+      const u = new SpeechSynthesisUtterance(it.t);
+      const v = it.en ? (this.enVoice || null) : this.arVoice;
+      if (v) { u.voice = v; u.lang = v.lang; } else u.lang = it.en ? 'en-US' : 'ar-SA';
+      u.rate = it.rate || (it.en ? Math.min(1, (this.voiceRate || 0.8) + 0.05) : (this.voiceRate || 0.8)); u.pitch = 1;
+      u.onstart = () => { if (it.ph) this.setState({ ph: it.ph }); else if (this.state.ph && !it.en) this.setState({ ph: null }); };
+      if (i === q.length - 1) { const fin = () => { if (!force) this.setState({ ph: null }); onDone && onDone(); }; u.onend = fin; u.onerror = fin; }
+      speechSynthesis.speak(u);
+    });
+  }
+  testVoice() {
+    if (!window.speechSynthesis || !this.arVoice) return;
+    speechSynthesis.cancel();
+    this.speakRuns('أهلًا يا حنين، أنا الأستاذ يوسف. هيا نحلّ معًا: 35 + 27 = 62. ولنقرأ كلمة: pencils.');
+  }
+  stopSpeech() { clearTimeout(this._stepT); clearTimeout(this._gapT); if (window.speechSynthesis) speechSynthesis.cancel(); }
+  speakStep(i) {
+    const tu = this.state.tutor; if (!tu) return;
+    this.stopSpeech();
+    if (i >= tu.steps.length) { this.setState(s => ({ tutor: s.tutor && { ...s.tutor, playing: false } })); return; }
+    const token = (this._tok = (this._tok || 0) + 1);
+    this.setState(s => ({ tutor: s.tutor && { ...s.tutor, i, playing: true } }));
+    const step = tu.steps[i];
+    const advance = () => { if (this._tok !== token) return; this._gapT = setTimeout(() => { if (this._tok === token && this.state.tutor && this.state.tutor.playing) this.speakStep(i + 1); }, step.pause || 650); };
+    if (window.speechSynthesis && this.arVoice) {
+      this.speakRuns(step.text, advance);
+    } else this._stepT = setTimeout(advance, 2400 + step.text.length * 50);
+  }
+  openTutor(tu, withAI) {
+    this.setState({ tutor: { ...tu, i: 0, playing: !withAI, loading: !!withAI } }, () => { if (withAI) this.askAI(true); else this.speakStep(0); });
+  }
+  closeTutor() { this._tok = (this._tok || 0) + 1; this.stopSpeech(); this.setState({ tutor: null, aiBusy: false }); }
+
+  arith(it) {
+    const full = it.q.map(s => s.t).join('');
+    const answers = it.q.filter(s => s.a).map(s => s.t);
+    const re = /(\d{1,3})\s*([+−])\s*(\d{1,3})(?![\d,])/g; let m;
+    while ((m = re.exec(full))) {
+      const prev = full[m.index - 1];
+      if (prev && /[\d,.]/.test(prev)) continue;
+      const a = +m[1], b = +m[3], op = m[2];
+      const r = op === '+' ? a + b : a - b;
+      if (r < 0) continue;
+      if (answers.some(x => (x.match(/^\s*(\d+)/) || [])[1] === String(r))) return this.buildArith(a, op, b, r);
+    }
+    return null;
+  }
+  buildArith(a, op, b, r) {
+    const n = Math.max(String(a).length, String(b).length, String(r).length);
+    const dig = (x) => { const s = String(x); return Array.from({ length: n }, (_, i) => i < s.length ? +s[s.length - 1 - i] : null); };
+    const A = dig(a), B = dig(b), rl = String(r).length;
+    const cols = Array.from({ length: n }, (_, i) => ({ top: A[i], bot: B[i], above: null, newTop: null, res: null }));
+    const steps = [];
+    const say = (text, active, extra) => steps.push({ text, ...(extra || {}), board: { active, cols: cols.map(c => ({ ...c })) } });
+    const ask = (text, active) => say(text, active, { pause: 2200, think: true });
+    const sign = op === '+' ? '+' : '−';
+    say('أهلًا يا حنين. هيا نحلّ هذه المسألة معًا: ' + a + ' ' + sign + ' ' + b + '. انظري إلى السبّورة.', -1);
+    if (op === '+') {
+      say('أولًا نكتب العددين فوق بعضهما: الآحاد تحت الآحاد، والعشرات تحت العشرات' + (n > 2 ? '، والمئات تحت المئات.' : '.'), -1);
+      say('نبدأ دائمًا من اليمين، من خانة الآحاد.', 0);
+      let carry = 0;
+      for (let i = 0; i < n; i++) {
+        const terms = [A[i], B[i]].filter(v => v != null);
+        if (!terms.length && !carry) break;
+        const s = terms.reduce((x, y) => x + y, 0) + carry; const nm = COLN[i];
+        if (!terms.length) { cols[i].res = s; say('في خانة ' + nm + ' لا توجد أرقام، فنكتب الواحد المحمول: 1.', i); carry = 0; continue; }
+        if (terms.length === 1 && !carry) { cols[i].res = s; say('في خانة ' + nm + ' يوجد رقم واحد فقط، وهو ' + s + '. ننزله كما هو.', i); continue; }
+        if (i > 0) say('ننتقل الآن إلى خانة ' + nm + '.', i);
+        ask(carry ? 'لدينا ' + terms.join(' و') + '، ولا ننسى الواحد المحمول. كم يساوي ' + terms.join(' + ') + ' + 1؟' : 'كم يساوي ' + terms.join(' + ') + '؟', i);
+        if (s >= 10) { cols[i].res = s % 10; cols[i + 1].above = '1'; say('يساوي ' + s + '. وبما أن الناتج عشرة أو أكثر، نكتب ' + (s % 10) + ' في خانة ' + nm + '، ونحمل 1 فوق خانة ' + COLN[i + 1] + '.', i); carry = 1; }
+        else { cols[i].res = s; say('يساوي ' + s + '. نكتب ' + s + ' في خانة ' + nm + '.', i); carry = 0; }
+      }
+      say('إذن الناتج هو ' + r + '. ممتاز يا حنين، هكذا نحلّ الجمع الرأسي!', -2);
+    } else {
+      say('أولًا نكتب العدد الأكبر ' + a + ' في الأعلى، ونكتب ' + b + ' تحته، وكل رقم تحت خانته.', -1);
+      say('نبدأ دائمًا من اليمين، من خانة الآحاد.', 0);
+      const T = A.map(v => v == null ? 0 : v);
+      for (let i = 0; i < n; i++) {
+        if (A[i] == null) break;
+        const y = B[i] == null ? 0 : B[i]; const nm = COLN[i];
+        if (i > 0) say('ننتقل الآن إلى خانة ' + nm + '.', i);
+        if (i >= rl && i > 0) { say('لم يتبقَّ شيء في خانة ' + nm + '، والصفر على اليسار لا نكتبه.', i); continue; }
+        if (B[i] == null) { cols[i].res = T[i]; say('لا يوجد رقم تحت ' + T[i] + '، فننزله كما هو.', i); continue; }
+        if (T[i] < y) {
+          const orig = T[i];
+          ask('هل نستطيع أن نطرح ' + y + ' من ' + orig + '؟', i);
+          if (T[i + 1] > 0) {
+            T[i + 1] -= 1; cols[i + 1].newTop = T[i + 1]; T[i] += 10; cols[i].newTop = T[i];
+            say('لا نستطيع، لأن ' + orig + ' أصغر من ' + y + '. لذلك نستلف 1 من خانة ' + COLN[i + 1] + ' فتصبح ' + T[i + 1] + '، ونضيف 10 إلى ' + orig + ' فيصبح ' + T[i] + '.', i);
+          } else {
+            T[i + 2] -= 1; cols[i + 2].newTop = T[i + 2]; T[i + 1] = 9; cols[i + 1].newTop = 9; T[i] += 10; cols[i].newTop = T[i];
+            say('لا نستطيع، وخانة ' + COLN[i + 1] + ' فيها صفر. فنستلف أولًا من ' + COLN[i + 2] + ' فتصبح ' + T[i + 2] + '، ثم تصبح ' + COLN[i + 1] + ' 9، ويصبح ' + orig + ' هو ' + T[i] + '.', i);
+          }
+        }
+        const d = T[i] - y;
+        ask('كم يساوي ' + T[i] + ' − ' + y + '؟', i);
+        cols[i].res = d;
+        say('يساوي ' + d + '. نكتب ' + d + ' في خانة ' + nm + '.', i);
+      }
+      say('إذن الناتج هو ' + r + '. ولنتأكد نجمع: ' + r + ' + ' + b + ' = ' + a + '. أحسنتِ يا حنين!', -2);
+    }
+    return { op: sign, n, steps };
+  }
+  localSteps(it, L) {
+    const ex = this.explainFor(L);
+    const answers = it.q.filter(s => s.a).map(s => s.t);
+    const st = [{ text: 'أهلًا يا حنين. هيا نقرأ السؤال معًا بهدوء، ونفهم المطلوب منه.' }];
+    if (ex) {
+      st.push({ text: 'تذكّري ما تعلّمناه في هذا الدرس: ' + ex.idea, show: ex.ex });
+      ex.steps.slice(0, 3).forEach((t, i) => st.push({ text: ORD[i] + '، ' + t }));
+    }
+    if (answers.length) {
+      st.push({ text: 'والآن فكّري قليلًا: ما الإجابة؟', pause: 2600, think: true });
+      st.push({ text: 'الإجابة الصحيحة هي: ' + answers.join('، ') + '.', show: answers.join('  ·  ') });
+    }
+    st.push({ text: 'أحسنتِ يا حنين. إذا أردتِ أن نعيد الشرح، اضغطي زر البداية.' });
+    return st;
+  }
+  tutorForItem(it, L, C) {
+    const ar = this.arith(it);
+    const q = it.q.map(s => s.a ? ' ? ' : s.t).join('').replace(/\s+/g, ' ');
+    const ex = this.explainFor(L);
+    const answers = it.q.filter(s => s.a).map(s => s.t);
+    return { title: L.title, q, steps: ar ? ar.steps : this.localSteps(it, L), fallback: ar ? null : this.localSteps(it, L), board: ar, color: this.colorOf(C), itemId: it.id,
+      ctx: { q: it.q.map(s => s.t).join(''), answers, rule: ex ? [ex.idea, ...ex.steps].join(' ') : '', lesson: L.title } };
+  }
+  async askAI(first) {
+    const tu = this.state.tutor; if (!tu || !tu.ctx || !window.claude || this.state.aiBusy) { if (first) this.setState(s => ({ tutor: s.tutor && { ...s.tutor, loading: false } }), () => this.speakStep(0)); return; }
+    this._tok = (this._tok || 0) + 1; this.stopSpeech(); this.setState(s => ({ aiBusy: true, tutor: { ...s.tutor, playing: false, loading: true } }));
+    try {
+      const prompt = 'الدرس: ' + tu.ctx.lesson + '\nالسؤال (بالإنجليزية كما في الكتاب): ' + tu.ctx.q + '\nالإجابة الصحيحة: ' + tu.ctx.answers.join('، ') + '\nقاعدة الدرس: ' + (tu.ctx.rule || 'غير متوفرة') +
+        '\n\nاشرح هذا السؤال لحنين كما يشرح المدرّس في الفصل' + (first ? '' : '، بطريقة مختلفة عن الشرح المعتاد') + ':\n- ابدأ بتحية قصيرة، ثم اشرح المطلوب في السؤال بالعربية ببساطة.\n- اربط الفكرة بمثال من حياتها اليومية.\n- اسألها سؤالًا صغيرًا لتفكّر فيه قبل أن تعطيها الإجابة.\n- ثم حلّ خطوة بخطوة، وانتهِ بكلمة تشجيع.\n' +
+        'أعد مصفوفة JSON فقط، من 5 إلى 7 عناصر، كل عنصر بالشكل {"say": "جملة يقولها المدرّس", "board": "ما يكتبه على السبّورة بالأرقام أو فارغ", "think": true إذا كانت سؤالًا لها}. الجمل قصيرة وواضحة بالعربية الفصحى المبسّطة، بلا عامية، والأرقام 0-9.';
+      const out = await window.claude.complete({ messages: [{ role: 'user', content: prompt }], max_tokens: 1200,
+        system: 'أنت الأستاذ يوسف، مدرّس ماث خبير، ويسمّي المادة «ماث» دائمًا وليس «رياضيات»، وهادئ وصبور للصف الثاني الابتدائي. تتحدث بالعربية الفصحى المبسّطة الواضحة فقط، وتخاطب الطالبة حنين بصيغة المؤنث، وتشرح بالتدريج كما في الفصل.' });
+      const arr = JSON.parse((out.match(/\[[\s\S]*\]/) || [out])[0]);
+      if (!Array.isArray(arr) || !arr.length) throw new Error('bad');
+      if (!this.state.tutor) return;
+      const steps = arr.map(x => typeof x === 'string' ? { text: x } : { text: String(x.say || ''), show: x.board ? String(x.board) : '', think: !!x.think, pause: x.think ? 2400 : 0 }).filter(s => s.text);
+      this.setState(s => ({ aiBusy: false, tutor: { ...s.tutor, steps, board: null, ai: true, i: 0, loading: false } }), () => this.speakStep(0));
+    } catch (e) {
+      this.setState(s => ({ aiBusy: false, tutor: s.tutor && { ...s.tutor, loading: false, steps: first && s.tutor.fallback ? s.tutor.fallback : s.tutor.steps } }), () => this.speakStep(0));
+      if (!first) this.showToast('تعذّر إعداد شرح جديد الآن');
+    }
+  }
+
+  graphOf(q) {
+    if (!q) return null;
+    let full = q.map((s, i) => s.a ? '\u27E6' + i + '\u27E7' : s.t).join('');
+    full = full.replace(/^\s*\(?\d+\)\s*/, '').replace(/\(Total = [^)]*\)/g, '').replace(/\([^)]*[\u0600-\u06FF][^)]*\)/g, '');
+    if (/[+−=]/.test(full)) return null;
+    const labRe = /([A-Za-z0-9][A-Za-z0-9 ]*?):\s*/g; const labs = []; let m;
+    while ((m = labRe.exec(full))) labs.push({ label: m[1].trim(), start: m.index, end: m.index + m[0].length });
+    const chunks = labs.length ? labs.map((l, i) => ({ label: l.label, text: full.slice(l.end, i + 1 < labs.length ? labs[i + 1].start : full.length) })) : [{ label: '', text: full }];
+    const groups = [];
+    for (const ch of chunks) {
+      const items = []; const pr = /([A-Z][a-z]+(?: [A-Z][a-z]+)?)\s+(?:\u27E6(\d+)\u27E7|(\d+))/g; let p;
+      while ((p = pr.exec(ch.text))) {
+        const idx = p[2] != null ? +p[2] : null; const v = idx != null ? parseInt(q[idx].t, 10) : +p[3];
+        if (isNaN(v) || v > 14) continue;
+        items.push({ name: p[1], value: v, segIndex: idx });
+      }
+      if (items.length >= 3) groups.push({ label: ch.label, items });
+    }
+    return groups.length ? groups : null;
+  }
+  graphVals(groups, sg, col) {
+    return groups.map(g => { const max = Math.max(...g.items.map(x => x.value)); const dot = max > 10 ? 12 : max > 8 ? 14 : 16;
+      return { label: g.label, hasLabel: !!g.label, dot, h: max * (dot + 3) + 2,
+        cols: g.items.map(x => { const cc = COLORS[x.name]; const ic = ICON[x.name] || '';
+          return { name: x.name, isSwatch: !!cc, swatch: cc || '', isIcon: !cc && !!ic, icon: ic, head: ic || x.name.slice(0, 3),
+            color: cc || col, fill: cc ? cc : col + '30', dots: Array.from({ length: x.value }, (_, i) => ({ i })),
+            cell: x.segIndex != null && sg ? sg[x.segIndex] : { t: String(x.value), plain: true } }; }) }; });
+  }
+  examTitle(def) {
+    const sc = this.exg.SCOPES.find(s => s.key === def.scope);
+    return def.scope === 'unit' ? 'اختبار ' + this.content.CH_AR[def.chapters[0]] + ' · النموذج ' + def.model : sc.label + ' · النموذج ' + def.model;
+  }
+  startExam(def, replace) {
+    const prev = this.state.examRes[def.id]; const attempt = prev ? prev.attempts : 0;
+    const qs = this.exg.buildExam(def, attempt);
+    const e = { s: 'exam', id: def.id };
+    this.setState(s => ({ examRun: { id: def.id, attempt, qs, i: 0, ans: {}, start: Date.now(), done: false }, confirmSubmit: false, now: Date.now(),
+      nav: replace ? [...s.nav.slice(0, -1), e] : [...s.nav, e] }));
+  }
+  gradeQ(q, ans, qi) {
+    let k = -1; const mine = []; let ok = true;
+    q.segs.forEach(s => { if (!s.a) return; k++; const got = ans[qi + '#' + k] || ''; mine.push(got || '—');
+      const want = s.t; const lead = (want.match(/^\s*([\d,]+)/) || [])[1];
+      const good = norm(got) === norm(want) || (/^\d+$/.test(norm(got)) && lead && norm(lead) === norm(got) && !/:/.test(want));
+      if (!good) ok = false; });
+    return { ok, mine: mine.join(' · ') };
+  }
+  submitExam() {
+    const run = this.state.examRun; if (!run || run.done) return;
+    const per = run.qs.map((q, qi) => this.gradeQ(q, run.ans, qi));
+    const correct = per.filter(p => p.ok).length, total = run.qs.length, pct = Math.round(correct / total * 100);
+    const secs = Math.round((Date.now() - run.start) / 1000);
+    const prev = this.state.examRes[run.id] || { best: 0, attempts: 0 };
+    const examRes = { ...this.state.examRes, [run.id]: { best: Math.max(prev.best, pct), last: pct, attempts: prev.attempts + 1, at: Date.now() } };
+    try { localStorage.setItem('haneenMath.exams', JSON.stringify(examRes)); } catch (e) {}
+    this.setState(s => ({ examRes, examRun: { ...run, done: true, result: { per, correct, total, pct, secs } }, confirmSubmit: false,
+      nav: [...s.nav.slice(0, -1), { s: 'result', id: run.id }],
+      celebrate: pct >= 80 ? { text: 'حصلتِ على ' + pct + '% في ' + this.examTitle(this.exg.EXAMS.find(e => e.id === run.id)) + '.' } : null }));
+  }
+  celebrateEl() {
+    const c = this.state.celebrate; if (!c) return null;
+    const h = React.createElement; const cols = ['#ec4899', '#7c3aed', '#059669', '#be185d', '#f59e0b', '#0e7490'];
+    const close = () => this.setState({ celebrate: null });
+    const pieces = Array.from({ length: 30 }, (_, i) => h('span', { key: i, style: { position: 'absolute', top: -24, left: ((i * 37) % 100) + '%', width: 8, height: 13, borderRadius: 2, background: cols[i % 6], transform: 'rotate(' + i * 40 + 'deg)', animation: 'hm-fall ' + (1.8 + (i % 5) * 0.3) + 's ' + ((i % 7) * 0.09) + 's ease-in forwards' } }));
+    return h('div', { onClick: close, style: { position: 'absolute', inset: 0, zIndex: 30, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(15,23,42,.4)' } }, ...pieces,
+      h('div', { onClick: e => e.stopPropagation(), style: { position: 'relative', background: '#fff', borderRadius: 30, padding: '28px 22px 20px', width: '80%', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 8, animation: 'hm-pop .5s cubic-bezier(.2,1.4,.4,1) both' } },
+        h('div', { style: { position: 'relative', alignSelf: 'center', width: 104, height: 104 } }, h('img', { src: 'assets/haneen-avatar.png', alt: 'حنين', style: { width: 104, height: 104, borderRadius: '50%', objectFit: 'cover', border: '4px solid #fff', boxShadow: '0 0 0 3px #f9a8d4' } }), h('span', { style: { position: 'absolute', bottom: -4, left: -4, width: 40, height: 40, borderRadius: '50%', background: '#fff', display: 'grid', placeItems: 'center', fontSize: 22, boxShadow: '0 4px 10px rgba(157,23,77,.25)' } }, '🏆')),
+        h('div', { style: { font: '900 22px Cairo, sans-serif', color: '#0f172a' } }, 'أحسنتِ يا حنين!'),
+        h('div', { style: { font: '600 14px/1.7 Cairo, sans-serif', color: '#64748b' } }, c.text),
+        h('div', { style: { fontSize: 28, letterSpacing: 6 } }, '⭐⭐⭐'),
+        h('button', { onClick: close, style: { marginTop: 6, height: 48, borderRadius: 16, border: 0, background: '#ec4899', color: '#fff', font: '800 15px Cairo, sans-serif', cursor: 'pointer' } }, 'متابعة')));
+  }
+
+  renderVals() {
+    const { data, err, nav, mode } = this.state;
+    const parent = mode === 'parent';
+    const base = {
+      scrollRef: this.scrollRef, loading: !data, loadingText: err ? 'تعذّر فتح ملف المذاكرة (' + err + ')' : 'جارٍ تجهيز المذاكرة…',
+      back: () => this.setState(s => ({ nav: s.nav.length > 1 ? s.nav.slice(0, -1) : [{ s: 'home' }] })),
+      goCompare: () => this.push({ s: 'compare' }), goExams: () => this.setState({ nav: [{ s: 'exams' }] }), examsCount: this.exg ? this.exg.EXAMS.length : 50, goCheat: () => this.push({ s: 'cheat' }),
+      stars: Object.keys(this.state.done).length,
+      hasToast: !!this.state.toast, toastText: this.state.toast || '',
+      celebrateEl: this.celebrateEl(),
+      setKid: () => this.setState({ mode: 'kid' }), setParent: () => this.setState({ mode: 'parent' }),
+      modeKidBg: parent ? 'transparent' : '#fff', modeKidFg: parent ? '#64748b' : '#9d174d', modeKidSh: parent ? 'none' : '0 1px 3px rgba(15,23,42,.12)',
+      modeParBg: parent ? '#fff' : 'transparent', modeParFg: parent ? '#9d174d' : '#64748b', modeParSh: parent ? '0 1px 3px rgba(15,23,42,.12)' : 'none',
+      modeHelp: parent ? 'وضع وليّ الأمر: تظهر جميع الإجابات وملاحظات أخطاء الكتب، لمراجعة حل حنين وتصحيحه.' : 'وضع حنين: الإجابات مخفية، تكتب حنين إجابتها وتتحقق منها، ويمكنها الاستماع إلى الشرح.',
+    };
+    let top = nav[nav.length - 1] || { s: 'home' };
+    if ((top.s === 'exam' || top.s === 'result') && (!this.state.examRun || this.state.examRun.done !== (top.s === 'result'))) top = { s: 'exams' };
+    const DEV = { phone: [390, 844], 'tablet-portrait': [834, 1194], 'tablet-landscape': [1194, 834] };
+    const hosted = /github\.io$/i.test(location.hostname) || /[?&]app\b/.test(location.search);
+    const dev = hosted ? 'fit' : (this.state.device || this.props.device || 'tablet-landscape');
+    const fr = DEV[dev]; const vw = this.state.vw || window.innerWidth, vh = this.state.vh || window.innerHeight;
+    const appW = fr ? fr[0] : vw; const isPhone = appW < 700, isWide = appW >= 1024, isTablet = !isPhone;
+    const pd = fr ? (isPhone ? 10 : 14) : 0;
+    const sc = fr ? Math.min(1, (vw - 32) / (fr[0] + pd * 2), (vh - 76) / (fr[1] + pd * 2)) : 1;
+    Object.assign(base, {
+      isPhone, isWide, isTablet, framed: !!fr, showDevBar: !hosted,
+      devices: [['tablet-landscape', 'تابلت بالعرض'], ['tablet-portrait', 'تابلت بالطول'], ['phone', 'هاتف'], ['fit', 'ملء الشاشة']].map(([k, label]) => { const on = dev === k;
+        return { label, onClick: () => this.setState({ device: k }), bg: on ? '#9d174d' : '#fff', fg: on ? '#fff' : '#334155', border: on ? '#9d174d' : '#f0d5e3' }; }),
+      stageW: fr ? Math.round((fr[0] + pd * 2) * sc) + 'px' : '100vw', stageH: fr ? Math.round((fr[1] + pd * 2) * sc) + 'px' : (hosted ? '100dvh' : 'calc(100vh - 58px)'),
+      devW: fr ? (fr[0] + pd * 2) + 'px' : '100vw', devH: fr ? (fr[1] + pd * 2) + 'px' : (hosted ? '100dvh' : 'calc(100vh - 58px)'), frameScale: sc,
+      bezelBg: fr ? '#0b1222' : 'transparent', bezelR: fr ? (isPhone ? 52 : 40) : 0, bezelPad: pd, bezelSh: fr ? '0 40px 80px -30px rgba(15,23,42,.55)' : 'none', screenR: fr ? (isPhone ? 42 : 26) : 0,
+      statusH: isPhone ? 46 : 26, statusBg: isPhone ? '#fdf6fa' : '#fff',
+      sideW: isWide ? 256 : 92, sidePadX: isWide ? 14 : 8, sideJustify: isWide ? 'flex-start' : 'center',
+      navDir: isWide ? 'row' : 'column', navGap: isWide ? 12 : 4, navPad: isWide ? '11px 12px' : '10px 4px', navFs: isWide ? 14 : 11,
+      topPad: isPhone ? '8px 14px' : '12px 28px', topFs: isPhone ? 16 : 18,
+      pad: isPhone ? '18px 16px 30px' : isWide ? '30px 40px 48px' : '28px 32px 44px', heroPad: isPhone ? '18px' : '22px 26px', helloFs: isPhone ? 22 : 28, modeW: isPhone ? '100%' : 'auto',
+      heroCols: isPhone ? 'minmax(0,1fr)' : 'minmax(0,1.3fr) minmax(0,1fr)',
+      gridCols: isPhone ? 'repeat(3,minmax(0,1fr))' : isWide ? 'repeat(5,minmax(0,1fr))' : 'repeat(3,minmax(0,1fr))', tileH: isPhone ? 128 : 140,
+      twinW: isPhone ? '100%' : 'auto',
+      lessonCols: isWide ? 'minmax(300px,360px) minmax(0,1fr)' : 'minmax(0,1fr)', asidePos: isWide ? 'sticky' : 'static',
+      qCols: isWide ? 'minmax(0,1fr)' : isPhone ? 'minmax(0,1fr)' : 'repeat(2,minmax(0,1fr))', tabFlex: isPhone ? 'none' : '1', slotH: isWide ? 360 : 300,
+      cmpCols: isPhone ? 'minmax(0,1fr)' : '170px minmax(0,1fr) minmax(0,1fr)', cmpCellPad: isPhone ? '0 16px 12px' : '12px 16px', cmpSplit: isWide ? 'minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,1fr)',
+      parCols: isPhone ? 'minmax(0,1fr)' : 'minmax(0,1fr) minmax(0,1fr)', tabPadB: fr ? 22 : 8, shellDir: isPhone ? 'column' : 'row',
+      tutorDim: isPhone ? '#fdf6fa' : 'rgba(15,23,42,.5)', tutorW: isPhone ? '100%' : 'min(1000px, 94%)', tutorH: isPhone ? '100%' : 'min(760px, 92%)', tutorR: isPhone ? 0 : 24,
+      tutorPadTop: isPhone && fr ? 46 : 0, tutorCols: isPhone ? 'minmax(0,1fr)' : 'minmax(0,1.15fr) minmax(0,1fr)',
+      modeShort: parent ? 'وضع وليّ الأمر' : 'وضع حنين',
+    });
+    const curTab = ['home', 'part', 'chapter', 'lesson'].includes(top.s) ? 'home' : ['exams', 'exam', 'result'].includes(top.s) ? 'exams' : top.s;
+    base.tabs = [['home', 'الرئيسية'], ['exams', 'الامتحانات'], ['cheat', 'القواعد'], ['compare', 'المقارنة'], ['parent', 'وليّ الأمر']].map(([k, label]) => ({ label,
+      color: curTab === k ? '#9d174d' : '#64748b', pill: curTab === k ? '#f5f3ff' : 'transparent', side: curTab === k ? '#f5f3ff' : 'transparent',
+      isHome: k === 'home', isExams: k === 'exams', isCheat: k === 'cheat', isCompare: k === 'compare', isParent: k === 'parent',
+      onClick: () => this.setState({ nav: [{ s: k }] }) }));
+    const tu = this.state.tutor;
+    base.tutorOpen = !!tu;
+    if (tu) {
+      const step = tu.steps[tu.i] || tu.steps[tu.steps.length - 1] || { text: '' };
+      const bd = tu.board && step.board && !tu.loading;
+      const h = React.createElement;
+      base.tutorAvatar = h('div', { style: { flex: 'none', width: 52, height: 52, borderRadius: '50%', background: '#fdf2f8', border: '2px solid #fbcfe8', display: 'grid', placeItems: 'center', fontSize: 28, animation: tu.playing ? 'hm-pulse 1.4s ease-in-out infinite' : 'none' } }, '👨‍🏫');
+      const total = tu.steps.length;
+      base.tutor = {
+        q: tu.q, text: tu.loading ? 'لحظة يا حنين، أفكّر في أوضح طريقة لشرح هذا السؤال…' : iso(step.text), think: !tu.loading && !!step.think && tu.playing,
+        op: tu.board ? tu.board.op : '', hasBoard: !!bd, hasBoardText: !bd && !tu.loading && !!step.show, boardText: step.show || '',
+        cols: bd ? step.board.cols.slice().reverse().map((c, ri) => { const i = step.board.cols.length - 1 - ri; const act = step.board.active === i;
+          return { label: COLL[i], above: c.newTop != null ? String(c.newTop) : (c.above || ''), top: c.top == null ? '' : c.top, strike: c.newTop != null, plainTop: c.newTop == null,
+            bot: c.bot == null ? '' : c.bot, res: c.res == null ? '' : c.res, bg: act ? 'rgba(253,230,138,.12)' : 'transparent', ring: act ? '#fde68a' : 'transparent' }; }) : [],
+        list: tu.loading ? [] : tu.steps.map((s, i) => { const cur = i === tu.i, past = i < tu.i;
+          return { t: iso(s.text), mark: past ? '✓' : String(i + 1), bg: cur ? '#fdf2f8' : 'transparent', fg: cur ? '#0f172a' : past ? '#94a3b8' : '#475569',
+            dotBg: cur ? '#ec4899' : past ? '#d1fae5' : '#f9eef4', dotFg: cur ? '#fff' : past ? '#047857' : '#64748b', onClick: () => this.speakStep(i) }; }),
+        playing: tu.playing, paused: !tu.playing,
+        status: tu.loading ? 'يحضّر الشرح…' : (tu.playing ? 'يشرح الآن' : 'متوقّف') + ' · الخطوة ' + (tu.i + 1) + ' من ' + total,
+        noVoice: !this.arVoice, canAI: !!window.claude && !!tu.ctx && !tu.loading,
+        aiLabel: tu.ai ? 'اشرح لي بطريقة أخرى' : 'اشرح لي بطريقة مختلفة',
+        playPause: () => { if (tu.loading) return; if (tu.playing) { this._tok++; this.stopSpeech(); this.setState(s => ({ tutor: { ...s.tutor, playing: false } })); } else this.speakStep(tu.i >= total - 1 ? 0 : tu.i); },
+        prev: () => this.speakStep(Math.max(0, tu.i - 1)), next: () => this.speakStep(Math.min(total - 1, tu.i + 1)), replay: () => this.speakStep(0),
+        askAI: () => this.askAI(false),
+      };
+    }
+    const ph = this.state.ph;
+    base.phShow = !!ph; base.phFloat = !!ph && !tu; base.phWord = ph ? ph.word : '';
+    base.phChips = ph ? ph.parts.map((pp, k) => { const cur = ph.k === k || ph.k === -1; return { g: pp.g, bg: pp.silent ? '#f9eef4' : cur ? '#db2777' : '#fff', fg: pp.silent ? '#c4a3b5' : cur ? '#fff' : '#3b0a2a', dec: pp.silent ? 'line-through' : 'none' }; }) : [];
+    base.closeTutor = () => this.closeTutor();
+    if (!data) return { ...base, isHome: false, showSubHeader: false, showTop: false, showBack: false, hasCrumb: false, crumb: '', overallPct: 0, headerTitle: '', hasContinue: false,
+      overall: { pct: 0, deg: 0, d: 0, t: 0, headline: '' }, chips: [], extras: [], books: [], grid: [], cont: {},
+      part: { notes: [], rows: [] }, chap: { lessons: [] }, les: { notes: [], items: [], tabs: [], exSteps: [] },
+      cmp: { rows: [], map: [], diffs: [] }, cheat: [], par: { modes: [], progress: [] }, vo: { voices: [], rates: [] }, exl: { stats: [], filters: [], items: [] }, ex: { dots: [], q: { segs: [], choices: [], groups: [] } }, res: { items: [] }, prn: { rows: [], preview: [], sources: [] } };
+
+    const { parts } = data; const ct = this.content;
+    const P = top.p != null ? parts[top.p] : null;
+    const C = P && top.c != null ? P.chapters[top.c] : null;
+    const L = C && top.l != null ? C.lessons[top.l] : null;
+    if ((top.s === 'part' && !P) || (top.s === 'chapter' && !C) || (top.s === 'lesson' && !L)) top = { s: 'home' };
+    const flags = { isHome: top.s === 'home', isPart: top.s === 'part', isChapter: top.s === 'chapter', isLesson: top.s === 'lesson',
+      isCompare: top.s === 'compare', isCheat: top.s === 'cheat', isParent: top.s === 'parent', isExams: top.s === 'exams' && !!this.exg, isExam: top.s === 'exam' && !!this.exg && !!this.state.examRun && !this.state.examRun.done, isResult: top.s === 'result' && !!this.exg && !!this.state.examRun && !!this.state.examRun.done };
+    const out = { ...base, ...flags, showSubHeader: !flags.isHome, showTop: !(base.isPhone && flags.isHome), showBack: nav.length > 1 || ['part', 'chapter', 'lesson'].includes(top.s) };
+    out.overallPct = this.stats(parts.flatMap(p => p.qids)).pct;
+    const bookName = (p) => p ? p.title.replace(/^الجزء [^—]+— /, '').replace(/\s*\(.*$/, '') : '';
+    out.crumb = L ? bookName(P) + ' · ' + (C.num ? 'Chapter ' + C.num : C.name) : C ? bookName(P) : flags.isHome ? 'الصف الثاني الابتدائي' : '';
+    out.hasCrumb = !!out.crumb;
+    const titles = { compare: 'المقارنة', cheat: 'القواعد', parent: 'وليّ الأمر', exams: 'الامتحانات', exam: 'امتحان', result: 'النتيجة' };
+    out.headerTitle = (flags.isHome ? 'الرئيسية' : '') || titles[top.s] || (L ? L.title : C ? (C.num ? 'Chapter ' + C.num + ' — ' + C.name : C.name) : P ? P.title : '');
+    const srcList = [];
+    parts.forEach((p, pi) => {
+      if (p.badge) srcList.push({ badge: p.badge, title: p.title.replace(/^الجزء [^—]+— /, '').replace(/\s*\(.*$/, ''), emoji: p.emoji, ids: p.qids, open: () => this.push({ s: 'part', p: pi }), pi });
+      else p.chapters.forEach((c, ci) => srcList.push({ badge: c.badge, title: c.name, emoji: '📎', ids: c.qids, open: () => this.openChapter(pi, ci), pi, ci }));
+    });
+
+    if (flags.isHome) {
+      const o = this.stats(parts.flatMap(p => p.qids));
+      out.overall = { ...o, deg: Math.round(o.pct * 3.6), headline: o.d === 0 ? 'هيا نبدأ المذاكرة!' : o.pct < 50 ? 'بداية رائعة، استمري!' : o.pct < 100 ? 'اقتربتِ من النهاية!' : 'أنهيتِ كل شيء! 🎉' };
+      const lt = this.state.last; const lP = lt && parts[lt.p]; const lC = lP && lP.chapters[lt.c]; const lL = lC && lC.lessons[lt.l];
+      out.hasContinue = !!lL;
+      const fb = data.bookP >= 0 && parts[data.bookP].chapters[0];
+      out.cont = lL ? { kicker: 'تابعي من حيث توقفتِ', cta: 'متابعة', title: lL.title, emoji: lC.emoji, pct: this.stats(lL.qids).pct, open: () => this.openLesson(lt.p, lt.c, lt.l) }
+        : { kicker: 'ابدئي من هنا', cta: 'ابدئي', title: fb ? fb.lessons[0].title : '', emoji: fb ? fb.emoji : '📘', pct: 0, open: () => fb && this.openLesson(data.bookP, 0, 0) };
+      out.books = srcList.filter(s => s.badge && s.badge.startsWith('MOE')).map(s => { const B = BADGES[s.badge]; return { ...s, color: B.c, soft: B.soft, kind: B.kind, pct: this.stats(s.ids).pct }; });
+      const ext = srcList.filter(s => s.badge && s.badge.startsWith('EXT'));
+      const f = this.state.filter;
+      out.chips = ['ALL', ...Array.from(new Set(ext.map(s => s.badge)))].map(b => { const on = f === b; const B = BADGES[b] || { c: '#0f172a' };
+        return { label: b === 'ALL' ? 'الكل' : b, onClick: () => this.setState({ filter: b }), bg: on ? B.c : '#fff', fg: on ? '#fff' : B.c, border: on ? B.c : '#f3e3ec' }; });
+      out.extras = ext.filter(s => f === 'ALL' || s.badge === f).map(s => { const B = BADGES[s.badge]; return { ...s, color: B.c, soft: B.soft, kind: B.kind, pct: this.stats(s.ids).pct }; });
+      const bp = parts[data.bookP], ap = parts[data.assessP];
+      out.grid = bp ? bp.chapters.map((c, ci) => { const tw = ap ? ap.chapters.find(x => x.num === c.num) : null;
+        return { num: c.num, ar: this.arOf(c), emoji: c.emoji, color: CH[c.num], soft: CH[c.num] + '1a',
+          bookPct: this.stats(c.qids).pct, assessPct: tw ? this.stats(tw.qids).pct : 0, open: () => this.openChapter(data.bookP, ci) }; }) : [];
+    }
+
+    if (flags.isPart) {
+      const B = BADGES[P.badge] || BADGES['EXT-NOTES']; const isBook = P.badge === 'MOE-BOOK';
+      out.part = { title: P.title.replace(/^الجزء [^—]+— /, ''), emoji: P.emoji, color: B.c, soft: B.soft, pct: this.stats(P.qids).pct,
+        flow: isBook ? 'Point! → Example → Warm Up → Try → Exercise' : 'Class Performance → Homework → Weekly Assessment',
+        notes: parent ? P.notes.map(n => ({ segs: bsegs(n.segs) })) : [],
+        rows: P.chapters.map((c, ci) => { const st = this.stats(c.qids); const col = this.colorOf(c); const pg = c.num && data.pages[c.num];
+          return { name: c.name, ar: this.arOf(c), emoji: c.emoji, color: col, soft: col + '1a', kicker: c.num ? 'Chapter ' + c.num : 'Revision',
+            pages: pg ? (isBook ? pg.book : pg.assess).replace(/\s*\(.*$/, '') : c.pagesOwn, pct: st.pct, doneTxt: st.d + '/' + st.t,
+            open: () => this.openChapter(top.p, ci) }; }) };
+    }
+
+    if (flags.isChapter) {
+      const col = this.colorOf(C); const st = this.stats(C.qids); const pg = C.num && data.pages[C.num];
+      const isBook = P.badge === 'MOE-BOOK', isAss = P.badge === 'MOE-ASSESS';
+      const twinP = isBook ? data.assessP : isAss ? data.bookP : -1;
+      const twinC = twinP >= 0 && C.num ? parts[twinP].chapters.findIndex(x => x.num === C.num) : -1;
+      const X = [0, 62, 0, -62];
+      out.chap = { name: C.name, ar: this.arOf(C), emoji: C.emoji, color: col, soft: col + '1a', bookSh: isBook ? '0 1px 2px rgba(16,24,40,.1)' : 'none', assessSh: isAss ? '0 1px 2px rgba(16,24,40,.1)' : 'none', badge: C.badge, pct: st.pct,
+        kicker: C.num ? 'Chapter ' + C.num : 'Revision', pages: pg ? (isBook ? pg.book : pg.assess) : (C.pagesOwn || ''),
+        hasTwin: twinC >= 0,
+        bookBg: isBook ? '#fff' : 'transparent', bookFg: isBook ? '#7c3aed' : '#64748b',
+        assessBg: isAss ? '#fff' : 'transparent', assessFg: isAss ? '#db2777' : '#64748b',
+        goBook: () => { if (!isBook) this.replaceTop({ s: 'chapter', p: twinP, c: twinC }); },
+        goAssess: () => { if (!isAss) this.replaceTop({ s: 'chapter', p: twinP, c: twinC }); },
+        lessons: C.lessons.map((l, li) => { const s = this.stats(l.qids); const full = s.t > 0 && s.d === s.t; const x = X[li % 4];
+          const stars = s.pct >= 100 ? '★★★' : s.pct >= 60 ? '★★☆' : s.pct > 0 ? '★☆☆' : '☆☆☆';
+          return { title: l.title, pct: s.pct, meta: [l.pages, s.d + '/' + s.t].filter(Boolean).join(' · '), stars, x, hasDots: li > 0, dotX: (x + X[(li - 1) % 4]) / 2,
+            mark: full ? '✓' : String(li + 1), ring: s.d ? col : '#f3e3ec', fill: full ? col : '#fff', numFg: full ? '#fff' : s.d ? col : '#64748b',
+            shadow: full ? 'rgba(15,23,42,.18)' : '#f3e3ec', open: () => this.openLesson(top.p, top.c, li) }; }) };
+    }
+
+    if (flags.isLesson) {
+      const col = this.colorOf(C); const B = BADGES[C.badge] || BADGES['EXT-NOTES']; const st = this.stats(L.qids);
+      const secI = Math.min(top.sec || 0, Math.max(0, L.sections.length - 1));
+      const S = L.sections[secI] || { title: '', items: [], qids: [] };
+      const ex = this.explainFor(L);
+      const lkey = top.p + '|' + top.c + '|' + top.l;
+      const exOpen = this.state.exOpen[lkey] != null ? this.state.exOpen[lkey] : !!L.isBook;
+      const pageOpen = (this.state.pageOpen || {})[lkey] != null ? this.state.pageOpen[lkey] : true;
+      const showNote = (n) => n.type === 'warn' ? parent : !(ex && L.isBook);
+      const notes = [...(!P.badge ? P.notes : []), ...L.notes].filter(showNote).map(n => ({ isRule: n.type === 'rule', isWarn: n.type === 'warn', segs: bsegs(n.segs) }));
+      const items = S.items.map(it => {
+        if (it.label) return { isLabel: true, label: it.label, color: col };
+        if (it.note) return showNote(it.note) ? { isRule: it.note.type === 'rule', isWarn: it.note.type === 'warn', segs: bsegs(it.note.segs) } : {};
+        const hasA = it.q.some(s => s.a); const dn = !!this.state.done[it.id];
+        const rawQ = it.q.filter(s => !s.a).map(s => s.t).join('');
+        const scope = rawQ.includes('❌') ? ['خارج منهج الفصل الأول', '#fee2e2', '#b91c1c'] : rawQ.includes('⚠️') ? ['أصعب من المنهج · تدريب إضافي', '#fef3c7', '#92400e'] : rawQ.includes('✅') ? ['ضمن المنهج', '#d1fae5', '#047857'] : rawQ.includes('🔁') ? ['منقول من كتب الوزارة', '#ede9fe', '#7c3aed'] : null;
+        const strip = (t) => t.replace(/❌|✅|⚠️|⚠|🔁|\uFE0F/g, '');
+        const qNo = (rawQ.match(/^\s*(\d+)\)/) || [])[1] || '';
+        const answerOnly = hasA && strip(rawQ).replace(/^\s*\(?[\d①-⑳]+\)?/, '').replace(/[\s.,:;—\-–()]/g, '') === '';
+        const rev = parent || !!this.state.reveal[it.id] || !hasA;
+        const chk = this.state.checked[it.id];
+        let k = -1; const inputIdx = [];
+        const sg = it.q.map(s => {
+          if (!s.a) return { t: strip(s.t), plain: true };
+          k++;
+          if (rev || chk === 'ok') return { t: s.t, shown: true };
+          if (s.t.trim().length <= 18) {
+            const key = it.id + '#' + k; const kk = k; inputIdx.push(kk);
+            const val = this.state.ans[key] || '';
+            const bad = chk && chk.bad && chk.bad.includes(kk);
+            return { isInput: true, val, w: Math.max(70, Math.min(230, s.t.trim().length * 13 + 30)),
+              border: bad ? '#f87171' : val ? '#db2777' : '#fbcfe8', bg: bad ? '#fef2f2' : '#fff', fg: bad ? '#b91c1c' : '#3b0a2a',
+              onChange: (e) => { const v = e.target.value; this.setState(s2 => { const c2 = { ...s2.checked }; delete c2[it.id]; return { ans: { ...s2.ans, [key]: v }, checked: c2 }; }); } };
+          }
+          return { t: s.t, hidden: true, w: Math.max(36, Math.min(220, s.t.length * 10)) };
+        });
+        const check = () => {
+          const ansSegs = it.q.filter(s => s.a); const bad = [];
+          inputIdx.forEach(kk => { const want = ansSegs[kk].t; const got = this.state.ans[it.id + '#' + kk] || '';
+            const okNum = /^\d+$/.test(norm(got)) && (want.match(/^\s*([\d,]+)/) || [])[1] && norm(want.match(/^\s*([\d,]+)/)[1]) === norm(got);
+            if (!(norm(got) === norm(want) || okNum)) bad.push(kk); });
+          if (bad.length) this.setState(s2 => ({ checked: { ...s2.checked, [it.id]: { bad } } }));
+          else { this.setState(s2 => ({ checked: { ...s2.checked, [it.id]: 'ok' } })); this.showToast('إجابة صحيحة! ⭐'); if (!dn) this.markDone(it.id, true, S, L); }
+        };
+        const obj = { isQ: true, num: it.n, answerOnly, qNo: qNo ? qNo + ' ' : '', hasScope: !!scope, scopeLabel: scope ? scope[0] : '', scopeBg: scope ? scope[1] : '', scopeFg: scope ? scope[2] : '', color: col, soft: col + '14', badge: C.badge, badgeColor: B.c, badgeSoft: B.soft, segs: sg,
+          canCheck: inputIdx.length > 0, check, isBad: !!(chk && chk.bad), isOk: chk === 'ok',
+          showReveal: hasA && !parent && chk !== 'ok', revealLabel: this.state.reveal[it.id] ? 'إخفاء الإجابة' : 'أظهري الإجابة',
+          toggleReveal: () => this.setState(s2 => { const m = { ...s2.reveal }; if (m[it.id]) delete m[it.id]; else m[it.id] = 1; return { reveal: m }; }),
+          explain: () => { const tt = this.tutorForItem(it, L, C); this.openTutor(tt, !tt.board && !!window.claude); },
+          doneBg: dn ? '#fdf2f8' : '#fff', doneFg: dn ? '#be185d' : '#b4a0ad', doneBorder: dn ? '#f9a8d4' : '#f3e3ec',
+          boxBg: dn ? '#db2777' : 'transparent', tick: dn ? '✓' : '', cardBorder: chk === 'ok' || dn ? '#f9a8d4' : chk && chk.bad ? '#fecaca' : '#f3e3ec',
+          toggleDone: () => this.markDone(it.id, !dn, S, L) };
+        const rows = []; let cur = { label: '', segs: [] }; let lead = null;
+        const pushRow = () => { if (cur.segs.length || cur.label) rows.push(cur); };
+        sg.forEach((s, si) => {
+          if (!s.plain) { cur.segs.push(s); return; }
+          let t = s.t;
+          if (si === 0) { const m = t.match(/^\s*\(?(\d+)\)\s*/); if (m) { lead = m[1]; t = t.slice(m[0].length); } }
+          t.split(/(\s*(?<![(\w])(?:[a-f]\)|[①-⑳])\s)/).forEach((pt, pi) => {
+            if (pi % 2 === 1) { pushRow(); cur = { label: pt.trim().replace(')', ''), segs: [] }; return; }
+            pt.split(/\s—\s/).forEach((piece, k2) => { if (k2 > 0) { pushRow(); cur = { label: '', segs: [] }; } if (piece.trim()) cur.segs.push({ t: piece.trim(), ptok: true, toks: this.toks(piece.trim()) }); });
+          });
+        });
+        pushRow();
+        const multi = rows.length > 1;
+        obj.rows = rows.map(r => ({ ...r, hasLabel: !!r.label, pad: multi ? '8px 10px' : '0', bg: multi ? '#fdf8fb' : 'transparent' }));
+        obj.qNum = lead || it.n;
+        const gr = this.graphOf(it.q);
+        if (gr) { obj.isQ = false; obj.isGraph = true; obj.groups = this.graphVals(gr, sg, col);
+          obj.graphHint = inputIdx.length ? 'عُدّي الدوائر في كل عمود من الرسم البياني، ثم اكتبي العدد في الجدول.' : 'هذا هو الرسم البياني والجدول (محلول في الكتاب).'; }
+        return obj;
+      });
+      let staticGroups = null;
+      if (C.num === 1 && !S.items.some(x => x.q && this.graphOf(x.q))) {
+        for (const n of [...L.notes, ...S.items.filter(x => x.note).map(x => x.note)]) { const g = this.graphOf(n.segs); if (g) { staticGroups = this.graphVals(g, null, col); break; } }
+        if (!staticGroups) for (const s2 of L.sections) { const hit = s2.items.find(x => x.q && this.graphOf(x.q)); if (hit) { staticGroups = this.graphVals(this.graphOf(hit.q), null, col); break; } }
+      }
+      let next = null, nextLabel = '';
+      if (secI < L.sections.length - 1) { next = () => this.replaceTop({ ...top, sec: secI + 1 }); nextLabel = 'التالي: ' + L.sections[secI + 1].short; }
+      else if (top.l < C.lessons.length - 1) { next = () => this.openLesson(top.p, top.c, top.l + 1, true); nextLabel = 'الدرس التالي'; }
+      out.les = { title: L.implicit ? (C.sub || L.title) : L.title, chName: C.num ? 'Chapter ' + C.num + ' — ' + C.name : C.name, emoji: C.emoji,
+        pages: L.pages, color: col, soft: col + '14', badge: C.badge, badgeColor: B.c, badgeSoft: B.soft, exDivider: exOpen ? '#f8eaf2' : 'transparent', pct: st.pct, doneTxt: st.d + '/' + st.t,
+        hasExplain: !!ex, exOpen, exChevron: exOpen ? '−' : '+',
+        exLabel: L.isBook ? 'شرح الدرس' : 'تذكير بالدرس ' + (L.code || ''),
+        exIdea: ex ? iso(ex.idea) : '', exSteps: ex ? ex.steps.map((t, i) => ({ n: i + 1, t: iso(t) })) : [],
+        hasTip: !!(ex && ex.tip), exTip: ex && ex.tip ? iso(ex.tip) : '', exEx: ex ? ex.ex : '',
+        toggleExplain: () => this.setState(s2 => ({ exOpen: { ...s2.exOpen, [lkey]: !exOpen } })),
+        listen: () => this.openTutor({ title: L.title, q: L.title, color: col, board: null, ctx: null,
+          steps: ex ? [{ text: 'أهلًا يا حنين. درسنا اليوم عن: ' + ex.idea }, ...ex.steps.map((t, i) => ({ text: ORD[i] + '، ' + t })), ...(ex.tip ? [{ text: 'وانتبهي جيدًا: ' + ex.tip }] : []), { text: 'لنرَ مثالًا على السبّورة.', show: ex.ex }, { text: 'هل فهمتِ؟ الآن جرّبي حلّ الأسئلة بنفسك، وأنا معك إذا احتجتِ.' }] : [] }),
+        notes, items, hasTabs: L.sections.length > 1,
+        pageRef: (P.badge === 'MOE-BOOK' ? 'افتحي كتاب المدرسة' : P.badge === 'MOE-ASSESS' ? 'افتحي كتاب التقييمات' : 'افتحي ورقة ' + C.name) + (((S.title.match(/p\. ([^)]+)/) || [])[1] || L.pages.replace('p. ', '')) ? ' · صفحة ' + ((S.title.match(/p\. ([^)]+)/) || [])[1] || L.pages.replace('p. ', '')) : ''),
+        pageHint: 'الأسئلة والصور موجودة في الكتاب، وهنا تكتبين الإجابة وتتحققين منها.' + (pageOpen ? '' : ' اضغطي لعرض صورة الصفحة.'),
+        pageChevron: pageOpen ? '−' : '+',
+        togglePage: () => this.setState(s2 => ({ pageOpen: { ...(s2.pageOpen || {}), [lkey]: !pageOpen } })),
+        slots: L.sections.map((s, i) => ({ id: 'page-p' + top.p + '-c' + top.c + '-l' + top.l + '-s' + i, display: pageOpen && i === secI ? 'block' : 'none',
+          ph: parent ? 'اسحب صورة صفحة الكتاب هنا (' + (s.short || 'الأسئلة') + ')' : 'لم تُضَف صورة الصفحة بعد. يضيفها وليّ الأمر من هنا.' })), hasStaticGraph: !!staticGroups, staticGroups: staticGroups || [],
+        tabs: L.sections.map((s, i) => { const a = i === secI; const ss = this.stats(s.qids);
+          return { label: s.short, count: ss.t ? ss.d + '/' + ss.t : '', bg: a ? '#fff' : 'transparent', fg: a ? col : '#475569', sh: a ? '0 1px 2px rgba(16,24,40,.12)' : 'none',
+            onClick: () => this.replaceTop({ ...top, sec: i }) }; }),
+        hasSecTitle: !!S.title && S.title !== S.short, secTitle: S.title, hasNext: !!next, next, nextLabel };
+    }
+
+    if (flags.isExams || flags.isExam || flags.isResult) {
+      const X = this.exg; const res = this.state.examRes;
+      const srcChip = (q) => q.src === 'book' ? { src: 'على نمط كتاب المدرسة', srcBg: '#ede9fe', srcFg: '#6d28d9' } : { src: 'على نمط كتاب التقييمات', srcBg: '#fce7f3', srcFg: '#be185d' };
+      if (flags.isExams) {
+        const f2 = this.state.exFilter; const done = X.EXAMS.filter(e => res[e.id]);
+        const avg = done.length ? Math.round(done.reduce((a, e) => a + res[e.id].best, 0) / done.length) : 0;
+        out.exl = { stats: [{ v: X.EXAMS.length, l: 'امتحانًا', color: '#7c3aed' }, { v: done.length, l: 'أنهيتِها', color: '#db2777' }, { v: avg + '%', l: 'متوسط أفضل نتيجة', color: '#0f766e' }],
+          filters: [{ key: 'all', label: 'الكل' }, ...X.SCOPES].map(s => { const on = f2 === s.key; return { label: s.label, n: s.key === 'all' ? X.EXAMS.length : X.EXAMS.filter(e => e.scope === s.key).length, onClick: () => this.setState({ exFilter: s.key }), bg: on ? '#db2777' : '#fff', fg: on ? '#fff' : '#6b4a5e', border: on ? '#db2777' : '#f3e3ec' }; }),
+          items: X.EXAMS.filter(e => f2 === 'all' || e.scope === f2).map(e => { const r = res[e.id]; const col = e.scope === 'unit' ? CH[e.chapters[0]] : e.scope === 'final' ? '#7c3aed' : '#db2777';
+            const chs = e.chapters.length > 1 ? 'Chapters ' + e.chapters[0] + '–' + e.chapters[e.chapters.length - 1] : 'Chapter ' + e.chapters[0];
+            const st = !r ? ['لم تبدئي بعد', '#f9eef4', '#8a6a7d'] : r.best >= 80 ? ['أفضل نتيجة ' + r.best + '%', '#ecfdf5', '#047857'] : ['أفضل نتيجة ' + r.best + '%', '#fff7ed', '#b45309'];
+            return { no: e.no, title: this.examTitle(e), meta: chs + ' · ' + e.count + ' سؤالًا · ' + e.minutes + ' دقيقة', color: col, soft: col + '1a',
+              status: st[0], stBg: st[1], stFg: st[2], stars: r ? (r.best >= 90 ? '★★★' : r.best >= 70 ? '★★☆' : r.best >= 40 ? '★☆☆' : '☆☆☆') : '',
+              cta: r ? 'نموذج جديد' : 'ابدئي الامتحان', btnBg: r ? '#fdf2f8' : '#db2777', btnFg: r ? '#be185d' : '#fff', start: () => this.startExam(e) }; }) };
+      }
+      const run = this.state.examRun; const def = run && X.EXAMS.find(e => e.id === run.id);
+      if (flags.isExam && def) {
+        const q = run.qs[run.i]; const col = CH[q.ch]; const left = Math.max(0, def.minutes * 60 - Math.floor((this.state.now - run.start) / 1000));
+        const setAns = (key, v) => this.setState(s => ({ examRun: { ...s.examRun, ans: { ...s.examRun.ans, [key]: v } }, confirmSubmit: false }));
+        let k = -1;
+        const segsV = q.segs.map(s => { if (!s.a) return { t: s.t, ptok: true, toks: this.toks(s.t) }; k++; const key = run.i + '#' + k; const v = run.ans[key] || '';
+          if (q.choices) return { slot: true, t: v || '?', border: v ? '#db2777' : '#f9a8d4', bg: v ? '#fdf2f8' : '#fff' };
+          return { isInput: true, val: v, w: Math.max(80, Math.min(200, s.t.length * 14 + 34)), border: v ? '#db2777' : '#fbcfe8', onChange: (e) => setAns(key, e.target.value) }; });
+        const answered = (qi) => { const qq = run.qs[qi]; let kk = -1, all = true; qq.segs.forEach(s => { if (s.a) { kk++; if (!(run.ans[qi + '#' + kk] || '').trim()) all = false; } }); return all; };
+        const nAns = run.qs.filter((_, qi) => answered(qi)).length;
+        const go = (i) => this.setState(s => ({ examRun: { ...s.examRun, i }, confirmSubmit: false }));
+        out.ex = { title: this.examTitle(def), scope: def.chapters.length > 1 ? 'Chapters ' + def.chapters[0] + '–' + def.chapters[def.chapters.length - 1] : 'Chapter ' + def.chapters[0],
+          pos: run.i + 1, n: run.qs.length, pct: Math.round(nAns / run.qs.length * 100),
+          timer: Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0'), timerBg: left < 120 ? '#fef2f2' : '#fdf2f8', timerFg: left < 120 ? '#b91c1c' : '#9d174d',
+          dots: run.qs.map((_, qi) => { const cur = qi === run.i, a2 = answered(qi); return { n: qi + 1, onClick: () => go(qi), bg: cur ? '#db2777' : a2 ? '#fce7f3' : '#fff', fg: cur ? '#fff' : a2 ? '#be185d' : '#8a6a7d', border: cur ? '#db2777' : a2 ? '#f9a8d4' : '#f3e3ec' }; }),
+          q: { ...srcChip(q), ch: 'Chapter ' + q.ch + ' · ' + this.content.CH_AR[q.ch], color: col, soft: col + '1a', segs: segsV,
+            hasGraph: !!q.graph, groups: q.graph ? this.graphVals(q.graph, null, col) : [],
+            hasChoices: !!q.choices, choices: (q.choices || []).map(c => { const on = run.ans[run.i + '#0'] === c; return { label: c, onClick: () => setAns(run.i + '#0', c), bg: on ? '#db2777' : '#fff', fg: on ? '#fff' : '#3b0a2a', border: on ? '#db2777' : '#f3e3ec' }; }) },
+          hasPrev: run.i > 0, prev: () => go(run.i - 1), hasNext: run.i < run.qs.length - 1, next: () => go(run.i + 1),
+          subLabel: this.state.confirmSubmit ? (nAns < run.qs.length ? 'باقي ' + (run.qs.length - nAns) + ' بلا إجابة. اضغطي للتأكيد' : 'اضغطي مرة أخرى للتسليم') : 'تسليم الامتحان',
+          subBg: this.state.confirmSubmit ? '#9d174d' : '#fff', subFg: this.state.confirmSubmit ? '#fff' : '#9d174d', subBorder: this.state.confirmSubmit ? '#9d174d' : '#f9a8d4',
+          submit: () => { if (this.state.confirmSubmit) this.submitExam(); else this.setState({ confirmSubmit: true }); } };
+      }
+      if (flags.isResult && def) {
+        const R = run.result; const p = R.pct; const col = p >= 80 ? '#059669' : p >= 50 ? '#db2777' : '#e11d48';
+        const bookC = (ch) => { const bp = parts[data.bookP]; return (bp && bp.chapters.find(c => c.num === ch)) || { num: ch, name: '', badge: 'MOE-BOOK' }; };
+        out.res = { pct: p, deg: Math.round(p * 3.6), color: col, stars: p >= 90 ? '★★★' : p >= 70 ? '★★☆' : p >= 40 ? '★☆☆' : '☆☆☆',
+          msg: p >= 90 ? 'ممتاز يا حنين! 🌟' : p >= 70 ? 'أحسنتِ يا حنين!' : p >= 50 ? 'جيد، ويمكنكِ أفضل!' : 'لا بأس، لنتدرّب أكثر',
+          sub: 'أجبتِ إجابة صحيحة عن ' + R.correct + ' من ' + R.total + ' سؤالًا في ' + Math.floor(R.secs / 60) + ' دقيقة و' + (R.secs % 60) + ' ثانية.',
+          retry: () => this.startExam(def, true), backList: () => this.setState({ nav: [{ s: 'exams' }] }),
+          items: run.qs.map((q, qi) => { const g = R.per[qi];
+            return { n: qi + 1, verdict: g.ok ? 'إجابة صحيحة' : 'تحتاج إلى مراجعة', ch: 'Chapter ' + q.ch, wrong: !g.ok, mine: g.mine,
+              dot: g.ok ? '#059669' : '#e11d48', fg: g.ok ? '#047857' : '#be123c', border: g.ok ? '#d1fae5' : '#fecdd3',
+              segs: q.segs.map(s => s.a ? { t: s.t, shown: true } : { t: s.t, plain: true }),
+              explain: () => { const tt = this.tutorForItem({ q: q.segs, id: 'ex' }, { title: 'Exam', code: q.code, isBook: true }, bookC(q.ch)); this.openTutor(tt, !tt.board && !!window.claude); } }; }) };
+      }
+    }
+    if (flags.isCompare) {
+      const bp = parts[data.bookP];
+      out.cmp = {
+        rows: ct.COMPARE.map(r => ({ label: r[0], book: iso(r[1]), assess: iso(r[2]) })),
+        map: Object.keys(data.pages).map(k => { const n = +k; const pg = data.pages[n]; const ci = bp ? bp.chapters.findIndex(c => c.num === n) : -1;
+          return { ar: ct.CH_AR[n] || pg.name, emoji: pg.emoji, soft: (CH[n] || '#64748b') + '1a', book: pg.book, assess: pg.assess,
+            open: () => { if (ci >= 0) this.openChapter(data.bookP, ci); } }; }),
+        diffs: ct.DIFFS.map(d => bsegs(segs(d))) };
+    }
+    if (flags.isCheat) out.cheat = ct.CHEAT.map((s, i) => ({ n: i + 1, segs: bsegs(segs(s)),
+      speak: () => this.openTutor({ title: 'قاعدة', q: 'القاعدة ' + (i + 1), color: '#7c3aed', board: null, ctx: null, steps: [{ text: 'قاعدة مهمة يا حنين:' }, { text: plain(s) }, { text: 'احفظيها جيدًا، فهي تساعدك في الامتحان.' }] }) }));
+
+    if (flags.isParent) {
+      const vs = this.arVoices || []; const rt = this.voiceRate || 0.8;
+      const pill = (on) => on ? { bg: '#db2777', fg: '#fff', border: '#db2777' } : { bg: '#fff', fg: '#6b4a5e', border: '#f3e3ec' };
+      out.vo = { none: !vs.length,
+        voices: vs.slice(0, 8).map(v => ({ label: v.name.replace(/\s*\(.*\)/, '') + ' · ' + v.lang, ...pill(this.arVoice && v.name === this.arVoice.name), onClick: () => { this.setVoice(v.name); this.testVoice(); } })),
+        rates: [['بطيئة', 0.7], ['متوسطة', 0.8], ['عادية', 0.95]].map(([l, r]) => ({ label: l, ...pill(Math.abs(rt - r) < 0.01), onClick: () => this.setVoice(undefined, r) })),
+        test: () => this.testVoice(), phLabel: this.phonicsOn !== false ? 'الفونيكس للكلمات الإنجليزية في الشرح: مفعّل' : 'الفونيكس للكلمات الإنجليزية في الشرح: متوقف', phBg: this.phonicsOn !== false ? '#db2777' : '#fff', phFg: this.phonicsOn !== false ? '#fff' : '#6b4a5e',
+        phToggle: () => { this.phonicsOn = this.phonicsOn === false; this.setVoice(); } };
+      const mk = (on, title, desc, m) => ({ title, desc, border: on ? '#9d174d' : '#f3e3ec', dotBorder: on ? '#9d174d' : '#cbd5e1', dot: on ? '#9d174d' : 'transparent', onClick: () => this.setState({ mode: m }) });
+      out.par = {
+        modes: [mk(!parent, 'وضع حنين', 'الإجابات مخفية. تكتب حنين إجابتها في الفراغ وتضغط «تحقّقي»، وإذا لم تفهم المسألة تضغط «اشرحي لي» فيشرحها الأستاذ يوسف بالصوت خطوة بخطوة كما في الفصل.', 'kid'),
+          mk(parent, 'وضع وليّ الأمر', 'تظهر جميع الإجابات باللون الأخضر، وتظهر ملاحظات الأخطاء المطبعية وأخطاء الترجمة في الكتب ⚠️، لمراجعة حل حنين وتصحيحه بسرعة.', 'parent')],
+        progress: srcList.map(s => { const st = this.stats(s.ids); const B = BADGES[s.badge] || BADGES['EXT-NOTES']; return { title: s.title, pct: st.pct, txt: st.d + '/' + st.t, color: B.c }; }),
+        resetLabel: this.state.confirmReset ? 'اضغطي مرة أخرى لتأكيد مسح التقدّم' : 'مسح التقدّم والبدء من جديد',
+        resetBg: this.state.confirmReset ? '#fef2f2' : '#fff',
+        reset: () => { if (this.state.confirmReset) this.setState({ done: {}, checked: {}, ans: {}, reveal: {}, confirmReset: false, last: null }); else { this.setState({ confirmReset: true }); setTimeout(() => this.setState({ confirmReset: false }), 4000); } } };
+      const opts = srcList.map(s => ({ label: s.emoji + ' ' + s.title, p: s.pi, c: s.ci }));
+      const sel = opts[Math.min(this.state.printSrc, opts.length - 1)] || opts[0];
+      const ans = this.state.printAns;
+      const rows = []; let count = 0;
+      const sp = parts[sel.p]; const chs = sel.c != null ? [sp.chapters[sel.c]] : sp.chapters;
+      rows.push({ isH1: true, text: 'Haneen Math · ' + (sel.c != null ? chs[0].name : sp.title) + (ans ? ' — Answer Key' : '') });
+      chs.forEach(c => {
+        const col = this.colorOf(c);
+        if (sel.c == null) rows.push({ isH1: true, text: c.emoji + ' ' + (c.num ? 'Chapter ' + c.num + ' — ' : '') + c.name });
+        c.lessons.forEach(l => {
+          if (!l.implicit) rows.push({ isH2: true, color: col, text: l.title + (l.pages ? '  (' + l.pages + ')' : '') });
+          l.sections.forEach(s => {
+            if (s.title) rows.push({ isH3: true, text: s.title });
+            s.items.forEach(it => {
+              if (it.label) rows.push({ isH3: true, text: it.label });
+              else if (it.q) { count++; rows.push({ isItem: true, segs: it.q.map(x => ({ t: x.t, plain: !x.a, shown: x.a && ans, hidden: x.a && !ans, w: Math.max(24, x.t.length * 8) })) }); }
+            });
+          });
+        });
+      });
+      const on = (b) => b ? { bg: '#9d174d', fg: '#fff', border: '#9d174d' } : { bg: '#fff', fg: '#334155', border: '#f3e3ec' };
+      out.prn = { rows, preview: rows.slice(0, 22), count,
+        sources: opts.map((o, i) => ({ label: o.label, ...on(o === sel), onClick: () => this.setState({ printSrc: i }) })),
+        qBg: ans ? 'transparent' : '#fff', qFg: ans ? '#64748b' : '#9d174d', aBg: ans ? '#fff' : 'transparent', aFg: ans ? '#047857' : '#64748b',
+        setQ: () => this.setState({ printAns: false }), setA: () => this.setState({ printAns: true }), doPrint: () => window.print() };
+    }
+    return out;
+  }
+}
+
+</script>
+</body>
+</html>
