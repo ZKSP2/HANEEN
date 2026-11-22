@@ -773,7 +773,9 @@ class Component extends DCLogic {
         this.arVoice = this.arVoices.find(x => x.name === this.voicePref) || this.arVoices[0] || null;
         const es = (x) => (/natural|neural|online|premium|enhanced/i.test(x.name) ? 4 : 0) + (/google/i.test(x.name) ? 2 : 0) + (/^en[-_]US/i.test(x.lang) ? 2 : /^en[-_]GB/i.test(x.lang) ? 1 : 0) + (/samantha|aria|jenny|zira|female/i.test(x.name) ? 1 : 0);
         this.enVoice = v.filter(x => /^en/i.test(x.lang)).sort((p, q) => es(q) - es(p))[0] || null; this.forceUpdate(); };
-      speechSynthesis.onvoiceschanged = load; load();
+      speechSynthesis.onvoiceschanged = load; load(); setTimeout(load, 600); setTimeout(load, 2000);
+      const unlock = () => { try { speechSynthesis.resume(); const z = new SpeechSynthesisUtterance(' '); z.volume = 0; speechSynthesis.speak(z); } catch (e) {} window.removeEventListener('pointerdown', unlock, true); window.removeEventListener('touchend', unlock, true); };
+      window.addEventListener('pointerdown', unlock, true); window.addEventListener('touchend', unlock, true);
     }
   }
   componentWillUnmount() { this.stopSpeech(); clearInterval(this._tick); window.removeEventListener('resize', this._onR); }
@@ -967,6 +969,7 @@ class Component extends DCLogic {
       });
     });
     if (!q.length) { onDone && onDone(); return; }
+    try { speechSynthesis.resume(); } catch (e) {}
     q.forEach((it, i) => {
       const u = new SpeechSynthesisUtterance(it.t);
       const v = it.en ? (this.enVoice || null) : this.arVoice;
@@ -978,7 +981,7 @@ class Component extends DCLogic {
     });
   }
   testVoice() {
-    if (!window.speechSynthesis || !this.arVoice) return;
+    if (!window.speechSynthesis) return;
     speechSynthesis.cancel();
     this.speakRuns('أهلًا يا حنين، أنا الأستاذ يوسف. هيا نحلّ معًا: 35 + 27 = 62. ولنقرأ كلمة: pencils.');
   }
@@ -991,7 +994,7 @@ class Component extends DCLogic {
     this.setState(s => ({ tutor: s.tutor && { ...s.tutor, i, playing: true } }));
     const step = tu.steps[i];
     const advance = () => { if (this._tok !== token) return; this._gapT = setTimeout(() => { if (this._tok === token && this.state.tutor && this.state.tutor.playing) this.speakStep(i + 1); }, step.pause || 650); };
-    if (window.speechSynthesis && this.arVoice) {
+    if (window.speechSynthesis) {
       this.speakRuns(step.text, advance);
     } else this._stepT = setTimeout(advance, 2400 + step.text.length * 50);
   }
@@ -1257,7 +1260,7 @@ class Component extends DCLogic {
             dotBg: cur ? '#ec4899' : past ? '#d1fae5' : '#f9eef4', dotFg: cur ? '#fff' : past ? '#047857' : '#64748b', onClick: () => this.speakStep(i) }; }),
         playing: tu.playing, paused: !tu.playing,
         status: tu.loading ? 'يحضّر الشرح…' : (tu.playing ? 'يشرح الآن' : 'متوقّف') + ' · الخطوة ' + (tu.i + 1) + ' من ' + total,
-        noVoice: !this.arVoice, canAI: !!window.claude && !!tu.ctx && !tu.loading,
+        noVoice: !window.speechSynthesis, canAI: !!window.claude && !!tu.ctx && !tu.loading,
         aiLabel: tu.ai ? 'اشرح لي بطريقة أخرى' : 'اشرح لي بطريقة مختلفة',
         playPause: () => { if (tu.loading) return; if (tu.playing) { this._tok++; this.stopSpeech(); this.setState(s => ({ tutor: { ...s.tutor, playing: false } })); } else this.speakStep(tu.i >= total - 1 ? 0 : tu.i); },
         prev: () => this.speakStep(Math.max(0, tu.i - 1)), next: () => this.speakStep(Math.min(total - 1, tu.i + 1)), replay: () => this.speakStep(0),
