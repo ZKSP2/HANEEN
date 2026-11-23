@@ -151,6 +151,16 @@
     '.hqx-mf span{position:absolute;top:8px;right:10px;background:rgba(154,52,18,.85);color:#fff;font-size:12px;font-weight:900;padding:2px 10px;border-radius:999px}' +
     '.hqx-mapbtn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;font:900 14px "Baloo Bhaijaan 2",sans-serif;box-shadow:0 8px 16px -8px #ea580c}' +
     '.hqx-mapbtn svg{width:16px;height:16px}' +
+    '.hqx-mp{width:100%;max-width:1400px;box-sizing:border-box;margin:0 auto 16px;padding:14px 16px;border-radius:18px;background:linear-gradient(140deg,#ecfdf5,#fff 80%);border:1.5px solid #a7f3d0;box-shadow:0 14px 30px -24px #047857}' +
+    '.hqx-mp-t b{display:block;font-size:16px;font-weight:900;color:#065f46}.hqx-mp-t small{font-size:12px;font-weight:700;color:#047857}' +
+    '.hqx-mp-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}' +
+    '.hqx-mp-p,.hqx-mp-b{all:unset;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;color:#fff;background:linear-gradient(135deg,#10b981,#047857)}' +
+    '.hqx-mp-p{width:48px;height:48px;box-shadow:0 10px 18px -8px #047857}.hqx-mp-p svg{width:22px;height:22px}.hqx-mp-p.on{background:linear-gradient(135deg,#f43f5e,#be123c)}' +
+    '.hqx-mp-b{width:36px;height:36px;font-size:24px;font-weight:900;line-height:1;background:#d1fae5;color:#065f46}' +
+    '.hqx-mp-pos{font-weight:900;color:#065f46;min-width:110px}' +
+    '.hqx-mp-rs{display:inline-flex;gap:4px;background:#d1fae5;border-radius:999px;padding:3px}' +
+    '.hqx-mp-r{all:unset;cursor:pointer;padding:5px 12px;border-radius:999px;font-size:13px;font-weight:900;color:#065f46}.hqx-mp-r.on{background:#047857;color:#fff}' +
+    '.hqx-mp-j{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:900;color:#065f46}.hqx-mp-j input{width:64px;padding:6px 8px;border-radius:10px;border:1.5px solid #a7f3d0;font:inherit;text-align:center}' +
     '@media (max-width:520px){.hqx-cards{grid-template-columns:1fr}.hqx-ay{font-size:21px}.hqx-gt{font-size:22px}.hqx-sn{min-width:72px}}';
   var I = {
     close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
@@ -163,7 +173,7 @@
     book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-2.5-2-6-2-8.5-1v14c2.5-1 6-1 8.5 1 2.5-2 6-2 8.5-1V5c-2.5-1-6-1-8.5 1z"/><path d="M12 6v14"/></svg>'
   };
   var audio = null, playing = null;
-  function stopAudio() { if (audio) { try { audio.pause(); } catch (e) {} } if (playing) { playing.classList.remove('on'); playing.innerHTML = I.play; } playing = null; }
+  function stopAudio() { if (mp && mp.on) mpStop(); if (audio) { try { audio.pause(); } catch (e) {} } if (playing) { playing.classList.remove('on'); playing.innerHTML = I.play; } playing = null; }
   function playAyah(btn, s, a) {
     if (playing === btn) { stopAudio(); return; }
     stopAudio();
@@ -438,6 +448,7 @@
   function mmImg(s, k) { return base + 'maps/' + ('00' + s).slice(-3) + '-' + ('0' + k).slice(-2) + '.webp'; }
   var base = new URL('./', location.href).href;
   function renderMm() {
+    stopAudio();
     var o = ov.mm; o.setHead('الخرائط الذهنية', 'خريطة لكل سورة تساعد على الحفظ والفهم', false); o._mode = 'list';
     var w = o._w; w.innerHTML = '';
     var done = {};
@@ -456,11 +467,82 @@
     });
     o._b.scrollTop = 0;
   }
+  // ---- Husary recitation of the surah, played ayah by ayah above its mind map ----
+  var AYAHS = { 1: 7, 2: 286, 3: 200, 51: 60, 52: 49, 53: 62, 54: 55, 55: 78, 56: 96, 57: 29, 58: 22, 59: 24, 60: 13, 61: 14, 62: 11, 63: 11, 64: 18, 65: 12, 66: 12, 67: 30, 68: 52, 69: 52, 70: 44, 71: 28, 72: 28, 73: 20, 74: 56, 75: 40, 76: 31, 77: 50, 78: 40, 79: 46, 80: 42, 81: 29, 82: 19, 83: 36, 84: 25, 85: 22, 86: 17, 87: 19, 88: 26, 89: 30, 90: 20, 91: 15, 92: 21, 93: 11, 94: 8, 95: 8, 96: 19, 97: 5, 98: 8, 99: 8, 100: 11, 101: 11, 102: 8, 103: 3, 104: 9, 105: 5, 106: 4, 107: 7, 108: 3, 109: 6, 110: 3, 111: 5, 112: 4, 113: 5, 114: 6 };
+  var MMR = [['Husary_128kbps', 'مرتّل'], ['Husary_Muallim_128kbps', 'المعلّم']];
+  var mp = { audio: null, s: 0, a: 1, on: false, r: 0, ui: null, basm: false };
+  function mpStop() { mp.on = false; if (mp.audio) { try { mp.audio.pause(); } catch (e) {} } mpDraw(); }
+  function mpSrc(s, a, r) { return 'https://everyayah.com/data/' + MMR[r][0] + '/' + pad(s) + pad(a) + '.mp3'; }
+  function mpPlay() {
+    try { var app = document.querySelector('audio'); if (app && !app.paused) app.pause(); } catch (e) {}
+    if (!mp.audio) { mp.audio = new Audio(); mp.audio.preload = 'auto'; }
+    var au = mp.audio, s = mp.s, a = mp.a;
+    // the basmala is recited before ayah 1 of every surah except al-Fatiha (it is its ayah 1) and at-Tawba
+    var src = mp.basm ? mpSrc(1, 1, mp.r) : mpSrc(s, a, mp.r), tried64 = false;
+    au.onerror = function () {
+      if (!tried64 && mp.on) { tried64 = true; au.src = src.replace('_128kbps', '_64kbps'); au.play().catch(function () {}); }
+      else mpStop();
+    };
+    au.onended = function () {
+      if (!mp.on) return;
+      if (mp.basm) { mp.basm = false; mpPlay(); return; }
+      if (mp.a < AYAHS[mp.s]) { mp.a++; mpPlay(); } else { mp.a = 1; mpStop(); }
+    };
+    au.src = src; mp.on = true; mpDraw();
+    var p = au.play(); if (p && p.catch) p.catch(function () { mpStop(); });
+  }
+  function mpGo(a) {
+    var n = AYAHS[mp.s] || 1; mp.a = Math.max(1, Math.min(n, a)); mp.basm = false;
+    if (mp.on) mpPlay(); else mpDraw();
+  }
+  function mpDraw() {
+    var u = mp.ui; if (!u) return;
+    u.play.innerHTML = mp.on ? I.stop : I.play; u.play.classList.toggle('on', mp.on);
+    u.pos.textContent = mp.basm ? 'البسملة' : 'الآية ' + ar(mp.a) + ' من ' + ar(AYAHS[mp.s] || 0);
+    u.r.forEach(function (b, i) { b.classList.toggle('on', i === mp.r); });
+  }
+  function mpBar(s) {
+    if (!AYAHS[s]) return null;
+    mpStop(); mp.s = s; mp.a = 1; mp.basm = false;
+    var bar = el('div', 'hqx-mp');
+    bar.appendChild(el('div', 'hqx-mp-t', '<b>استمعي للسورة بصوت الشيخ الحصري</b><small>تابعي الخريطة وأنتِ تسمعين الآيات</small>'));
+    var row = el('div', 'hqx-mp-row');
+    var prev = el('button', 'hqx-mp-b', '›'), play = el('button', 'hqx-mp-p', I.play), next = el('button', 'hqx-mp-b', '‹');
+    prev.title = 'الآية السابقة'; next.title = 'الآية التالية';
+    var pos = el('span', 'hqx-mp-pos', '');
+    prev.onclick = function () { mpGo(mp.a - 1); };
+    next.onclick = function () { mpGo(mp.a + 1); };
+    play.onclick = function () {
+      if (mp.on) { mpStop(); return; }
+      stopAudio();
+      mp.basm = (mp.a === 1 && s !== 1 && s !== 9);
+      mpPlay();
+    };
+    row.appendChild(prev); row.appendChild(play); row.appendChild(next); row.appendChild(pos);
+    var rs = el('div', 'hqx-mp-rs'), rb = [];
+    MMR.forEach(function (x, i) {
+      var b = el('button', 'hqx-mp-r', x[1]);
+      b.onclick = function () { mp.r = i; if (mp.on) { mp.basm = false; mpPlay(); } else mpDraw(); };
+      rb.push(b); rs.appendChild(b);
+    });
+    row.appendChild(rs);
+    if (AYAHS[s] > 20) {
+      var jump = el('label', 'hqx-mp-j', 'من آية <input type="number" min="1" max="' + AYAHS[s] + '" inputmode="numeric">');
+      jump.querySelector('input').onchange = function () { var v = parseInt(this.value, 10); if (v) mpGo(v); };
+      row.appendChild(jump);
+    }
+    bar.appendChild(row);
+    mp.ui = { play: play, pos: pos, r: rb };
+    mpDraw();
+    return bar;
+  }
+
   function openMap(s, push2) {
     var o = ov.mm; if (push2) push(3); o._mode = 'quiz';
     var n = MM.c[s] || 0;
     o.setHead('الخريطة الذهنية · سورة ' + sname(s), n > 1 ? ar(n) + ' خرائط بالترتيب · اضغط على الخريطة للتكبير' : 'اضغط على الخريطة للتكبير', true);
     var w = o._w; w.innerHTML = '';
+    var bar = mpBar(s); if (bar) w.appendChild(bar);
     var v = el('div', 'hqx-mv');
     for (var k = 1; k <= n; k++) {
       var f = el('div', 'hqx-mf', (n > 1 ? '<span>' + ar(k) + ' / ' + ar(n) + '</span>' : '') + '<img loading="' + (k < 3 ? 'eager' : 'lazy') + '" decoding="async" alt="" src="' + mmImg(s, k) + '">');
