@@ -204,7 +204,8 @@ function openSub(k, push){
   det.querySelector('.back').onclick = function(){ history.length > 1 && history.state && history.state.sub ? history.back() : closeSub(); };
   det.setAttribute('aria-hidden','false');
   det.scrollTop = 0;
-  requestAnimationFrame(function(){ document.body.classList.add('open'); });
+  void det.offsetWidth;
+  document.body.classList.add('open');
   if (push) { try { history.pushState({sub:k}, '', '#' + k); } catch(e){} }
 }
 function closeSub(){
