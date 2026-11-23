@@ -211,7 +211,38 @@
     }
     if (D && wantOpen && (!ov || !document.body.contains(ov) || !ov.classList.contains('on'))) { if (ov && !document.body.contains(ov)) ov = null; open(); }
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bar); else bar();
-  setInterval(bar, 1000);
+  var APP = (location.pathname.match(/\/(arabic|religion|math|english|quran)\//) || [])[1] || '';
+  function theme() {
+    if (APP !== 'arabic' && APP !== 'religion') return;
+    if (document.getElementById('hnn-theme')) return;
+    var l = document.createElement('link'); l.id = 'hnn-theme-font'; l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Baloo+Bhaijaan+2:wght@500;600;700;800&display=swap';
+    document.head.appendChild(l);
+    var B = "'Baloo Bhaijaan 2',Cairo,sans-serif", R = "'Aref Ruqaa','Baloo Bhaijaan 2',serif";
+    var c = APP === 'religion'
+      ? '[style*="Cairo"],[style*="Noto Naskh Arabic"]{font-family:' + B + '!important}[style*="Reem Kufi"]{font-family:' + R + '!important}'
+      : '[style*="\'Cairo\'"]{font-family:' + B + '!important}[style*="font:800 40px"],[style*="font:800 22px"],[style*="font: 800 40px"],[style*="font: 800 22px"],[style*="font-size:40px"],[style*="font-size: 40px"]{font-family:' + R + '!important}';
+    var s = document.createElement('style'); s.id = 'hnn-theme'; s.textContent = c; document.head.appendChild(s);
+  }
+  var lastFit = '';
+  function fit() {
+    if (APP !== 'arabic' && APP !== 'religion') return;
+    var W = window.innerWidth, H = window.innerHeight;
+    var z = W >= 700 ? Math.min(W * 0.94 / 480, H >= W ? 1.62 : 1.45) : 1;
+    z = Math.round(z * 100) / 100;
+    var els = document.querySelectorAll('[style*="max-width:480px"],[style*="max-width: 480px"],#hnn-fit');
+    var key = z + '|' + H + '|' + els.length;
+    for (var i = 0; i < els.length; i++) {
+      var e = els[i];
+      if (String(e.style.zoom) !== String(z)) e.style.zoom = z === 1 ? '' : z;
+      if (e.id === 'hnn-fit') { var h = z === 1 ? '' : Math.floor(H / z) + 'px'; if (e.style.height !== h) e.style.height = h || '100dvh'; }
+    }
+    lastFit = key;
+  }
+  window.addEventListener('resize', fit);
+  window.addEventListener('orientationchange', function () { setTimeout(fit, 250); });
+  function boot() { bar(); theme(); fit(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+  setInterval(boot, 1000);
   if ('serviceWorker' in navigator && location.protocol === 'https:') { try { navigator.serviceWorker.register(home + 'sw.js', { scope: home }).catch(function () {}); } catch (e) {} }
 })();
