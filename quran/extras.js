@@ -2,6 +2,8 @@
   if (window.__hqx) return;
   window.__hqx = true;
   var MT = (window.HQX && window.HQX.mt) || null;
+  var AQ = (window.HQX && window.HQX.aq) || null;
+  var HD = (window.HQX && window.HQX.hd) || null;
   var AR = '٠١٢٣٤٥٦٧٨٩';
   function ar(n) { return String(n).replace(/\d/g, function (d) { return AR[d]; }); }
   function el(t, c, h) { var e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; }
@@ -92,13 +94,46 @@
     '.hqx-ali .hqx-qp,.hqx-ali .hqx-res .big{color:#047857}' +
     '.hqx-ali .hqx-qbar{background:#d1fae5}.hqx-ali .hqx-qbar i{background:linear-gradient(90deg,#34d399,#047857)}' +
     '.hqx-ali .hqx-q{border-color:#d1fae5}' +
-    '.hqx-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}' +
+    '.hqx-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0}' +
     '.hqx-card{all:unset;box-sizing:border-box;cursor:pointer;text-align:right;border-radius:24px;padding:16px;display:flex;align-items:center;gap:12px;transition:transform .18s}' +
     '.hqx-card:active{transform:scale(.98)}' +
     '.hqx-card .ic{width:54px;height:54px;flex:none;border-radius:18px;color:#fff;display:grid;place-items:center;font-size:24px;font-weight:900}' +
     '.hqx-card .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}' +
     '.hqx-card b{font-size:clamp(17px,4.6vw,20px);font-weight:900;color:#0f172a;line-height:1.35}' +
     '.hqx-card small{font-size:12.5px;color:#64748b;font-weight:700;line-height:1.5}' +
+    '.hqx-hd.aq{background:radial-gradient(circle at 12% 0%,rgba(255,255,255,.25),transparent 40%),linear-gradient(135deg,#0ea5e9,#0284c7 55%,#075985)}' +
+    '.hqx-hd.hd{background:radial-gradient(circle at 12% 0%,rgba(255,255,255,.25),transparent 40%),linear-gradient(135deg,#14b8a6,#0d9488 55%,#115e59)}' +
+    '.hqx-aq .hqx-chip.on,.hqx-aq .hqx-act.p{background:#0284c7;border-color:#0284c7;color:#fff}.hqx-aq .hqx-op{border-color:#bae6fd}.hqx-aq .hqx-qp,.hqx-aq .hqx-res .big{color:#0284c7}.hqx-aq .hqx-qbar{background:#e0f2fe}.hqx-aq .hqx-qbar i{background:linear-gradient(90deg,#38bdf8,#0284c7)}' +
+    '.hqx-hdx .hqx-chip.on,.hqx-hdx .hqx-act.p{background:#0d9488;border-color:#0d9488;color:#fff}.hqx-hdx .hqx-chip{border-color:#99f6e4;color:#115e59}.hqx-hdx .hqx-act{border-color:#99f6e4;color:#0f766e}' +
+    '.hqx-fc{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}' +
+    '.hqx-f{all:unset;box-sizing:border-box;cursor:pointer;position:relative;min-height:170px;border-radius:24px;perspective:900px}' +
+    '.hqx-fi{position:absolute;inset:0;transition:transform .5s;transform-style:preserve-3d}' +
+    '.hqx-f.r .hqx-fi{transform:rotateY(180deg)}' +
+    '.hqx-fs{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;justify-content:center;gap:8px}' +
+    '.hqx-fs.q{background:linear-gradient(140deg,#e0f2fe,#fff 75%);border:1.5px solid #bae6fd;box-shadow:0 14px 26px -22px #0284c7}' +
+    '.hqx-fs.a{background:linear-gradient(140deg,#0284c7,#075985);color:#fff;transform:rotateY(180deg)}' +
+    '.hqx-fs .no{position:absolute;top:10px;left:14px;font-size:12px;font-weight:900;color:#0284c7;opacity:.6}' +
+    '.hqx-fs.a .no{color:#fff}' +
+    '.hqx-fs b{font-size:19px;font-weight:900;line-height:1.55;color:#0c4a6e}' +
+    '.hqx-fs.a b{color:#fff;font-size:17.5px;font-weight:800;line-height:1.75}' +
+    '.hqx-fs small{font-size:12px;font-weight:800;color:#0284c7}' +
+    '.hqx-fs.a small{color:#bae6fd}' +
+    '.hqx-search{flex:1;min-width:180px;padding:10px 14px;border-radius:14px;border:1.5px solid #99f6e4;font:700 15px "Baloo Bhaijaan 2",sans-serif;background:#fff;outline:none}' +
+    '.hqx-h{background:#fff;border:1px solid #ccfbf1;border-radius:22px;padding:14px 16px;margin-bottom:12px;box-shadow:0 12px 24px -22px #0d9488}' +
+    '.hqx-h.m{background:linear-gradient(140deg,#f0fdfa,#fff 70%);border-color:#5eead4}' +
+    '.hqx-hh{display:flex;align-items:center;gap:8px;margin-bottom:6px}' +
+    '.hqx-hn{min-width:34px;height:34px;border-radius:11px;background:#ccfbf1;color:#0f766e;font-weight:900;font-size:14px;display:grid;place-items:center;padding:0 6px}' +
+    '.hqx-nar{flex:1;font-size:13.5px;font-weight:700;color:#64748b;line-height:1.6}' +
+    '.hqx-mt{font-family:"Amiri",serif;font-size:22px;line-height:2;color:#0f172a;font-weight:700}' +
+    '.hqx-mt:before{content:"«";color:#14b8a6}.hqx-mt:after{content:"»";color:#14b8a6}' +
+    '.hqx-hf{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px}' +
+    '.hqx-src2{font-size:12px;font-weight:900;color:#0f766e;background:#f0fdfa;border:1px solid #99f6e4;border-radius:999px;padding:2px 10px}' +
+    '.hqx-x{font-size:13.5px;font-weight:700;color:#92400e;background:#fffbeb;border-radius:10px;padding:3px 10px}' +
+    '.hqx-mb{all:unset;cursor:pointer;margin-inline-start:auto;font-size:13px;font-weight:900;padding:6px 12px;border-radius:12px;border:1.5px solid #99f6e4;color:#0f766e;background:#fff}' +
+    '.hqx-h.m .hqx-mb{background:#0d9488;border-color:#0d9488;color:#fff}' +
+    '.hqx-prog{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:14px;font-weight:900;color:#0f766e}' +
+    '.hqx-prog i{flex:1;height:9px;border-radius:9px;background:#ccfbf1;overflow:hidden;display:block}' +
+    '.hqx-prog i b{display:block;height:100%;background:linear-gradient(90deg,#2dd4bf,#0d9488);border-radius:9px}' +
     '@media (max-width:520px){.hqx-cards{grid-template-columns:1fr}.hqx-ay{font-size:21px}.hqx-gt{font-size:22px}.hqx-sn{min-width:72px}}';
   var I = {
     close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
@@ -135,7 +170,7 @@
   var ov = {}, state = { f: 'all', hide: false };
   function shell(id, title, sub, cls) {
     var o = el('div', 'hqx ' + (cls || '')); o.id = id;
-    var hd = el('div', 'hqx-hd ' + (cls === 'hqx-ali' ? 'ali' : '')), r = el('div', 'hqx-hr');
+    var hd = el('div', 'hqx-hd ' + ({ 'hqx-ali': 'ali', 'hqx-aq': 'aq', 'hqx-hdx': 'hd' }[cls] || '')), r = el('div', 'hqx-hr');
     var b = el('button', 'hqx-ib', I.close); b.onclick = function () { history.back(); };
     r.appendChild(b);
     var tt = el('div', 'hqx-tt', '<h2></h2><p></p>'); r.appendChild(tt); hd.appendChild(r); o.appendChild(hd);
@@ -312,38 +347,125 @@
     var qs = shuffle(ALI.quiz.slice()).slice(0, 10).map(function (q) { return { t: q[0], right: q[1], opts: shuffle(q[2].slice()) }; });
     runQuiz(o, qs, function (q, box) { box.appendChild(el('div', 'hqx-qt plain', esc(q.t))); }, function (s, t) { result(o, s, t, function () { history.back(); setTimeout(startAliQuiz, 60); }, function () { history.back(); }); });
   }
+  function renderAq(cards) {
+    var o = ov.aq; o.setHead('العقيدة سؤال وجواب', ar(AQ.items.length) + ' سؤالًا · بطاقات تنقلب واختبار', false); o._mode = 'list';
+    var w = o._w; w.innerHTML = '';
+    var bar = el('div', 'hqx-bar');
+    var c1 = el('button', 'hqx-chip' + (state.aqAll ? '' : ' on'), 'بطاقات تنقلب'); c1.onclick = function () { state.aqAll = false; renderAq(); };
+    var c2 = el('button', 'hqx-chip' + (state.aqAll ? ' on' : ''), 'عرض كل الإجابات'); c2.onclick = function () { state.aqAll = true; renderAq(); };
+    bar.appendChild(c1); bar.appendChild(c2); bar.appendChild(el('span', 'hqx-sp'));
+    if (AQ.pdf) { var pd = el('a', 'hqx-act', I.book + 'الكتاب الأصلي'); pd.href = AQ.pdf; pd.target = '_blank'; bar.appendChild(pd); }
+    var qb = el('button', 'hqx-act p', I.quiz + 'اختبار العقيدة'); qb.onclick = startAqQuiz; bar.appendChild(qb);
+    w.appendChild(bar);
+    var g = el('div', 'hqx-fc');
+    AQ.items.forEach(function (it, i) {
+      var f = el('button', 'hqx-f' + (state.aqAll ? ' r' : ''));
+      f.innerHTML = '<span class="hqx-fi"><span class="hqx-fs q"><span class="no">' + ar(i + 1) + '</span><small>سؤال</small><b>' + esc(it[0]) + '</b><small style="color:#94a3b8">اضغط لرؤية الإجابة</small></span><span class="hqx-fs a"><span class="no">' + ar(i + 1) + '</span><small>' + esc(it[0]) + '</small><b>' + esc(it[1]) + '</b></span></span>';
+      f.onclick = function () { f.classList.toggle('r'); };
+      g.appendChild(f);
+    });
+    w.appendChild(g); o._b.scrollTop = 0;
+  }
+  function startAqQuiz() {
+    var o = ov.aq; o._mode = 'quiz'; push(3);
+    o.setHead('اختبار العقيدة', 'اختار الإجابة الصحيحة', true);
+    var pool = AQ.items.filter(function (x) { return x[1].length <= 70; });
+    var qs = shuffle(pool.slice()).slice(0, 10).map(function (q) {
+      var others = shuffle(pool.filter(function (x) { return x !== q && x[1] !== q[1]; })).slice(0, 2).map(function (x) { return x[1]; });
+      return { t: q[0], right: q[1], opts: shuffle(others.concat([q[1]])) };
+    });
+    runQuiz(o, qs, function (q, box) { box.appendChild(el('div', 'hqx-qt plain', esc(q.t))); }, function (s, t) { result(o, s, t, function () { history.back(); setTimeout(startAqQuiz, 60); }, function () { history.back(); }); });
+  }
+  function memGet() { try { return JSON.parse(localStorage.getItem('hqx_hd_mem') || '{}'); } catch (e) { return {}; } }
+  function memSet(m) { try { localStorage.setItem('hqx_hd_mem', JSON.stringify(m)); } catch (e) {} }
+  function renderHd() {
+    var o = ov.hd; o.setHead('٢٠٠ حديث من الصحيحين', 'أحاديث قصيرة سهلة الحفظ من البخاري ومسلم', false); o._mode = 'list';
+    var w = o._w; w.innerHTML = '';
+    var mem = memGet(), done = HD.items.filter(function (h) { return mem[h.n]; }).length;
+    w.appendChild(el('div', 'hqx-prog', '<span>حفظت ' + ar(done) + ' من ' + ar(HD.items.length) + '</span><i><b style="width:' + (done / HD.items.length * 100) + '%"></b></i>'));
+    var bar = el('div', 'hqx-bar');
+    [['all', 'الكل'], ['todo', 'لم أحفظها'], ['done', 'حفظتها']].forEach(function (f) {
+      var c = el('button', 'hqx-chip' + ((state.hdF || 'all') === f[0] ? ' on' : ''), f[1]); c.onclick = function () { state.hdF = f[0]; renderHd(); }; bar.appendChild(c);
+    });
+    var rb = el('button', 'hqx-act', I.quiz + 'حديث عشوائي'); rb.onclick = function () { var l = HD.items.filter(function (h) { return !mem[h.n]; }); if (!l.length) l = HD.items; var h = l[Math.floor(Math.random() * l.length)]; state.hdQ = String(h.n); renderHd(); };
+    bar.appendChild(rb);
+    if (HD.pdf) { var pd = el('a', 'hqx-act', I.book + 'الكتاب الأصلي'); pd.href = HD.pdf; pd.target = '_blank'; bar.appendChild(pd); }
+    w.appendChild(bar);
+    var sb = el('div', 'hqx-bar'); var inp = el('input', 'hqx-search'); inp.placeholder = 'ابحث بكلمة أو برقم الحديث…'; inp.value = state.hdQ || ''; sb.appendChild(inp); w.appendChild(sb);
+    var list = el('div', ''); w.appendChild(list);
+    function strip(s) { return String(s).replace(/[ً-ْٰ]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي'); }
+    function draw() {
+      list.innerHTML = '';
+      var q = strip((state.hdQ || '').trim()), shown = 0;
+      HD.items.forEach(function (h) {
+        var f = state.hdF || 'all';
+        if (f === 'todo' && mem[h.n]) return; if (f === 'done' && !mem[h.n]) return;
+        if (q && !(String(h.n) === q || strip(h.m + ' ' + h.nar).indexOf(q) >= 0)) return;
+        if (shown >= 60 && !q) return; shown++;
+        var c = el('div', 'hqx-h' + (mem[h.n] ? ' m' : ''));
+        c.innerHTML = '<div class="hqx-hh"><span class="hqx-hn">' + ar(h.n) + '</span><span class="hqx-nar">' + esc(h.nar) + '</span></div><div class="hqx-mt">' + esc(h.m) + '</div>';
+        var ft = el('div', 'hqx-hf', (h.s ? '<span class="hqx-src2">' + esc(h.s) + '</span>' : '') + (h.x ? '<span class="hqx-x">' + esc(h.x) + '</span>' : ''));
+        var mb = el('button', 'hqx-mb', mem[h.n] ? 'حفظته ✓' : 'حفظته؟');
+        mb.onclick = function () { if (mem[h.n]) delete mem[h.n]; else mem[h.n] = 1; memSet(mem); var y = o._b.scrollTop; renderHd(); o._b.scrollTop = y; };
+        ft.appendChild(mb); c.appendChild(ft); list.appendChild(c);
+      });
+      if (!shown) list.appendChild(el('div', 'hqx-hint', '<span>لا توجد أحاديث مطابقة.</span>'));
+      else if (!q && shown >= 60) { var more = el('div', 'hqx-hint', '<span>اكتب كلمة أو رقمًا في البحث لعرض باقي الأحاديث، أو اختر «لم أحفظها».</span>'); list.appendChild(more); }
+    }
+    var tm; inp.oninput = function () { clearTimeout(tm); tm = setTimeout(function () { state.hdQ = inp.value; draw(); }, 200); };
+    draw(); o._b.scrollTop = 0;
+  }
   function push(n) { try { history.pushState({ hqx: n }, ''); } catch (e) {} }
   function ensure() {
     if (!document.getElementById('hqx-css')) { var s = el('style'); s.id = 'hqx-css'; s.textContent = css; document.head.appendChild(s); }
     if (!document.getElementById('hqx-font')) { var l = el('link'); l.id = 'hqx-font'; l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Baloo+Bhaijaan+2:wght@500;600;700;800&display=swap'; document.head.appendChild(l); }
     if (MT && (!ov.mt || !document.body.contains(ov.mt))) ov.mt = shell('hqx-mt', '', '', '');
     if (!ov.ali || !document.body.contains(ov.ali)) ov.ali = shell('hqx-ali', '', '', 'hqx-ali');
+    if (AQ && (!ov.aq || !document.body.contains(ov.aq))) ov.aq = shell('hqx-aq', '', '', 'hqx-aq');
+    if (HD && (!ov.hd || !document.body.contains(ov.hd))) ov.hd = shell('hqx-hd', '', '', 'hqx-hdx');
   }
   var openId = null;
+  var R = { mt: function () { renderMt(); }, ali: function () { renderAli(); }, aq: function () { renderAq(); }, hd: function () { renderHd(); } };
   function open(id) {
     ensure(); stopAudio();
     openId = id; push(2);
     ov[id].classList.add('on'); document.documentElement.style.overflow = 'hidden'; document.documentElement.classList.add('hqx-open');
-    if (id === 'mt') renderMt(); else renderAli();
+    R[id]();
   }
-  function closeAll() { openId = null; stopAudio(); ['mt', 'ali'].forEach(function (k) { if (ov[k]) ov[k].classList.remove('on'); }); document.documentElement.style.overflow = ''; document.documentElement.classList.remove('hqx-open'); }
+  function closeAll() { openId = null; stopAudio(); ['mt', 'ali', 'aq', 'hd'].forEach(function (k) { if (ov[k]) ov[k].classList.remove('on'); }); document.documentElement.style.overflow = ''; document.documentElement.classList.remove('hqx-open'); }
   window.addEventListener('popstate', function () {
     if (!openId) return;
     var o = ov[openId];
-    if (o && o._mode === 'quiz') { if (openId === 'mt') renderMt(); else renderAli(); return; }
+    if (o && o._mode === 'quiz') { R[openId](); return; }
     closeAll();
   });
   window.HQX_open = open;
+  document.addEventListener('click', function (e) {
+    var t = e.target && e.target.closest ? e.target.closest('[data-hqx-open]') : null;
+    if (!t) return;
+    e.preventDefault(); e.stopPropagation();
+    open(t.getAttribute('data-hqx-open'));
+  }, true);
   function cards() {
     var c = el('div', 'hqx-cards'); c.id = 'hqx-cards';
     if (MT) {
       var a = el('button', 'hqx-card', '<span class="ic" style="background:linear-gradient(140deg,#f472b6,#be185d);box-shadow:0 10px 18px -8px #be185d;font-family:\'Amiri Quran\',serif">≋</span><span class="tx"><b>متشابهات مختارة</b><small>' + ar(MT.groups.length) + ' موضعًا مع روابط للحفظ واختبار</small></span>');
       a.style.cssText = 'border:1px solid #fbcfe8;background:linear-gradient(140deg,#fce7f3,#fff 72%);box-shadow:0 14px 28px -20px #be185d';
-      a.onclick = function () { open('mt'); }; c.appendChild(a);
+      a.setAttribute('data-hqx-open', 'mt'); c.appendChild(a);
     }
     var b = el('button', 'hqx-card', '<span class="ic" style="background:linear-gradient(140deg,#34d399,#047857);box-shadow:0 10px 18px -8px #047857">' + I.book.replace('<svg', '<svg width="28" height="28"') + '</span><span class="tx"><b>سيرة علي بن أبي طالب</b><small>قصة حياته ومواقفه واختبار</small></span>');
     b.style.cssText = 'border:1px solid #a7f3d0;background:linear-gradient(140deg,#d1fae5,#fff 72%);box-shadow:0 14px 28px -20px #047857';
-    b.onclick = function () { open('ali'); }; c.appendChild(b);
+    b.setAttribute('data-hqx-open', 'ali'); c.appendChild(b);
+    if (AQ) {
+      var e1 = el('button', 'hqx-card', '<span class="ic" style="background:linear-gradient(140deg,#38bdf8,#0284c7);box-shadow:0 10px 18px -8px #0284c7">؟</span><span class="tx"><b>العقيدة سؤال وجواب</b><small>' + ar(AQ.items.length) + ' سؤالًا في بطاقات تنقلب واختبار</small></span>');
+      e1.style.cssText = 'border:1px solid #bae6fd;background:linear-gradient(140deg,#e0f2fe,#fff 72%);box-shadow:0 14px 28px -20px #0284c7';
+      e1.setAttribute('data-hqx-open', 'aq'); c.appendChild(e1);
+    }
+    if (HD) {
+      var e2 = el('button', 'hqx-card', '<span class="ic" style="background:linear-gradient(140deg,#2dd4bf,#0d9488);box-shadow:0 10px 18px -8px #0d9488;font-family:\'Amiri\',serif">«»</span><span class="tx"><b>٢٠٠ حديث من الصحيحين</b><small>أحاديث قصيرة مع متابعة الحفظ</small></span>');
+      e2.style.cssText = 'border:1px solid #99f6e4;background:linear-gradient(140deg,#ccfbf1,#fff 72%);box-shadow:0 14px 28px -20px #0d9488';
+      e2.setAttribute('data-hqx-open', 'hd'); c.appendChild(e2);
+    }
     return c;
   }
   function tick() {
@@ -356,8 +478,8 @@
     }
     var bar = document.getElementById('hnn-bar');
     if (bar && !document.getElementById('hqx-b1')) {
-      if (MT) { var x = el('button', '', '<span>المتشابهات</span>'); x.id = 'hqx-b1'; x.style.background = '#be185d'; x.onclick = function () { open('mt'); }; bar.appendChild(el('span', 'sep')); bar.appendChild(x); }
-      var y = el('button', '', '<span>سيرة علي</span>'); y.id = 'hqx-b2'; y.style.background = '#047857'; y.onclick = function () { open('ali'); }; bar.appendChild(el('span', 'sep')); bar.appendChild(y);
+      if (MT) { var x = el('button', '', '<span>المتشابهات</span>'); x.id = 'hqx-b1'; x.style.background = '#be185d'; x.setAttribute('data-hqx-open', 'mt'); bar.appendChild(el('span', 'sep')); bar.appendChild(x); }
+      var y = el('button', '', '<span>سيرة علي</span>'); y.id = 'hqx-b2'; y.style.background = '#047857'; y.setAttribute('data-hqx-open', 'ali'); bar.appendChild(el('span', 'sep')); bar.appendChild(y);
     }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tick); else tick();
