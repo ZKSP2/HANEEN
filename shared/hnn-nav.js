@@ -224,20 +224,21 @@
       : '[style*="\'Cairo\'"]{font-family:' + B + '!important}[style*="font:800 40px"],[style*="font:800 22px"],[style*="font: 800 40px"],[style*="font: 800 22px"],[style*="font-size:40px"],[style*="font-size: 40px"]{font-family:' + R + '!important}';
     var s = document.createElement('style'); s.id = 'hnn-theme'; s.textContent = c; document.head.appendChild(s);
   }
-  var lastFit = '';
   function fit() {
     if (APP !== 'arabic' && APP !== 'religion') return;
     var W = window.innerWidth, H = window.innerHeight;
-    var z = W >= 700 ? Math.min(W * 0.94 / 480, H >= W ? 1.62 : 1.45) : 1;
-    z = Math.round(z * 100) / 100;
-    var els = document.querySelectorAll('[style*="max-width:480px"],[style*="max-width: 480px"],#hnn-fit');
-    var key = z + '|' + H + '|' + els.length;
+    var els = document.querySelectorAll('[style*="max-width:480px"],[style*="max-width: 480px"],#hnn-fit,[data-hnnfit]');
     for (var i = 0; i < els.length; i++) {
-      var e = els[i];
-      if (String(e.style.zoom) !== String(z)) e.style.zoom = z === 1 ? '' : z;
-      if (e.id === 'hnn-fit') { var h = z === 1 ? '' : Math.floor(H / z) + 'px'; if (e.style.height !== h) e.style.height = h || '100dvh'; }
+      var e = els[i]; e.setAttribute('data-hnnfit', '1');
+      var wide = APP === 'arabic' && W >= 1100 && e.textContent.indexOf('بطاقات الدروس') >= 0;
+      var z, mw = '';
+      if (wide) { z = W >= 1500 ? 1.22 : 1.08; mw = Math.min(1180, Math.floor(W * 0.92 / z)) + 'px'; }
+      else z = W >= 700 ? Math.min(W * 0.94 / 480, H >= W ? 1.62 : (W >= 1500 ? 1.6 : 1.45)) : 1;
+      z = Math.round(z * 100) / 100;
+      if (e.id !== 'hnn-fit') { var want = mw || '480px'; if (e.style.maxWidth !== want) e.style.maxWidth = want; }
+      if (String(e.style.zoom) !== String(z === 1 ? '' : z)) e.style.zoom = z === 1 ? '' : z;
+      if (e.id === 'hnn-fit') { var h = z === 1 ? '100dvh' : Math.floor(H / z) + 'px'; if (e.style.height !== h) e.style.height = h; }
     }
-    lastFit = key;
   }
   window.addEventListener('resize', fit);
   window.addEventListener('orientationchange', function () { setTimeout(fit, 250); });
