@@ -4,6 +4,7 @@
   var MT = (window.HQX && window.HQX.mt) || null;
   var AQ = (window.HQX && window.HQX.aq) || null;
   var HD = (window.HQX && window.HQX.hd) || null;
+  var MM = (window.HQX && window.HQX.mm) || null;
   var AR = '٠١٢٣٤٥٦٧٨٩';
   function ar(n) { return String(n).replace(/\d/g, function (d) { return AR[d]; }); }
   function el(t, c, h) { var e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; }
@@ -134,6 +135,22 @@
     '.hqx-prog{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:14px;font-weight:900;color:#0f766e}' +
     '.hqx-prog i{flex:1;height:9px;border-radius:9px;background:#ccfbf1;overflow:hidden;display:block}' +
     '.hqx-prog i b{display:block;height:100%;background:linear-gradient(90deg,#2dd4bf,#0d9488);border-radius:9px}' +
+    '.hqx-hd.mm{background:radial-gradient(circle at 12% 0%,rgba(255,255,255,.25),transparent 40%),linear-gradient(135deg,#f59e0b,#ea580c 55%,#9a3412)}' +
+    '.hqx-mmx .hqx-chip.on,.hqx-mmx .hqx-act.p{background:#ea580c;border-color:#ea580c;color:#fff}.hqx-mmx .hqx-chip{border-color:#fed7aa;color:#9a3412}.hqx-mmx .hqx-act{border-color:#fed7aa;color:#c2410c}' +
+    '.hqx-js{margin:18px 0 10px;font-size:19px;font-weight:900;color:#9a3412;display:flex;align-items:center;gap:10px}' +
+    '.hqx-js:after{content:"";flex:1;height:2px;background:repeating-linear-gradient(90deg,#fed7aa 0 8px,transparent 8px 14px)}' +
+    '.hqx-sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}' +
+    '.hqx-sc{all:unset;box-sizing:border-box;cursor:pointer;border-radius:18px;padding:12px 10px;text-align:center;background:linear-gradient(140deg,#ffedd5,#fff 75%);border:1.5px solid #fed7aa;box-shadow:0 10px 20px -18px #ea580c;display:flex;flex-direction:column;gap:3px;align-items:center}' +
+    '.hqx-sc b{font-family:"Amiri Quran",serif;font-size:22px;font-weight:400;color:#7c2d12;line-height:1.6}' +
+    '.hqx-sc small{font-size:11.5px;font-weight:800;color:#c2410c}' +
+    '.hqx-sc i{font-style:normal;font-size:11px;font-weight:900;color:#fff;background:#ea580c;border-radius:999px;padding:0 8px}' +
+    '.hqx-mv{display:flex;flex-direction:column;gap:16px;align-items:center}' +
+    '.hqx-mf{width:100%;max-width:1400px;background:#fff;border-radius:18px;overflow:auto;box-shadow:0 14px 30px -22px #9a3412;border:1px solid #fed7aa;position:relative}' +
+    '.hqx-mf img{display:block;width:100%;height:auto;cursor:zoom-in}' +
+    '.hqx-mf.z img{width:220%;max-width:none;cursor:zoom-out}' +
+    '.hqx-mf span{position:absolute;top:8px;right:10px;background:rgba(154,52,18,.85);color:#fff;font-size:12px;font-weight:900;padding:2px 10px;border-radius:999px}' +
+    '.hqx-mapbtn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;font:900 14px "Baloo Bhaijaan 2",sans-serif;box-shadow:0 8px 16px -8px #ea580c}' +
+    '.hqx-mapbtn svg{width:16px;height:16px}' +
     '@media (max-width:520px){.hqx-cards{grid-template-columns:1fr}.hqx-ay{font-size:21px}.hqx-gt{font-size:22px}.hqx-sn{min-width:72px}}';
   var I = {
     close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
@@ -170,7 +187,7 @@
   var ov = {}, state = { f: 'all', hide: false };
   function shell(id, title, sub, cls) {
     var o = el('div', 'hqx ' + (cls || '')); o.id = id;
-    var hd = el('div', 'hqx-hd ' + ({ 'hqx-ali': 'ali', 'hqx-aq': 'aq', 'hqx-hdx': 'hd' }[cls] || '')), r = el('div', 'hqx-hr');
+    var hd = el('div', 'hqx-hd ' + ({ 'hqx-ali': 'ali', 'hqx-aq': 'aq', 'hqx-hdx': 'hd', 'hqx-mmx': 'mm' }[cls] || '')), r = el('div', 'hqx-hr');
     var b = el('button', 'hqx-ib', I.close); b.onclick = function () { history.back(); };
     r.appendChild(b);
     var tt = el('div', 'hqx-tt', '<h2></h2><p></p>'); r.appendChild(tt); hd.appendChild(r); o.appendChild(hd);
@@ -415,6 +432,44 @@
     var tm; inp.oninput = function () { clearTimeout(tm); tm = setTimeout(function () { state.hdQ = inp.value; draw(); }, 200); };
     draw(); o._b.scrollTop = 0;
   }
+  var JUZ = [['الجزء الأول', 1, 2], ['الجزء الثاني', 2, 2], ['الجزء الثالث', 2, 3], ['جزء الذاريات (٢٧)', 51, 57], ['جزء قد سمع (٢٨)', 58, 66], ['جزء تبارك (٢٩)', 67, 77], ['جزء عم (٣٠)', 78, 114]];
+  var SN = { 1: 'الفاتحة', 2: 'البقرة', 3: 'آل عمران' };
+  function sname(s) { return SN[s] || (MT && MT.names[s]) || ('سورة ' + ar(s)); }
+  function mmImg(s, k) { return base + 'maps/' + ('00' + s).slice(-3) + '-' + ('0' + k).slice(-2) + '.webp'; }
+  var base = new URL('./', location.href).href;
+  function renderMm() {
+    var o = ov.mm; o.setHead('الخرائط الذهنية', 'خريطة لكل سورة تساعد على الحفظ والفهم', false); o._mode = 'list';
+    var w = o._w; w.innerHTML = '';
+    var done = {};
+    [['جزء عم', 78, 114], ['جزء تبارك', 67, 77], ['جزء قد سمع', 58, 66], ['جزء الذاريات', 51, 57], ['الفاتحة والبقرة وآل عمران', 1, 3]].forEach(function (g) {
+      var list = []; for (var s = g[1]; s <= g[2]; s++) if (MM.c[s]) list.push(s);
+      if (g[1] >= 78) list.reverse();
+      if (!list.length) return;
+      w.appendChild(el('div', 'hqx-js', esc(g[0])));
+      var grid = el('div', 'hqx-sg');
+      list.forEach(function (s) {
+        var c = el('button', 'hqx-sc', '<small>' + ar(s) + '</small><b>' + esc(sname(s)) + '</b>' + (MM.c[s] > 1 ? '<i>' + ar(MM.c[s]) + ' خرائط</i>' : '<i>خريطة</i>'));
+        c.onclick = function () { openMap(s, true); };
+        grid.appendChild(c);
+      });
+      w.appendChild(grid);
+    });
+    o._b.scrollTop = 0;
+  }
+  function openMap(s, push2) {
+    var o = ov.mm; if (push2) push(3); o._mode = 'quiz';
+    var n = MM.c[s] || 0;
+    o.setHead('الخريطة الذهنية · سورة ' + sname(s), n > 1 ? ar(n) + ' خرائط بالترتيب · اضغط على الخريطة للتكبير' : 'اضغط على الخريطة للتكبير', true);
+    var w = o._w; w.innerHTML = '';
+    var v = el('div', 'hqx-mv');
+    for (var k = 1; k <= n; k++) {
+      var f = el('div', 'hqx-mf', (n > 1 ? '<span>' + ar(k) + ' / ' + ar(n) + '</span>' : '') + '<img loading="' + (k < 3 ? 'eager' : 'lazy') + '" decoding="async" alt="" src="' + mmImg(s, k) + '">');
+      f.querySelector('img').onclick = (function (f) { return function () { f.classList.toggle('z'); }; })(f);
+      v.appendChild(f);
+    }
+    w.appendChild(v); o._b.scrollTop = 0;
+  }
+  window.HQX_map = function (s) { ensure(); stopAudio(); if (openId !== 'mm') { openId = 'mm'; push(2); ov.mm.classList.add('on'); document.documentElement.style.overflow = 'hidden'; document.documentElement.classList.add('hqx-open'); renderMm(); } openMap(s, true); };
   function push(n) { try { history.pushState({ hqx: n }, ''); } catch (e) {} }
   function ensure() {
     if (!document.getElementById('hqx-css')) { var s = el('style'); s.id = 'hqx-css'; s.textContent = css; document.head.appendChild(s); }
@@ -423,16 +478,17 @@
     if (!ov.ali || !document.body.contains(ov.ali)) ov.ali = shell('hqx-ali', '', '', 'hqx-ali');
     if (AQ && (!ov.aq || !document.body.contains(ov.aq))) ov.aq = shell('hqx-aq', '', '', 'hqx-aq');
     if (HD && (!ov.hd || !document.body.contains(ov.hd))) ov.hd = shell('hqx-hd', '', '', 'hqx-hdx');
+    if (MM && (!ov.mm || !document.body.contains(ov.mm))) ov.mm = shell('hqx-mm', '', '', 'hqx-mmx');
   }
   var openId = null;
-  var R = { mt: function () { renderMt(); }, ali: function () { renderAli(); }, aq: function () { renderAq(); }, hd: function () { renderHd(); } };
+  var R = { mt: function () { renderMt(); }, ali: function () { renderAli(); }, aq: function () { renderAq(); }, hd: function () { renderHd(); }, mm: function () { renderMm(); } };
   function open(id) {
     ensure(); stopAudio();
     openId = id; push(2);
     ov[id].classList.add('on'); document.documentElement.style.overflow = 'hidden'; document.documentElement.classList.add('hqx-open');
     R[id]();
   }
-  function closeAll() { openId = null; stopAudio(); ['mt', 'ali', 'aq', 'hd'].forEach(function (k) { if (ov[k]) ov[k].classList.remove('on'); }); document.documentElement.style.overflow = ''; document.documentElement.classList.remove('hqx-open'); }
+  function closeAll() { openId = null; stopAudio(); ['mt', 'ali', 'aq', 'hd', 'mm'].forEach(function (k) { if (ov[k]) ov[k].classList.remove('on'); }); document.documentElement.style.overflow = ''; document.documentElement.classList.remove('hqx-open'); }
   window.addEventListener('popstate', function () {
     if (!openId) return;
     var o = ov[openId];
@@ -441,6 +497,8 @@
   });
   window.HQX_open = open;
   document.addEventListener('click', function (e) {
+    var mp = e.target && e.target.closest ? e.target.closest('[data-hqx-map]') : null;
+    if (mp) { e.preventDefault(); e.stopPropagation(); window.HQX_map(+mp.getAttribute('data-hqx-map')); return; }
     var t = e.target && e.target.closest ? e.target.closest('[data-hqx-open]') : null;
     if (!t) return;
     e.preventDefault(); e.stopPropagation();
@@ -466,6 +524,11 @@
       e2.style.cssText = 'border:1px solid #99f6e4;background:linear-gradient(140deg,#ccfbf1,#fff 72%);box-shadow:0 14px 28px -20px #0d9488';
       e2.setAttribute('data-hqx-open', 'hd'); c.appendChild(e2);
     }
+    if (MM) {
+      var e3 = el('button', 'hqx-card', '<span class="ic" style="background:linear-gradient(140deg,#fbbf24,#ea580c);box-shadow:0 10px 18px -8px #ea580c"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="4" cy="5" r="2"/><circle cx="20" cy="5" r="2"/><circle cx="4" cy="19" r="2"/><circle cx="20" cy="19" r="2"/><path d="M6 6l4 4M18 6l-4 4M6 18l4-4M18 18l-4-4"/></svg></span><span class="tx"><b>الخرائط الذهنية للسور</b><small>' + ar(Object.keys(MM.c).length) + ' سورة · خريطة تساعد على الحفظ والفهم</small></span>');
+      e3.style.cssText = 'border:1px solid #fed7aa;background:linear-gradient(140deg,#ffedd5,#fff 72%);box-shadow:0 14px 28px -20px #ea580c;grid-column:1/-1';
+      e3.setAttribute('data-hqx-open', 'mm'); c.appendChild(e3);
+    }
     return c;
   }
   function tick() {
@@ -475,6 +538,22 @@
       var btns = document.querySelectorAll('button'), anchor = null;
       for (var i = 0; i < btns.length; i++) { if (btns[i].textContent.indexOf('المتشابهات في جزء عم وتبارك') >= 0) { anchor = btns[i]; break; } }
       if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(cards(), anchor.nextSibling);
+    }
+    if (MM) {
+      var AD = '٠١٢٣٤٥٦٧٨٩';
+      var divs = document.querySelectorAll('div');
+      for (var q = 0; q < divs.length; q++) {
+        var d = divs[q];
+        if (d.querySelector('div,button,section') || d.textContent.indexOf('سورة رقم') < 0 || d.textContent.length > 120) continue;
+        var m = d.textContent.match(/سورة رقم\s*([٠-٩0-9]+)/); if (!m) continue;
+        var sn = +m[1].replace(/[٠-٩]/g, function (x) { return AD.indexOf(x); });
+        var host = d.parentNode, ex = host.querySelector('[data-hqx-map]');
+        if (!MM.c[sn]) { if (ex) ex.remove(); continue; }
+        if (ex && +ex.getAttribute('data-hqx-map') === sn) continue;
+        if (ex) ex.remove();
+        var mb = el('button', 'hqx-mapbtn', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M6 6l4 4M18 6l-4 4M6 18l4-4M18 18l-4-4"/></svg>الخريطة الذهنية');
+        mb.setAttribute('data-hqx-map', sn); host.appendChild(mb);
+      }
     }
     var bar = document.getElementById('hnn-bar');
     if (bar && !document.getElementById('hqx-b1')) {
