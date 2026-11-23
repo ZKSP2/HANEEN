@@ -213,4 +213,5 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bar); else bar();
   setInterval(bar, 1000);
+  if ('serviceWorker' in navigator && location.protocol === 'https:') { try { navigator.serviceWorker.register(home + 'sw.js', { scope: home }).catch(function () {}); } catch (e) {} }
 })();
