@@ -35,6 +35,10 @@
     '.hnb-f.on{background:#24493d;border-color:#24493d;color:#fff}' +
     '.hnb-mh{display:flex;align-items:center;gap:10px;margin:14px 0 12px;font:700 22px "Aref Ruqaa",serif;color:#5b4a35}' +
     '.hnb-mh:after{content:"";flex:1;height:2px;background:repeating-linear-gradient(90deg,#d6c8b2 0 8px,transparent 8px 14px)}' +
+    '.hnb-print{display:flex;align-items:center;gap:14px;margin:4px 0 18px;padding:14px 18px;border-radius:18px;background:linear-gradient(135deg,#2f6b5a,#3f8a73);color:#fff;text-decoration:none;box-shadow:0 6px 18px rgba(47,107,90,.28)}' +
+    '.hnb-print .ic{font-size:28px;width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,.18);display:grid;place-items:center;flex-shrink:0}' +
+    '.hnb-print .tx{flex:1;display:flex;flex-direction:column;gap:2px}.hnb-print b{font-size:17px}.hnb-print small{font-size:13px;opacity:.88}' +
+    '.hnb-print .go{background:#ffd166;color:#1f3b33;font-weight:800;border-radius:999px;padding:7px 16px;white-space:nowrap}' +
     '.hnb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}' +
     '.hnb-lc{all:unset;cursor:pointer;position:relative;display:flex;flex-direction:column;min-height:150px;padding:14px 16px 18px;border-radius:14px;background:' + BOARD + ';color:#f4f1e8;border:7px solid transparent;border-image:' + WOOD + ' 1;box-shadow:0 10px 22px rgba(60,40,20,.22),0 2px 4px rgba(60,40,20,.18);transition:transform .15s}' +
     '.hnb-lc:hover{transform:translateY(-3px) rotate(-.3deg)}' +
@@ -165,6 +169,9 @@
       fl.appendChild(b);
     });
     w.appendChild(fl);
+    var pr = el('a', 'hnb-print', '<span class="ic">🖨️</span><span class="tx"><b>كل السبورات في ملف واحد للطباعة</b><small>مرتبة ومنسقة على ورق A4 · ' + LS.length + ' درس</small></span><span class="go">فتح ←</span>');
+    pr.href = new URL('boards/print.html', location.href).href; pr.target = '_blank'; pr.rel = 'noopener';
+    w.appendChild(pr);
     var groups = {}, order = [];
     LS.map(function (l, i) { return [l, i]; }).reverse().forEach(function (p) {
       var l = p[0]; if (filter !== 'الكل' && l.kind !== filter) return;
@@ -288,8 +295,7 @@
     if (!document.body) return;
     var bar = document.getElementById('hnn-bar');
     if (bar && !document.getElementById('hnb-btn')) {
-      var b = el('button', '', I.board + '<span>سبورة الفصل</span><span class="c">' + LS.length + '</span>'); b.id = 'hnb-btn';
-      b.style.background = '#24493d'; b.onclick = open;
+      var b = el('button', '', I.board + '<span>سبورة الفصل</span><span class="c">' + LS.length + '</span>'); b.id = 'hnb-btn'; b.className = 'bd'; b.onclick = open;
       bar.appendChild(el('span', 'sep')); bar.appendChild(b);
     }
     if (wantOpen && (!ov || !document.body.contains(ov) || !ov.classList.contains('on'))) { if (ov && !document.body.contains(ov)) ov = null; open(); }

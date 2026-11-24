@@ -7,14 +7,23 @@
   var home = new URL('../', location.href).href;
   var PDFJS = new URL('../shared/pdfjs/', location.href).href;
   var css = '' +
-    '#hnn-bar{position:fixed;top:10px;left:10px;z-index:2147483646;display:flex;align-items:center;gap:2px;padding:4px;direction:rtl;background:rgba(24,21,18,.82);-webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);border:1px solid rgba(255,255,255,.14);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.22),0 1px 2px rgba(0,0,0,.2)}' +
-    '#hnn-bar a,#hnn-bar button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;color:#fff;font:700 12.5px Cairo,system-ui,sans-serif;padding:7px 11px;border-radius:10px;white-space:nowrap;line-height:1;transition:background .15s}' +
-    '#hnn-bar a:hover{background:rgba(255,255,255,.1)}' +
-    '#hnn-bar svg{width:15px;height:15px;flex-shrink:0}' +
-    '#hnn-bar button{background:var(--hc)}' +
-    '#hnn-bar button:hover{filter:brightness(1.08)}' +
-    '#hnn-bar .c{background:rgba(255,255,255,.25);border-radius:6px;padding:2px 6px;font-size:11px}' +
-    '#hnn-bar .sep{width:1px;height:18px;background:rgba(255,255,255,.16);margin:0 2px}' +
+    '#hnn-bar{position:relative;z-index:2147483000;box-sizing:border-box;width:100%;display:flex;align-items:center;gap:8px;direction:rtl;padding:8px max(14px,env(safe-area-inset-right)) 8px max(14px,env(safe-area-inset-left));background:rgba(255,255,255,.94);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid rgba(31,27,22,.08);box-shadow:0 2px 14px rgba(31,27,22,.06);font-family:\'Baloo Bhaijaan 2\',Cairo,system-ui,sans-serif}' +
+    '#hnn-bar *{box-sizing:border-box}' +
+    '#hnn-bar .hb{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:9px;margin-inline-end:auto;font:800 16px/1 \'Baloo Bhaijaan 2\',Cairo,system-ui,sans-serif;color:#2a241d;white-space:nowrap}' +
+    '#hnn-bar .hb img{width:34px;height:34px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.12)}' +
+    '#hnn-bar a.nv,#hnn-bar button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 15px;border-radius:999px;font:700 14px/1 \'Baloo Bhaijaan 2\',Cairo,system-ui,sans-serif;white-space:nowrap;transition:transform .12s,filter .15s,background .15s}' +
+    '#hnn-bar a.nv{background:#f2eee7;color:#3b342b;border:1px solid #e6dfd3}' +
+    '#hnn-bar a.nv:hover{background:#ebe5da}' +
+    '#hnn-bar button{color:#fff;background:var(--hc);box-shadow:0 3px 10px color-mix(in srgb,var(--hc) 35%,transparent)}' +
+    '#hnn-bar button.bd{--hc:#2f6b5a}' +
+    '#hnn-bar button:hover{filter:brightness(1.07)}' +
+    '#hnn-bar a.nv:active,#hnn-bar button:active{transform:scale(.96)}' +
+    '#hnn-bar svg{width:17px;height:17px;flex-shrink:0}' +
+    '#hnn-bar .c{background:rgba(255,255,255,.26);border-radius:999px;padding:3px 8px;font-size:12px;line-height:1}' +
+    '#hnn-bar .sep{display:none}' +
+    '@media (max-width:560px){#hnn-bar{gap:6px;padding-top:6px;padding-bottom:6px}#hnn-bar .hb span{display:none}#hnn-bar a.nv,#hnn-bar button{height:34px;padding:0 11px;font-size:12.5px}#hnn-bar .c{display:none}}' +
+    '@media (max-width:360px){#hnn-bar a.nv span{display:none}}' +
+    '@media print{#hnn-bar{display:none}}' +
     '#hnn-ov{position:fixed;inset:0;z-index:2147483647;background:#f7f5f1;direction:rtl;font-family:Cairo,system-ui,sans-serif;color:#1f1b16;display:none;flex-direction:column}' +
     '#hnn-ov.on{display:flex}' +
     '#hnn-ov *{box-sizing:border-box}' +
@@ -201,13 +210,16 @@
     ensureStyle(); ensureFont();
     if (!document.getElementById('hnn-bar')) {
       var b = el('div'); b.id = 'hnn-bar'; b.style.setProperty('--hc', C);
-      var a = el('a', '', ICON_HOME + '<span>كل المواد</span>'); a.href = home; b.appendChild(a);
+      var hb = el('a', 'hb', '<img src="' + home + 'icons/icon-192.png" alt=""><span>تعلّم مع حنين</span>'); hb.href = home; b.appendChild(hb);
+      var a = el('a', 'nv', ICON_HOME + '<span>كل المواد</span>'); a.href = home; b.appendChild(a);
       if (D) {
         b.appendChild(el('span', 'sep'));
         var e = el('button', '', ICON_DOC + '<span>الامتحانات</span><span class="c">' + D.total + '</span>');
         e.onclick = open; b.appendChild(e);
       }
-      document.body.appendChild(b);
+      document.body.insertBefore(b, document.body.firstChild);
+    } else if (document.body.firstElementChild !== document.getElementById('hnn-bar')) {
+      document.body.insertBefore(document.getElementById('hnn-bar'), document.body.firstChild);
     }
     if (D && wantOpen && (!ov || !document.body.contains(ov) || !ov.classList.contains('on'))) { if (ov && !document.body.contains(ov)) ov = null; open(); }
   }
