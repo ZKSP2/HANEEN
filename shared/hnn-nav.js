@@ -236,7 +236,21 @@
       : '[style*="\'Cairo\'"]{font-family:' + B + '!important}[style*="font:800 40px"],[style*="font:800 22px"],[style*="font: 800 40px"],[style*="font: 800 22px"],[style*="font-size:40px"],[style*="font-size: 40px"]{font-family:' + R + '!important}';
     var s = document.createElement('style'); s.id = 'hnn-theme'; s.textContent = c; document.head.appendChild(s);
   }
+  function fitEn() {
+    var W = window.innerWidth, H = window.innerHeight;
+    var e = document.querySelector('[data-hnnen]');
+    if (!e) {
+      var ds = document.querySelectorAll('div[style*="100vh"]');
+      for (var i = 0; i < ds.length; i++) { if (/Nunito/.test(ds[i].style.fontFamily)) { e = ds[i]; break; } }
+      if (!e) return;
+      e.setAttribute('data-hnnen', '1');
+    }
+    var z = W >= 700 ? Math.round(Math.min(W * 0.94 / 430, H >= W ? 1.7 : 1.38) * 100) / 100 : 1;
+    var want = z === 1 ? '' : String(z);
+    if (String(e.style.zoom || '') !== want) e.style.zoom = want;
+  }
   function fit() {
+    if (APP === 'english') { fitEn(); return; }
     if (APP !== 'arabic' && APP !== 'religion') return;
     var W = window.innerWidth, H = window.innerHeight;
     var els = document.querySelectorAll('[style*="max-width:480px"],[style*="max-width: 480px"],#hnn-fit,[data-hnnfit]');

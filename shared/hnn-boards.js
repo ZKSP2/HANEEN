@@ -99,6 +99,8 @@
     '.hnb-hw h4{margin:0 0 8px;font:700 24px "Aref Ruqaa",serif;color:#7a5c00}' +
     '.hnb-hw ul{margin:0;padding-inline-start:22px;font-size:18px;font-weight:700;line-height:1.9}' +
     '.hnb-pr{display:inline-block;font-size:12px;font-weight:800;color:#3d3207;background:#ffe27a;border-radius:999px;padding:0 9px;margin-inline-start:6px;vertical-align:middle;line-height:20px}' +
+    '.hnb-h.sg{opacity:.8;border-bottom:2px dashed rgba(255,226,122,.7);padding-bottom:1px}' +
+    '.hnb-sgn{font-size:13px;color:#ffe27a;margin:10px 0 0;font-weight:600;opacity:.85}' +
     '.hnb-tip{font-size:15px;color:rgba(255,255,255,.7);margin:10px 0 0;font-weight:600}' +
     '.hz .hnb-h{cursor:pointer;color:transparent!important;text-shadow:0 0 9px rgba(255,255,255,.75);background:rgba(255,255,255,.07);border-radius:8px;padding:0 6px;user-select:none;transition:all .25s}' +
     '.hz .hnb-h.r{color:inherit!important;text-shadow:none;background:rgba(182,240,156,.12)}' +
@@ -134,7 +136,7 @@
   function el(tag, cls, h) { var e = document.createElement(tag); if (cls) e.className = cls; if (h != null) e.innerHTML = h; return e; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function img(n) { return base + 'boards/img/' + ('00' + n).slice(-3) + '.webp'; }
-  function H(v) { return v ? '<span class="hnb-h">' + esc(v) + '</span>' : '<span class="hnb-pr">تدريب</span>'; }
+  function H(v) { if (!v) return '<span class="hnb-pr">تدريب</span>'; if (v.charAt(0) === '~') return '<span class="hnb-h sg" title="حل مقترح">' + esc(v.slice(1)) + '</span>'; return '<span class="hnb-h">' + esc(v) + '</span>'; }
   function gapify(s) { return esc(s).replace(/……/g, '<span class="hnb-gap"></span>'); }
   var LS = B.lessons.slice().sort(function (a, b) { return a.sort < b.sort ? -1 : 1; });
   var ov, body, quiz = false, cur = -1, filter = 'الكل', lb, lbList = [], lbI = 0, depth = 0;
@@ -209,6 +211,7 @@
     } else if (b.t === 'list') {
       h += '<div class="hnb-ch">' + b.items.map(function (x) { return '<span>' + esc(x) + '</span>'; }).join('') + '</div>';
     }
+    if (JSON.stringify(b).indexOf('"~') >= 0) h += '<p class="hnb-sgn">الإجابات المنقّطة حل مقترح للمذاكرة، الميس ما كتبتهاش على السبورة.</p>';
     return h;
   }
   function openLesson(i, push) {
