@@ -9,6 +9,7 @@
   var css = '' +
     '#hnn-bar{position:relative;z-index:2147483000;box-sizing:border-box;width:100%;display:flex;align-items:center;gap:8px;direction:rtl;padding:8px max(14px,env(safe-area-inset-right)) 8px max(14px,env(safe-area-inset-left));background:rgba(255,255,255,.94);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid rgba(31,27,22,.08);box-shadow:0 2px 14px rgba(31,27,22,.06);font-family:\'Baloo Bhaijaan 2\',Cairo,system-ui,sans-serif}' +
     '#hnn-bar *{box-sizing:border-box}' +
+    '#hnn-bar{overflow:hidden;max-width:100vw}' +
     '#hnn-bar .hb{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:9px;margin-inline-end:auto;font:800 16px/1 \'Baloo Bhaijaan 2\',Cairo,system-ui,sans-serif;color:#2a241d;white-space:nowrap}' +
     '#hnn-bar .hb img{width:34px;height:34px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.12)}' +
     '#hnn-bar a.nv,#hnn-bar button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 15px;border-radius:999px;font:700 14px/1 \'Baloo Bhaijaan 2\',Cairo,system-ui,sans-serif;white-space:nowrap;transition:transform .12s,filter .15s,background .15s}' +
@@ -21,7 +22,7 @@
     '#hnn-bar svg{width:17px;height:17px;flex-shrink:0}' +
     '#hnn-bar .c{background:rgba(255,255,255,.26);border-radius:999px;padding:3px 8px;font-size:12px;line-height:1}' +
     '#hnn-bar .sep{display:none}' +
-    '@media (max-width:560px){#hnn-bar{gap:6px;padding-top:6px;padding-bottom:6px}#hnn-bar .hb span{display:none}#hnn-bar a.nv,#hnn-bar button{height:34px;padding:0 11px;font-size:12.5px}#hnn-bar .c{display:none}}' +
+    '@media (max-width:560px){#hnn-bar a.pr span{display:none}#hnn-bar a.pr{padding:0 10px}#hnn-bar{gap:6px;padding-top:6px;padding-bottom:6px}#hnn-bar .hb span{display:none}#hnn-bar a.nv,#hnn-bar button{height:34px;padding:0 11px;font-size:12.5px}#hnn-bar .c{display:none}}' +
     '@media (max-width:360px){#hnn-bar a.nv span{display:none}}' +
     '@media print{#hnn-bar{display:none}}' +
     '#hnn-ov{position:fixed;inset:0;z-index:2147483647;background:#f7f5f1;direction:rtl;font-family:Cairo,system-ui,sans-serif;color:#1f1b16;display:none;flex-direction:column}' +
@@ -217,7 +218,8 @@
         var e = el('button', '', ICON_DOC + '<span>الامتحانات</span><span class="c">' + D.total + '</span>');
         e.onclick = open; b.appendChild(e);
       }
-      if (APP === 'english') { var pr = el('a', 'nv', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg><span>طباعة السبورة</span>'); pr.href = base + 'print.html'; pr.target = '_blank'; pr.rel = 'noopener'; b.appendChild(pr); }
+      if (APP === 'english') { var pr = el('a', 'nv pr', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg><span>طباعة السبورة</span>'); pr.href = base + 'print.html'; pr.target = '_blank'; pr.rel = 'noopener'; b.appendChild(pr); }
+      if (APP === 'english') { b.style.position = 'fixed'; b.style.top = '0'; b.style.left = '0'; b.style.right = '0'; }
       document.body.insertBefore(b, document.body.firstChild);
     } else if (document.body.firstElementChild !== document.getElementById('hnn-bar')) {
       document.body.insertBefore(document.getElementById('hnn-bar'), document.body.firstChild);
@@ -239,6 +241,9 @@
   }
   function fitEn() {
     var W = window.innerWidth, H = window.innerHeight;
+    if (!document.getElementById('hnn-en-css')) { var st = document.createElement('style'); st.id = 'hnn-en-css'; st.textContent = '[data-hnnen] button{box-sizing:border-box;max-width:100%}[data-hnnen] div[style*="display: grid"]>*{min-width:0}[data-hnnen] button>div{min-width:0}html,body{overflow-x:hidden}'; document.head.appendChild(st); }
+    var hb = document.getElementById('hnn-bar');
+    if (hb && document.body) { var ph = hb.offsetHeight + 'px'; if (document.body.style.paddingTop !== ph) document.body.style.paddingTop = ph; }
     var e = document.querySelector('[data-hnnen]');
     if (!e) {
       var ds = document.querySelectorAll('div[style*="100vh"]');
@@ -249,6 +254,18 @@
     var z = W >= 700 ? Math.round(Math.min(W * 0.94 / 430, H >= W ? 1.7 : 1.38) * 100) / 100 : 1;
     var want = z === 1 ? '' : String(z);
     if (String(e.style.zoom || '') !== want) e.style.zoom = want;
+    var nv = e.querySelector('nav');
+    var fd = e.querySelector('div[style*="pointer-events: none"][style*="bottom: 0"]');
+    var wide = z !== 1;
+    if (nv) {
+      var S = wide ? { bottom: '14px', borderRadius: '28px', border: '1px solid rgb(241, 227, 239)', paddingBottom: '8px', boxShadow: '0 10px 30px -8px rgba(120, 50, 120, 0.35), 0 2px 6px rgba(120, 50, 120, 0.08)' } : { bottom: '0px', borderRadius: '26px 26px 0px 0px', border: '', paddingBottom: 'calc(10px + env(safe-area-inset-bottom))', boxShadow: 'rgba(120, 50, 120, 0.4) 0px -12px 34px -18px' };
+      if (!wide) { if (nv.getAttribute('data-hnnw') === '1') { nv.style.border = ''; nv.style.borderTop = '1px solid rgb(241, 227, 239)'; for (var k in S) if (k !== 'border') nv.style[k] = S[k]; nv.removeAttribute('data-hnnw'); } }
+      else { for (var k2 in S) if (nv.style[k2] !== S[k2]) nv.style[k2] = S[k2]; nv.setAttribute('data-hnnw', '1'); }
+    }
+    if (fd) {
+      var fw = wide ? (Math.ceil(W / z) + 'px') : 'min(100%, 430px)';
+      if (fd.style.width !== fw) fd.style.width = fw;
+    }
   }
   function fit() {
     if (APP === 'english') { fitEn(); return; }
