@@ -211,7 +211,7 @@
     } else if (b.t === 'list') {
       h += '<div class="hnb-ch">' + b.items.map(function (x) { return '<span>' + esc(x) + '</span>'; }).join('') + '</div>';
     }
-    if (JSON.stringify(b).indexOf('"~') >= 0) h += '<p class="hnb-sgn">الإجابات المنقّطة حل مقترح للمذاكرة، الميس ما كتبتهاش على السبورة.</p>';
+    if (JSON.stringify(b).indexOf('"~') >= 0) h += '<p class="hnb-sgn">الإجابات المسطّرة بخطٍّ منقّط إجاباتٌ مقترحة للمذاكرة، ولم تُكتب على السبورة.</p>';
     return h;
   }
   function openLesson(i, push) {
