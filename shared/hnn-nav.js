@@ -218,7 +218,7 @@
         var e = el('button', '', ICON_DOC + '<span>الامتحانات</span><span class="c">' + D.total + '</span>');
         e.onclick = open; b.appendChild(e);
       }
-      if (APP === 'english') { var pr = el('a', 'nv pr', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg><span>طباعة السبورة</span>'); pr.href = base + 'print.html'; pr.target = '_blank'; pr.rel = 'noopener'; b.appendChild(pr); }
+      var PR = { english: ['print.html', 'طباعة السبورة'], religion: ['print.html', 'كتاب المراجعة'], arabic: ['summary.html', 'ملخص المنهج'] }[APP]; if (PR) { var pr = el('a', 'nv pr', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg><span>' + PR[1] + '</span>'); pr.href = base + PR[0]; pr.target = '_blank'; pr.rel = 'noopener'; b.appendChild(pr); }
       if (APP === 'english') { b.style.position = 'fixed'; b.style.top = '0'; b.style.left = '0'; b.style.right = '0'; }
       document.body.insertBefore(b, document.body.firstChild);
     } else if (document.body.firstElementChild !== document.getElementById('hnn-bar')) {
@@ -281,7 +281,35 @@
       z = Math.round(z * 100) / 100;
       if (e.id !== 'hnn-fit') { var want = mw || '480px'; if (e.style.maxWidth !== want) e.style.maxWidth = want; }
       if (String(e.style.zoom) !== String(z === 1 ? '' : z)) e.style.zoom = z === 1 ? '' : z;
-      if (e.id === 'hnn-fit') { var h = z === 1 ? '100dvh' : Math.floor(H / z) + 'px'; if (e.style.height !== h) e.style.height = h; }
+      if (e.id === 'hnn-fit') { var hb0 = document.getElementById('hnn-bar'); var bh = hb0 ? hb0.offsetHeight : 0; var h = z === 1 ? 'calc(100dvh - ' + bh + 'px)' : Math.floor((H - bh) / z) + 'px'; if (e.style.height !== h) e.style.height = h; }
+    }
+    if (APP === 'religion') relHero();
+  }
+  function relHero() {
+    var root = document.getElementById('hnn-fit');
+    if (!root) return;
+    var ds = root.querySelectorAll('div[style*="height:400px"],div[style*="height: 400px"]');
+    for (var i = 0; i < ds.length; i++) {
+      var d = ds[i];
+      if (d.getAttribute('data-hnnhero') === '1') continue;
+      if (!/url\(/.test(d.style.backgroundImage || '')) continue;
+      d.setAttribute('data-hnnhero', '1');
+      var pat = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23e9c46a' stroke-opacity='.13' stroke-width='1'%3E%3Cpath d='M32 4l8 20 20 8-20 8-8 20-8-20-20-8 20-8z'/%3E%3Crect x='18' y='18' width='28' height='28' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='7'/%3E%3C/g%3E%3C/svg%3E\")";
+      d.style.backgroundImage = 'linear-gradient(180deg,rgba(11,21,48,0) 55%,#0b1530 100%),radial-gradient(60% 55% at 22% 18%,rgba(233,196,106,.28) 0%,rgba(233,196,106,0) 70%),' + pat + ',linear-gradient(160deg,#16306b 0%,#0f1f4a 45%,#0b1530 100%)';
+      d.style.backgroundSize = 'auto,auto,64px 64px,auto';
+      d.style.backgroundPosition = 'center';
+      d.style.overflow = 'hidden';
+      d.style.isolation = 'isolate';
+      var m = document.createElement('div');
+      m.setAttribute('aria-hidden', 'true');
+      m.style.cssText = 'position:absolute;z-index:-1;top:34px;left:26px;width:110px;height:110px;pointer-events:none;filter:drop-shadow(0 0 18px rgba(233,196,106,.45))';
+      m.innerHTML = '<svg viewBox="0 0 100 100" width="110" height="110"><path d="M62 12a40 40 0 1 0 26 66A34 34 0 1 1 62 12z" fill="#e9c46a"/><path d="M74 30l3.5 8 8.6.8-6.5 5.7 2 8.4-7.6-4.5-7.5 4.5 1.9-8.4-6.5-5.7 8.6-.8z" fill="#e9c46a"/></svg>';
+      d.insertBefore(m, d.firstChild);
+      var sk = document.createElement('div');
+      sk.setAttribute('aria-hidden', 'true');
+      sk.style.cssText = 'position:absolute;z-index:-1;left:0;right:0;bottom:0;height:120px;pointer-events:none;opacity:.5';
+      sk.innerHTML = '<svg viewBox="0 0 480 120" preserveAspectRatio="xMidYMax slice" width="100%" height="120"><path fill="#1c3570" d="M0 120V86h40V70h14v16h30V52c0-14 12-26 26-26s26 12 26 26v34h22V40h6V22h4v18h6v46h40V60c0-22 18-40 40-40s40 18 40 40v26h40V40h6V22h4v18h6v46h22V52c0-14 12-26 26-26s26 12 26 26v34h30V70h14v16h40v34z"/></svg>';
+      d.insertBefore(sk, d.firstChild);
     }
   }
   window.addEventListener('resize', fit);
