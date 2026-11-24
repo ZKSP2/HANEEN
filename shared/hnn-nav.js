@@ -275,15 +275,26 @@
     for (var i = 0; i < els.length; i++) {
       var e = els[i]; e.setAttribute('data-hnnfit', '1');
       var wide = APP === 'arabic' && W >= 1100 && e.textContent.indexOf('بطاقات الدروس') >= 0;
+      var relw = APP === 'religion' && e.id === 'hnn-fit' && W >= 1000;
       var z, mw = '';
       if (wide) { z = W >= 1500 ? 1.22 : 1.08; mw = Math.min(1180, Math.floor(W * 0.92 / z)) + 'px'; }
+      else if (relw) { z = Math.round(Math.min(1.3, W / 1200 + .25) * 100) / 100; mw = '760px'; }
       else z = W >= 700 ? Math.min(W * 0.94 / 480, H >= W ? 1.62 : (W >= 1500 ? 1.6 : 1.45)) : 1;
       z = Math.round(z * 100) / 100;
-      if (e.id !== 'hnn-fit') { var want = mw || '480px'; if (e.style.maxWidth !== want) e.style.maxWidth = want; }
+      if (e.id !== 'hnn-fit' || APP === 'religion') { var want = mw || '480px'; if (e.style.maxWidth !== want) e.style.maxWidth = want; }
+      if (APP === 'religion' && e.id === 'hnn-fit') relNav(e, relw);
       if (String(e.style.zoom) !== String(z === 1 ? '' : z)) e.style.zoom = z === 1 ? '' : z;
       if (e.id === 'hnn-fit') { var hb0 = document.getElementById('hnn-bar'); var bh = hb0 ? hb0.offsetHeight : 0; var h = z === 1 ? 'calc(100dvh - ' + bh + 'px)' : Math.floor((H - bh) / z) + 'px'; if (e.style.height !== h) e.style.height = h; }
     }
-    if (APP === 'religion') relHero();
+  }
+  function relNav(root, w) {
+    var ds = root.querySelectorAll('div[style*="z-index: 6"],div[style*="z-index:6"]');
+    for (var i = 0; i < ds.length; i++) {
+      var d = ds[i];
+      if (!/bottom: 16px|bottom:16px/.test(d.getAttribute('style') || '')) continue;
+      var want = w ? '50%' : '14px';
+      if (d.style.left !== want) { d.style.left = want; d.style.right = w ? 'auto' : '14px'; d.style.width = w ? '460px' : ''; d.style.transform = w ? 'translateX(-50%)' : ''; }
+    }
   }
   function relHero() {
     var root = document.getElementById('hnn-fit');
