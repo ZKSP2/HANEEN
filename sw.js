@@ -1,4 +1,4 @@
-const C = 'haneen-v2';
+const C = 'haneen-v3';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './math/assets/haneen-avatar.png', './shared/hnn-nav.js', './shared/hnn-boards.js'];
 const CDN = ['fonts.googleapis.com', 'fonts.gstatic.com', 'unpkg.com', 'cdnjs.cloudflare.com', 'cdn.jsdelivr.net'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(C).then(c => c.addAll(CORE)).catch(() => {})); self.skipWaiting(); });
