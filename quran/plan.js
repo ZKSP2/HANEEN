@@ -171,58 +171,76 @@
   }
 
   var css = '' +
-    '.hqp{position:fixed;inset:0;z-index:2147483600;background:#fff8ef;direction:rtl;font-family:"Baloo Bhaijaan 2",Cairo,system-ui,sans-serif;color:#2b2342;display:none;flex-direction:column}' +
+    '.hqp{position:fixed;inset:0;z-index:2147483600;background:linear-gradient(180deg,#fdf2f8 0,#f5f3ff 60%,#fdf2f8 100%);direction:rtl;font-family:"Baloo Bhaijaan 2",Cairo,system-ui,sans-serif;color:#2b1840;display:none;flex-direction:column}' +
     '.hqp.on{display:flex}.hqp *{box-sizing:border-box}' +
-    '.hqp-hd{flex-shrink:0;background:radial-gradient(120% 140% at 85% 0,#ffd9ec 0,#fff0dc 55%,#fff8ef 100%);padding:14px 16px 16px;border-bottom:1px solid #f3e3c9}' +
-    '.hqp-hr{display:flex;align-items:center;gap:10px;max-width:760px;margin:0 auto}' +
-    '.hqp-x{all:unset;cursor:pointer;width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #f0dcc0;display:grid;place-items:center;font-size:20px;color:#7a3fd0}' +
-    '.hqp-hr h2{margin:0;font-size:21px;font-weight:800;color:#3a1f5c;flex:1}.hqp-hr small{display:block;font-size:12.5px;color:#8a6a40;font-weight:700}' +
-    '.hqp-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 90px}' +
-    '.hqp-w{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:14px}' +
-    '.hqp-card{background:#fff;border:1px solid #f0e2c8;border-radius:22px;padding:14px 16px;box-shadow:0 8px 22px -16px rgba(122,63,208,.35)}' +
-    '.hqp-card h3{margin:0 0 8px;font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px;color:#3a1f5c}' +
-    '.hqp-card h3 i{font-style:normal;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-size:16px}' +
-    '.hqp-cd{display:flex;gap:10px;align-items:stretch}' +
-    '.hqp-cd .big{flex:1;border-radius:18px;padding:12px 14px;background:linear-gradient(135deg,#7a3fd0,#b86ad9);color:#fff}' +
-    '.hqp-cd .big b{display:block;font-size:30px;line-height:1.1}.hqp-cd .big span{font-size:13px;font-weight:700;opacity:.9}' +
-    '.hqp-cd .sm{width:108px;border-radius:18px;padding:10px;background:#fff4dc;border:1px solid #f3d79b;text-align:center;font-weight:800;color:#b0761a}.hqp-cd .sm b{display:block;font-size:28px;line-height:1.1}' +
-    '.hqp-res{display:flex;flex-wrap:wrap;gap:6px}.hqp-res span{font-size:12.5px;font-weight:700;background:#e8f8ee;color:#137a45;border:1px solid #bfe9cf;border-radius:99px;padding:3px 10px}' +
-    '.hqp-req{display:grid;gap:8px}.hqp-req div{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:14px;background:#faf6ff;border:1px solid #ece2ff;font-weight:700;font-size:14.5px}' +
+    '.hqp-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 100px}' +
+    '.hqp-w{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:16px;padding:0 16px}' +
+    '.hqp-hero{position:relative;overflow:hidden;margin:0 -16px;padding:18px 20px 64px;background:radial-gradient(120% 90% at 20% 0,#f472b6 0,#c026d3 38%,#7c3aed 100%);color:#fff;border-radius:0 0 34px 34px}' +
+    '.hqp-hero:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#fff 1.2px,transparent 1.6px);background-size:46px 46px;opacity:.25}' +
+    '.hqp-hero .moon{position:absolute;left:22px;top:22px;width:54px;height:54px;border-radius:50%;box-shadow:-12px 10px 0 0 #fde68a;transform:rotate(-20deg);opacity:.95}' +
+    '.hqp-top{position:relative;display:flex;align-items:center;gap:10px}' +
+    '.hqp-x{all:unset;cursor:pointer;width:42px;height:42px;border-radius:14px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);display:grid;place-items:center;font-size:18px;color:#fff}' +
+    '.hqp-hero h2{position:relative;margin:18px 0 2px;font-size:30px;font-weight:800;line-height:1.25}' +
+    '.hqp-hero p{position:relative;margin:0;font-size:14px;font-weight:700;opacity:.92}' +
+    '.hqp-stats{position:relative;margin:-48px 0 0;display:grid;grid-template-columns:1.4fr 1fr;gap:12px}' +
+    '.hqp-st{background:#fff;border-radius:24px;padding:14px 16px;box-shadow:0 18px 34px -20px rgba(124,58,237,.55);border:1px solid #f3e8ff}' +
+    '.hqp-st small{display:block;font-size:12.5px;font-weight:700;color:#8b5cf6}' +
+    '.hqp-st b{display:block;font-size:30px;font-weight:800;line-height:1.15;color:#86198f}' +
+    '.hqp-st span{font-size:12px;font-weight:700;color:#7c6a92}' +
+    '.hqp-card{background:#fff;border-radius:28px;padding:16px;border:1px solid var(--bd,#f3e8ff);box-shadow:0 16px 32px -24px var(--sh,#7c3aed);background-image:linear-gradient(140deg,var(--tn,#faf5ff),#fff 55%)}' +
+    '.hqp-card h3{margin:0 0 12px;font-size:19px;font-weight:800;display:flex;align-items:center;gap:10px;color:#2b1840}' +
+    '.hqp-card h3 i{font-style:normal;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:20px;color:#fff;background:var(--ic,linear-gradient(140deg,#a78bfa,#7c3aed));box-shadow:0 10px 18px -10px var(--sh,#7c3aed)}' +
+    '.hqp-card h3 small{display:block;font-size:12.5px;font-weight:700;color:#7c6a92}' +
+    '.hqp-res{display:flex;flex-wrap:wrap;gap:6px}.hqp-res span{font-size:13px;font-weight:700;background:#fff;color:#047857;border:1px solid #a7f3d0;border-radius:99px;padding:4px 11px}.hqp-res span:before{content:"★ ";color:#f59e0b}' +
+    '.hqp-req{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hqp-req div{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:16px;background:#fff;border:1px solid #f0e6ff;font-weight:700;font-size:14.5px}' +
     '.hqp-tag{font-size:11.5px;font-weight:800;border-radius:99px;padding:2px 9px;margin-inline-start:auto;white-space:nowrap}' +
-    '.t-new{background:#ffe7c2;color:#9a5a00}.t-rec{background:#dcefff;color:#1d5fa8}.t-hd{background:#e8f8ee;color:#137a45}.t-x{background:#f1edf7;color:#6b5f80}' +
-    '.hqp-days{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}.hqp-days::-webkit-scrollbar{display:none}' +
-    '.hqp-day{all:unset;cursor:pointer;flex-shrink:0;min-width:96px;text-align:center;padding:8px 10px;border-radius:16px;background:#fff;border:1.5px solid #efe2cb;font-weight:700;font-size:13px}' +
-    '.hqp-day.on{border-color:#7a3fd0;background:#f5eeff;color:#5a2bb0}.hqp-day.ok{background:#e8f8ee;border-color:#9fdcb8}.hqp-day b{display:block;font-size:15px}' +
-    '.hqp-step{border-radius:18px;border:1.5px solid #efe2cb;padding:12px;background:#fffdf9}.hqp-step.ok{border-color:#9fdcb8;background:#f3fbf6}' +
-    '.hqp-sh{display:flex;align-items:center;gap:8px;margin-bottom:8px}.hqp-sh b{font-size:15.5px;flex:1}.hqp-sh em{font-style:normal;font-size:12px;font-weight:800;color:#8a6a40;background:#fff4dc;border-radius:99px;padding:2px 9px}' +
-    '.hqp-chk{all:unset;cursor:pointer;width:30px;height:30px;border-radius:10px;border:2px solid #cdbbe8;display:grid;place-items:center;font-size:16px;color:#fff;flex-shrink:0}.hqp-step.ok .hqp-chk{background:#22a35a;border-color:#22a35a}' +
-    '.hqp-ay{font-family:"Amiri Quran","Amiri",serif;font-size:22px;line-height:2.3;text-align:justify;background:#fffaf0;border:1px solid #f3e3c4;border-radius:14px;padding:8px 12px;margin:6px 0}' +
-    '.hqp-ay span{cursor:pointer;transition:filter .2s}.hqp-ay.cov span{filter:blur(6px);color:#b9a47a}.hqp-ay.cov span.sh{filter:none;color:inherit}' +
-    '.hqp-ay i{font-style:normal;font-size:.7em;color:#b0761a;margin:0 3px}' +
-    '.hqp-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}' +
-    '.hqp-b{all:unset;cursor:pointer;font-size:13px;font-weight:800;padding:7px 12px;border-radius:99px;background:#f3ecff;color:#5a2bb0;border:1px solid #e1d2fb}' +
-    '.hqp-b.g{background:#fff1d6;color:#8a5a10;border-color:#f3d79b}.hqp-b.on{background:#7a3fd0;color:#fff}.hqp-b.rec{background:#e5484d;color:#fff;border-color:#e5484d}' +
-    '.hqp-rate{display:flex;gap:6px;margin-top:8px}.hqp-rate button{all:unset;cursor:pointer;flex:1;text-align:center;font-size:12.5px;font-weight:800;padding:7px 4px;border-radius:12px}' +
-    '.hqp-rate .r3{background:#e8f8ee;color:#137a45}.hqp-rate .r2{background:#fff4dc;color:#9a5a00}.hqp-rate .r1{background:#ffe9ea;color:#b4232a}' +
-    '.hqp-hd2{font-family:"Amiri",serif;font-size:19px;line-height:2;background:#f4fbf6;border:1px solid #cdebd8;border-radius:14px;padding:10px 12px}' +
-    '.hqp-cyc{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}.hqp-cyc div{font-size:12.5px;font-weight:700;padding:7px 9px;border-radius:12px;background:#faf7f1;border:1px solid #efe5d2}.hqp-cyc div small{display:block;font-size:11px;color:#8a7a5e}' +
-    '.hqp-cyc .due{background:#fff1d6;border-color:#f3d79b}.hqp-cyc .w1{background:#ffe9ea;border-color:#f5c2c5}' +
-    '.hqp-recs{display:grid;gap:6px}.hqp-recs div{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;background:#faf7f1;border-radius:12px;padding:6px 8px}.hqp-recs audio{height:32px;flex:1;min-width:0}' +
-    '.hqp-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.hqp-row input{font:inherit;padding:6px 10px;border-radius:10px;border:1px solid #e1d2fb}' +
-    '.hqp-quiz{font-family:"Amiri Quran","Amiri",serif;font-size:22px;line-height:2.2;text-align:center;background:#f5eeff;border-radius:14px;padding:10px}' +
-    '.hqp-toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:2147483647;background:#3a1f5c;color:#fff;padding:10px 16px;border-radius:14px;font:700 14px Cairo,sans-serif}' +
-    '.hqp-entry{all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;margin:12px 16px;padding:14px;border-radius:22px;background:linear-gradient(135deg,#f5eeff,#fff3dc);border:1.5px solid #e1d2fb;box-shadow:0 12px 26px -18px #7a3fd0;direction:rtl;font-family:"Baloo Bhaijaan 2",Cairo,sans-serif}' +
-    '.hqp-entry .ic{width:52px;height:52px;border-radius:16px;background:linear-gradient(140deg,#a78bfa,#7a3fd0);display:grid;place-items:center;color:#fff;font-size:26px;flex-shrink:0}' +
-    '.hqp-entry b{display:block;font-size:17px;color:#3a1f5c}.hqp-entry small{font-size:12.5px;color:#7a6a90;font-weight:700}.hqp-entry .go{margin-inline-start:auto;font-weight:800;color:#fff;background:#7a3fd0;border-radius:99px;padding:6px 12px;font-size:13px;white-space:nowrap}' +
-    '.hqp-entry .dot{width:10px;height:10px;border-radius:50%;background:#e5484d;box-shadow:0 0 0 4px rgba(229,72,77,.2)}';
+    '.t-new{background:#fce7f3;color:#be185d}.t-rec{background:#e0f2fe;color:#0369a1}.t-hd{background:#d1fae5;color:#047857}.t-x{background:#f3e8ff;color:#6d28d9}' +
+    '.hqp-days{display:flex;gap:8px;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none}.hqp-days::-webkit-scrollbar{display:none}' +
+    '.hqp-day{all:unset;cursor:pointer;flex-shrink:0;min-width:92px;text-align:center;padding:9px 12px;border-radius:18px;background:#fff;border:1.5px solid #ede4fb;font-weight:700;font-size:12.5px;color:#7c6a92}' +
+    '.hqp-day b{display:block;font-size:15px;color:#2b1840}' +
+    '.hqp-day.on{background:linear-gradient(140deg,#db2777,#7c3aed);border-color:transparent;color:#fde7f3;box-shadow:0 10px 20px -12px #7c3aed}.hqp-day.on b{color:#fff}' +
+    '.hqp-day.ok{border-color:#86efac}.hqp-day.ok b:after{content:" ✓";color:#16a34a}' +
+    '.hqp-steps{display:flex;flex-direction:column;gap:12px;margin-top:12px}' +
+    '.hqp-step{position:relative;border-radius:22px;border:1.5px solid #f0e6ff;padding:14px;background:#fff}' +
+    '.hqp-step.ok{border-color:#86efac;background:linear-gradient(140deg,#f0fdf4,#fff 60%)}' +
+    '.hqp-sh{display:flex;align-items:center;gap:10px;margin-bottom:10px}.hqp-sh b{font-size:16.5px;flex:1}' +
+    '.hqp-sh em{font-style:normal;font-size:12px;font-weight:800;color:#a21caf;background:#fdf4ff;border:1px solid #f5d0fe;border-radius:99px;padding:3px 10px}' +
+    '.hqp-chk{all:unset;cursor:pointer;width:34px;height:34px;border-radius:12px;border:2px solid #d8b4fe;display:grid;place-items:center;font-size:17px;font-weight:800;color:#fff;flex-shrink:0;background:#fff}' +
+    '.hqp-step.ok .hqp-chk{background:#22c55e;border-color:#22c55e;box-shadow:0 8px 16px -8px #16a34a}' +
+    '.hqp-lbl{display:inline-block;font-size:13.5px;font-weight:800;color:#86198f;background:#fdf4ff;border-radius:10px;padding:2px 10px;margin:2px 0 6px}' +
+    '.hqp-ay{font-family:"Amiri Quran","Amiri",serif;font-size:23px;line-height:2.35;text-align:justify;background:linear-gradient(180deg,#fffbeb,#fff);border:1.5px solid #fde68a;border-radius:18px;padding:10px 14px;margin:4px 0 8px;color:#1f1530}' +
+    '.hqp-ay span{cursor:pointer;transition:filter .2s}.hqp-ay.cov span{filter:blur(7px);color:#c4a35a}.hqp-ay.cov span.sh{filter:none;color:inherit}' +
+    '.hqp-ay i{font-style:normal;font-size:.7em;color:#b45309;margin:0 3px}' +
+    '.hqp-btns{display:flex;flex-wrap:wrap;gap:6px}' +
+    '.hqp-b{all:unset;cursor:pointer;font-size:13px;font-weight:800;padding:8px 14px;border-radius:99px;background:#f5f3ff;color:#6d28d9;border:1px solid #e9d5ff}' +
+    '.hqp-b.g{background:#fffbeb;color:#b45309;border-color:#fde68a}.hqp-b.on{background:linear-gradient(140deg,#db2777,#7c3aed);color:#fff;border-color:transparent}.hqp-b.rec{background:#ef4444;color:#fff;border-color:#ef4444}' +
+    '.hqp-it{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 10px;border-radius:16px;background:#faf5ff;margin-bottom:6px}.hqp-it>b{font-size:14.5px;flex:1;min-width:110px}' +
+    '.hqp-rate{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.hqp-rate button{all:unset;cursor:pointer;text-align:center;font-size:12.5px;font-weight:800;padding:8px 4px;border-radius:12px}' +
+    '.hqp-rate .r3{background:#dcfce7;color:#15803d}.hqp-rate .r2{background:#fef3c7;color:#b45309}.hqp-rate .r1{background:#fee2e2;color:#b91c1c}' +
+    '.hqp-hd2{font-family:"Amiri",serif;font-size:20px;line-height:2.05;background:linear-gradient(140deg,#ecfdf5,#fff);border:1.5px solid #a7f3d0;border-radius:18px;padding:12px 14px;color:#064e3b}' +
+    '.hqp-note{margin:0 0 10px;font-size:13px;color:#7c6a92;font-weight:600}' +
+    '.hqp-cyc{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}.hqp-cyc div{font-size:13px;font-weight:800;padding:9px 11px;border-radius:16px;background:#fff;border:1px solid #f0e6ff}.hqp-cyc div small{display:block;font-size:11.5px;font-weight:700;color:#7c6a92}' +
+    '.hqp-cyc .due{background:linear-gradient(140deg,#fef3c7,#fff);border-color:#fcd34d}.hqp-cyc .w1{background:linear-gradient(140deg,#fee2e2,#fff);border-color:#fca5a5}' +
+    '.hqp-recs{display:grid;gap:8px}.hqp-recs div{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;background:#fff;border:1px solid #f0e6ff;border-radius:16px;padding:6px 10px}.hqp-recs audio{height:34px;flex:1;min-width:0}' +
+    '.hqp-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.hqp-row input{font:inherit;font-weight:700;padding:7px 12px;border-radius:12px;border:1.5px solid #e9d5ff;background:#fff;color:#6d28d9}' +
+    '.hqp-quiz{font-family:"Amiri Quran","Amiri",serif;font-size:23px;line-height:2.2;text-align:center;background:linear-gradient(140deg,#fdf4ff,#fff);border:1.5px solid #f5d0fe;border-radius:18px;padding:12px;margin:10px 0 8px}' +
+    '.hqp-toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);z-index:2147483647;background:linear-gradient(140deg,#db2777,#7c3aed);color:#fff;padding:11px 18px;border-radius:16px;font:700 14px Cairo,sans-serif;box-shadow:0 12px 24px -10px #7c3aed}' +
+    '.hqp-entry{all:unset;box-sizing:border-box;cursor:pointer;position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;width:100%;margin:0 0 16px;padding:18px;border-radius:28px;background:radial-gradient(120% 120% at 100% 0,#f472b6 0,#c026d3 45%,#7c3aed 100%);color:#fff;box-shadow:0 18px 34px -18px #7c3aed;direction:rtl;font-family:"Baloo Bhaijaan 2",Cairo,sans-serif;text-align:right}' +
+    '.hqp-entry:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#fff 1.2px,transparent 1.6px);background-size:38px 38px;opacity:.22}' +
+    '.hqp-entry>*{position:relative}' +
+    '.hqp-entry .ic{width:58px;height:58px;border-radius:18px;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.4);display:grid;place-items:center;font-size:28px;flex-shrink:0}' +
+    '.hqp-entry .tx{flex:1;min-width:0}.hqp-entry b{display:block;font-size:20px;font-weight:800}.hqp-entry small{display:block;font-size:13px;font-weight:700;opacity:.92}' +
+    '.hqp-entry .go{width:44px;height:44px;border-radius:50%;background:#fff;color:#be185d;display:grid;place-items:center;font-size:20px;font-weight:800;flex-shrink:0}' +
+    '.hqp-entry .dot{position:absolute;top:14px;left:14px;width:12px;height:12px;border-radius:50%;background:#fde047;box-shadow:0 0 0 5px rgba(253,224,71,.3)}' +
+    '@media (max-width:520px){.hqp-req{grid-template-columns:1fr}}';
 
   var ov = null, sel = TK;
+  function style() { if (document.getElementById('hqp-css')) return; var s = el('style'); s.id = 'hqp-css'; s.textContent = css; document.head.appendChild(s); }
   function ensure() {
+    style();
     if (ov) return;
-    var s = el('style'); s.textContent = css; document.head.appendChild(s);
     ov = el('div', 'hqp');
-    ov.innerHTML = '<div class="hqp-hd"><div class="hqp-hr"><button class="hqp-x" aria-label="إغلاق">✕</button><h2>خطة الحفظ<small></small></h2></div></div><div class="hqp-body"><div class="hqp-w"></div></div>';
-    ov.querySelector('.hqp-x').onclick = function () { if (location.hash === '#plan') history.back(); else close(); };
+    ov.innerHTML = '<div class="hqp-body"><div class="hqp-w"></div></div>';
     document.body.appendChild(ov);
   }
   function open() { ensure(); stop(); ov.classList.add('on'); document.documentElement.style.overflow = 'hidden'; render(); if (location.hash !== '#plan') history.pushState({ hqp: 1 }, '', '#plan'); }
@@ -232,21 +250,22 @@
   function render() {
     var w = ov.querySelector('.hqp-w'); w.innerHTML = '';
     var plan = buildPlan(), due = parse(P.next.due), left = Math.round((due - TODAY) / 864e5);
-    ov.querySelector('.hqp-hr small').textContent = P.next.title + ' · ' + dayName(due) + ' الساعة ' + ar(P.classTime);
-    var top = el('div', 'hqp-cd', '<div class="big"><span>باقي على ' + esc(P.next.title) + '</span><b>' + (left <= 0 ? 'النهارده!' : ar(left) + (left === 1 ? ' يوم' : left === 2 ? ' يومين' : ' أيام')) + '</b><span>' + esc(dayName(due)) + ' · ' + ar(P.classTime) + ' ظهرًا</span></div><div class="sm"><b>' + ar(streak()) + '</b>أيام متتالية 🔥</div>');
-    w.appendChild(top);
-
-    var c1 = el('div', 'hqp-card', '<h3><i style="background:#e8f8ee">🏅</i>نتيجة ' + esc(P.last.title) + '</h3>');
+    var hero = el('div', 'hqp-hero', '<span class="moon"></span><div class="hqp-top"><button class="hqp-x" aria-label="رجوع">→</button></div><h2>خطة الحفظ 📖</h2><p>' + esc(P.next.title) + ' · ' + esc(dayName(due)) + ' الساعة ' + ar(P.classTime) + ' ظهرًا</p>');
+    hero.querySelector('.hqp-x').onclick = function () { if (location.hash === '#plan') history.back(); else close(); };
+    w.appendChild(hero);
+    var td = doneOf(TK), cnt = (td.n ? 1 : 0) + (td.w ? 1 : 0) + (td.r ? 1 : 0) + (td.h ? 1 : 0);
+    w.appendChild(el('div', 'hqp-stats', '<div class="hqp-st"><small>باقي على الحصة</small><b>' + (left <= 0 ? 'النهارده!' : ar(left) + (left === 1 ? ' يوم' : left === 2 ? ' يومين' : ' أيام')) + '</b><span>ورد النهارده: ' + ar(cnt) + ' من ٤ خطوات</span></div><div class="hqp-st"><small>أيام متتالية</small><b>' + ar(streak()) + ' 🔥</b><span>كمّلي كل يوم</span></div>'));
+    var c1 = el('div', 'hqp-card', '<h3><i>🏅</i><span>نتيجة ' + esc(P.last.title) + '<small>برافو يا حنين!</small></span></h3>'); c1.style.cssText = '--bd:#a7f3d0;--tn:#ecfdf5;--sh:#059669;--ic:linear-gradient(140deg,#34d399,#059669)';
     var rs = el('div', 'hqp-res'); P.last.results.forEach(function (r) { rs.appendChild(el('span', '', esc(r[0]) + ' · ' + esc(r[1]))); }); c1.appendChild(rs); w.appendChild(c1);
 
-    var c2 = el('div', 'hqp-card', '<h3><i style="background:#fff1d6">📌</i>المطلوب في ' + esc(P.next.title) + '</h3>');
+    var c2 = el('div', 'hqp-card', '<h3><i>📌</i><span>المطلوب في ' + esc(P.next.title) + '<small>' + esc(dayName(due)) + '</small></span></h3>'); c2.style.cssText = '--bd:#fbcfe8;--tn:#fdf2f8;--sh:#db2777;--ic:linear-gradient(140deg,#f472b6,#be185d)';
     var rq = el('div', 'hqp-req');
     P.next.items.forEach(function (it) { rq.appendChild(el('div', '', esc(it.label) + '<span class="hqp-tag ' + (it.kind === 'new' ? 't-new">حفظ' : 't-rec">تسميع') + '</span>')); });
     rq.appendChild(el('div', '', 'الحديث الجديد<span class="hqp-tag t-hd">حديث</span>'));
     (P.next.extra || []).forEach(function (x) { rq.appendChild(el('div', '', esc(x) + '<span class="hqp-tag t-x">مراجعة</span>')); });
     c2.appendChild(rq); w.appendChild(c2);
 
-    var c3 = el('div', 'hqp-card', '<h3><i style="background:#f3ecff">🗓️</i>ورد كل يوم · نص ساعة بس</h3>');
+    var c3 = el('div', 'hqp-card', '<h3><i>🗓️</i><span>ورد كل يوم<small>نص ساعة بس · ٤ خطوات</small></span></h3>');
     var dz = el('div', 'hqp-days');
     if (!plan.some(function (p) { return p.k === sel; })) sel = plan[0].k;
     plan.forEach(function (p) {
@@ -259,7 +278,8 @@
     c3.appendChild(dayView(day));
     w.appendChild(c3);
 
-    var c4 = el('div', 'hqp-card', '<h3><i style="background:#ffe9ea">🔄</i>دورة المراجعة المستمرة</h3><p style="margin:0 0 8px;font-size:13px;color:#6b5f80;font-weight:600">كل يوم جزء من المحفوظ القديم. اللي يتقال ممتاز يرجع بعد أيام أكتر، واللي محتاج مراجعة يرجع بكرة.</p>');
+    var c4 = el('div', 'hqp-card', '<h3><i>🔄</i><span>دورة المراجعة المستمرة<small>عشان المحفوظ مايقعش أبدًا</small></span></h3><p class="hqp-note">كل يوم جزء من المحفوظ القديم. اللي يتقال ممتاز يرجع بعد أيام أكتر، واللي محتاج مراجعة يرجع بكرة.</p>');
+    c4.style.cssText = '--bd:#fde68a;--tn:#fffbeb;--sh:#d97706;--ic:linear-gradient(140deg,#fbbf24,#ea580c)';
     revInit();
     var cy = el('div', 'hqp-cyc');
     P.bank.slice().sort(function (a, b) { return ST.rev[a.id].due < ST.rev[b.id].due ? -1 : 1; }).forEach(function (b) {
@@ -269,19 +289,20 @@
     });
     c4.appendChild(cy); w.appendChild(c4);
 
-    var c5 = el('div', 'hqp-card', '<h3><i style="background:#f3ecff">🎯</i>جاهزة للتسميع؟ اختبار سريع</h3><p style="margin:0 0 8px;font-size:13px;color:#6b5f80;font-weight:600">بيطلعلك بداية آية من المحفوظ، كمّلي من غير ما تبصي.</p>');
+    var c5 = el('div', 'hqp-card', '<h3><i>🎯</i><span>جاهزة للتسميع؟<small>اختبار سريع</small></span></h3><p class="hqp-note">بيطلعلك بداية آية من المحفوظ، كمّلي من غير ما تبصي.</p>');
+    c5.style.cssText = '--bd:#bae6fd;--tn:#f0f9ff;--sh:#0284c7;--ic:linear-gradient(140deg,#38bdf8,#0284c7)';
     var qz = el('div', ''); var qb = el('button', 'hqp-b', 'هات آية'); qb.onclick = function () { quiz(qz); }; c5.appendChild(qb); c5.appendChild(qz); w.appendChild(c5);
 
-    var c6 = el('div', 'hqp-card', '<h3><i style="background:#fff1d6">⏰</i>تذكير يومي على الموبايل</h3>');
+    var c6 = el('div', 'hqp-card', '<h3><i>⏰</i><span>تذكير يومي على الموبايل<small>تنبيه كل يوم في ميعاد الورد</small></span></h3>'); c6.style.cssText = '--bd:#e9d5ff;--tn:#faf5ff';
     var rw = el('div', 'hqp-row', '<span style="font-weight:700;font-size:14px">ميعاد الورد:</span>');
     var inp = el('input'); inp.type = 'time'; inp.value = ST.time; inp.onchange = function () { ST.time = inp.value || '19:00'; save(); };
     rw.appendChild(inp);
     var ib = el('button', 'hqp-b g', '📅 أضيفي التذكير للتقويم'); ib.onclick = ics; rw.appendChild(ib);
     c6.appendChild(rw);
-    c6.appendChild(el('p', '', '<span style="font-size:12.5px;color:#6b5f80;font-weight:600">بينزل ملف تفتحيه، فيتضاف للتقويم تنبيه كل يوم في الميعاد ده، وتنبيه قبل حصة الجمعة بساعة.</span>'));
+    c6.appendChild(el('p', 'hqp-note', '<span>بينزل ملف تفتحيه، فيتضاف للتقويم تنبيه كل يوم في الميعاد ده، وتنبيه قبل حصة الجمعة بساعة.</span>'));
     w.appendChild(c6);
 
-    var c7 = el('div', 'hqp-card', '<h3><i style="background:#ffe9ea">🎙️</i>تسجيلاتي</h3>');
+    var c7 = el('div', 'hqp-card', '<h3><i>🎙️</i><span>تسجيلاتي<small>اسمعي نفسك واتأكدي من حفظك</small></span></h3>'); c7.style.cssText = '--bd:#fecaca;--tn:#fef2f2;--sh:#dc2626;--ic:linear-gradient(140deg,#fb7185,#dc2626)';
     var rl = el('div', 'hqp-recs'); c7.appendChild(rl); w.appendChild(c7);
     recList(function (L) {
       if (!L.length) { rl.appendChild(el('div', '', 'لسه مفيش تسجيلات. سجّلي تسميعك من ورد اليوم.')); return; }
@@ -318,14 +339,14 @@
     return box;
   }
   function dayView(day) {
-    var v = el('div', ''), list = el('div', ''); list.style.cssText = 'display:flex;flex-direction:column;gap:10px;margin-top:10px';
+    var v = el('div', ''), list = el('div', 'hqp-steps');
     var b1 = el('div', '');
-    if (day.news.length) day.news.forEach(function (n) { b1.appendChild(el('div', '', '<b style="font-size:14.5px">' + esc(NAMES[n.s]) + ' · الآيات ' + ar(n.a) + ' – ' + ar(n.b) + '</b>')); b1.appendChild(ayatBlock(n.s, n.a, n.b, NAMES[n.s] + ' ' + ar(n.a) + '–' + ar(n.b))); });
+    if (day.news.length) day.news.forEach(function (n) { b1.appendChild(el('span', 'hqp-lbl', 'سورة ' + esc(NAMES[n.s]) + ' · الآيات ' + ar(n.a) + ' – ' + ar(n.b))); b1.appendChild(ayatBlock(n.s, n.a, n.b, NAMES[n.s] + ' ' + ar(n.a) + '–' + ar(n.b))); });
     else b1.appendChild(el('div', '', '<span style="font-weight:700;color:#137a45">' + (day.last ? 'يوم الحصة: سمّعي الحفظ الجديد كله مرة قبل ما تمشي.' : 'الحفظ الجديد خلص 👏 كرري الجزء الجديد كله مرة.') + '</span>'));
     list.appendChild(step(day, 'n', day.last ? '١ · تسميع الحفظ الجديد' : '١ · حفظ جديد', 12, b1));
     var b2 = el('div', '');
     day.recs.forEach(function (it) {
-      var r = el('div', 'hqp-row', '<b style="font-size:14px">' + esc(it.label) + '</b>');
+      var r = el('div', 'hqp-it', '<b>' + esc(it.label) + '</b>');
       var p = el('button', 'hqp-b', '▶ استمعي'); p.onclick = function () { playRange(p, it.s, it.a, it.b, 1); }; r.appendChild(p);
       var rc = el('button', 'hqp-b', '● سجّلي'); rc.onclick = function () { recToggle(rc, it.label, function () { alertBox('اتحفظ التسجيل ✓'); }); }; r.appendChild(rc);
       b2.appendChild(r);
@@ -337,7 +358,7 @@
       var rv = revToday();
       if (!rv.length) b3.appendChild(el('div', '', '<span style="font-weight:700;color:#137a45">مفيش مراجعة مستحقة النهارده، اختاري أي سورة وسمّعيها.</span>'));
       rv.forEach(function (b) {
-        var r = el('div', '', '<b style="font-size:14px">' + esc(b.label) + '</b>');
+        var r = el('div', 'hqp-it', '<b>' + esc(b.label) + '</b>');
         var bt = el('div', 'hqp-btns');
         var rc = el('button', 'hqp-b', '● سجّلي'); rc.onclick = function () { recToggle(rc, 'مراجعة ' + b.label, function () { alertBox('اتحفظ التسجيل ✓'); }); }; bt.appendChild(rc);
         var p = el('button', 'hqp-b', '▶ استمعي لأول سورة'); p.onclick = function () { getSurah(b.s[0], function (arr) { playRange(p, b.s[0], 1, arr ? arr.length : 5, 1); }); }; bt.appendChild(p);
@@ -345,7 +366,7 @@
         var rt = el('div', 'hqp-rate', '<button class="r3">ممتاز</button><button class="r2">كويس</button><button class="r1">محتاجة مراجعة</button>');
         var bs = rt.querySelectorAll('button');
         [3, 2, 1].forEach(function (k, i) { bs[i].onclick = function () { rate(b.id, k); alertBox(k === 3 ? 'برافو! هترجعلها بعد كام يوم' : k === 2 ? 'تمام، هترجع قريب' : 'هترجعلها بكرة إن شاء الله'); render(); }; });
-        r.appendChild(rt); b3.appendChild(r);
+        var wrap = el('div', ''); wrap.style.marginBottom = '10px'; wrap.appendChild(r); wrap.appendChild(rt); b3.appendChild(wrap);
       });
     } else b3.appendChild(el('div', '', 'المراجعة الدائرية بتظهر في يومها.'));
     list.appendChild(step(day, 'r', '٣ · مراجعة المحفوظ القديم', 6, b3));
@@ -376,20 +397,17 @@
   function entry() {
     var b = el('button', 'hqp-entry'); b.id = 'hqp-entry';
     var due = parse(P.next.due), left = Math.round((due - TODAY) / 864e5), done = isFull(TK);
-    b.innerHTML = '<span class="ic">📖</span><span><b>خطة الحفظ · ' + esc(P.next.title) + '</b><small>' + (done ? 'خلصتي ورد النهارده ✓' : 'ورد النهارده مستنيكي · نص ساعة') + ' · باقي ' + ar(Math.max(0, left)) + ' يوم</small></span>' + (done ? '' : '<span class="dot"></span>') + '<span class="go">افتحي ←</span>';
-    b.onclick = open;
+    b.innerHTML = '<span class="ic">📖</span><span class="tx"><b>خطة الحفظ</b><small>' + esc(P.next.title) + ' · باقي ' + (left <= 0 ? 'النهارده' : ar(left) + (left === 1 ? ' يوم' : left === 2 ? ' يومين' : ' أيام')) + '</small><small>' + (done ? 'خلصتي ورد النهارده ✓' : 'ورد النهارده مستنيكي · نص ساعة') + '</small></span>' + (done ? '' : '<span class="dot"></span>') + '<span class="go">←</span>';
+    b.setAttribute('data-hqp-open', '1');
     return b;
   }
   function tick() {
     if (!document.body) return;
+    style();
     var cards = document.getElementById('hqx-cards');
     if (cards && !document.getElementById('hqp-entry')) cards.parentNode.insertBefore(entry(), cards);
-    var bar = document.getElementById('hnn-bar');
-    if (bar && !document.getElementById('hqp-b')) {
-      var x = el('button', '', '<span>خطة الحفظ</span>'); x.id = 'hqp-b'; x.style.background = '#7a3fd0'; x.onclick = open;
-      bar.appendChild(x);
-    }
   }
+  document.addEventListener('click', function (e) { var t = e.target && e.target.closest ? e.target.closest('[data-hqp-open]') : null; if (!t) return; e.preventDefault(); e.stopPropagation(); open(); }, true);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tick); else tick();
   setInterval(tick, 1000);
   if (location.hash === '#plan') setTimeout(open, 600);
