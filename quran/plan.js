@@ -147,7 +147,7 @@
         stream.getTracks().forEach(function (t) { t.stop(); });
         btn.classList.remove('rec'); btn.innerHTML = '● سجّلي تسميعك';
         var blob = new Blob(chunks, { type: mr.mimeType || 'audio/webm' });
-        recSave({ id: Date.now(), day: TK, label: label, blob: blob, type: blob.type }, onDone);
+        recSave({ id: Date.now(), day: TK, label: label, blob: blob, type: blob.type }, function () { fillRecs(); if (onDone) onDone(); });
       };
       mr.start(); btn.classList.add('rec'); btn.innerHTML = '■ إنهاء التسجيل';
     }).catch(function () { alertBox('لازم تسمحي للمتصفح باستخدام الميكروفون'); });
@@ -324,17 +324,24 @@
 
     var c7 = el('div', 'hqp-card', '<h3><i>🎙️</i><span>تسجيلاتي<small>اسمعي نفسك واتأكدي من حفظك</small></span></h3>'); c7.style.cssText = '--bd:#fecaca;--tn:#fef2f2;--sh:#dc2626;--ic:linear-gradient(140deg,#fb7185,#dc2626)';
     var rl = el('div', 'hqp-recs'); c7.appendChild(rl); w.appendChild(c7);
+    RL = rl; fillRecs();
+  }
+
+  var RL = null;
+  function fillRecs() {
+    var rl = RL; if (!rl) return;
     recList(function (L) {
+      rl.innerHTML = '';
       if (!L.length) { rl.appendChild(el('div', '', 'لسه مفيش تسجيلات. سجّلي تسميعك من ورد اليوم.')); return; }
-      L.slice(0, 30).forEach(function (r) {
+      L.slice(0, 30).forEach(function (r, i) {
         var d = parse(r.day), row = el('div', '', '<span style="white-space:nowrap">' + DAYS[d.getDay()] + ' ' + ar(d.getDate()) + ' · ' + esc(r.label) + '</span>');
+        if (i === 0 && Date.now() - r.id < 15000) row.style.cssText = 'border-color:#86efac;background:#f0fdf4';
         var au = el('audio'); au.controls = true; au.src = URL.createObjectURL(r.blob); row.appendChild(au);
-        var x = el('button', 'hqp-b', '🗑'); x.onclick = function () { recDel(r.id, render); }; row.appendChild(x);
+        var x = el('button', 'hqp-b', '🗑'); x.onclick = function () { recDel(r.id, fillRecs); }; row.appendChild(x);
         rl.appendChild(row);
       });
     });
   }
-
   function step(day, key, title, mins, body) {
     var dn = doneOf(day.k), s = el('div', 'hqp-step' + (dn[key] ? ' ok' : ''));
     var h = el('div', 'hqp-sh', '<b>' + title + '</b><em>' + ar(mins) + ' دقايق</em>');
@@ -467,7 +474,7 @@
     var p1 = el('button', 'hqp-b', '▶ استمعي ×٣'); p1.onclick = function () { playRange(p1, s, a, b, 3); }; bt.appendChild(p1);
     var p2 = el('button', 'hqp-b', '▶ مرة واحدة'); p2.onclick = function () { playRange(p2, s, a, b, 1); }; bt.appendChild(p2);
     var cv = el('button', 'hqp-b g', '🙈 اخفي واختبري نفسك'); cv.onclick = function () { ay.classList.toggle('cov'); Array.prototype.forEach.call(ay.querySelectorAll('span'), function (x) { x.classList.remove('sh'); }); }; bt.appendChild(cv);
-    var rc = el('button', 'hqp-b', '● سجّلي تسميعك'); rc.onclick = function () { recToggle(rc, label, function () { alertBox('اتحفظ التسجيل ✓'); }); }; bt.appendChild(rc);
+    var rc = el('button', 'hqp-b', '● سجّلي تسميعك'); rc.onclick = function () { recToggle(rc, label, function () { alertBox('اتحفظ التسجيل ✓ تلاقيه تحت في «تسجيلاتي»'); }); }; bt.appendChild(rc);
     var ck = el('div', '');
     var cb = el('button', 'hqp-b on', '🎤 سمّعي وأنا أصحّحلك'); cb.onclick = function () { checker(s, a, b, label, ck); }; bt.insertBefore(cb, bt.firstChild);
     box.appendChild(bt); box.appendChild(ck);
@@ -483,7 +490,7 @@
     day.recs.forEach(function (it) {
       var r = el('div', 'hqp-it', '<b>' + esc(it.label) + '</b>');
       var p = el('button', 'hqp-b', '▶ استمعي'); p.onclick = function () { playRange(p, it.s, it.a, it.b, 1); }; r.appendChild(p);
-      var rc = el('button', 'hqp-b', '● سجّلي'); rc.onclick = function () { recToggle(rc, it.label, function () { alertBox('اتحفظ التسجيل ✓'); }); }; r.appendChild(rc);
+      var rc = el('button', 'hqp-b', '● سجّلي'); rc.onclick = function () { recToggle(rc, it.label, function () { alertBox('اتحفظ التسجيل ✓ تلاقيه تحت في «تسجيلاتي»'); }); }; r.appendChild(rc);
       var ck = el('div', ''); ck.style.width = '100%';
       var cb = el('button', 'hqp-b on', '🎤 سمّعي وأنا أصحّح'); cb.onclick = function () { checker(it.s, it.a, it.b, it.label, ck); }; r.insertBefore(cb, p);
       r.appendChild(ck);
@@ -498,7 +505,7 @@
       rv.forEach(function (b) {
         var r = el('div', 'hqp-it', '<b>' + esc(b.label) + '</b>');
         var bt = el('div', 'hqp-btns');
-        var rc = el('button', 'hqp-b', '● سجّلي'); rc.onclick = function () { recToggle(rc, 'مراجعة ' + b.label, function () { alertBox('اتحفظ التسجيل ✓'); }); }; bt.appendChild(rc);
+        var rc = el('button', 'hqp-b', '● سجّلي'); rc.onclick = function () { recToggle(rc, 'مراجعة ' + b.label, function () { alertBox('اتحفظ التسجيل ✓ تلاقيه تحت في «تسجيلاتي»'); }); }; bt.appendChild(rc);
         var p = el('button', 'hqp-b', '▶ استمعي لأول سورة'); p.onclick = function () { getSurah(b.s[0], function (arr) { playRange(p, b.s[0], 1, arr ? arr.length : 5, 1); }); }; bt.appendChild(p);
         var ck = el('div', ''); ck.style.width = '100%';
         b.s.forEach(function (sn) { var cb = el('button', 'hqp-b on', '🎤 ' + NAMES[sn]); cb.onclick = function () { getSurah(sn, function (arr) { checker(sn, 1, arr ? arr.length : 1, 'سورة ' + NAMES[sn], ck); }); }; bt.appendChild(cb); });
