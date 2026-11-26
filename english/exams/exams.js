@@ -1,7 +1,7 @@
 window.HNN_EXAMS = {
  "title": "إنجليزي",
  "color": "#ec4899",
- "total": 23,
+ "total": 27,
  "sources": [
   {
    "pub": "التقييم المبدئي",
@@ -204,6 +204,51 @@ window.HNN_EXAMS = {
      "pages": 5,
      "kind": "exam",
      "n": 1
+    }
+   ],
+   "full": null
+  },
+  {
+   "pub": "ميس ولاء",
+   "title": "November Revision Booklet (with answers)",
+   "items": [
+    {
+     "name": "November Revision - Exams 1 and 2",
+     "file": "exams/5- Miss Walaa - November Revision Booklet (with answers)/November Revision - Exams 1 and 2.pdf",
+     "pages": 8,
+     "kind": "solved",
+     "n": 1
+    }
+   ],
+   "full": {
+    "file": "exams/5- Miss Walaa - November Revision Booklet (with answers)/00 - Full file (original).pdf",
+    "pages": 6
+   }
+  },
+  {
+   "pub": "ميس ولاء",
+   "title": "Final Revision Booklet (with answers)",
+   "items": [
+    {
+     "name": "Part 1 - Units 1 and 2",
+     "file": "exams/6- Miss Walaa - Final Revision Booklet (with answers)/Part 1 - Units 1 and 2.pdf",
+     "pages": 25,
+     "kind": "solved",
+     "n": 1
+    },
+    {
+     "name": "Part 2 - Units 3 and 4",
+     "file": "exams/6- Miss Walaa - Final Revision Booklet (with answers)/Part 2 - Units 3 and 4.pdf",
+     "pages": 26,
+     "kind": "solved",
+     "n": 2
+    },
+    {
+     "name": "Part 3 - Story, 4 Final Exams and Model Answers",
+     "file": "exams/6- Miss Walaa - Final Revision Booklet (with answers)/Part 3 - Story, 4 Final Exams and Model Answers.pdf",
+     "pages": 20,
+     "kind": "answers",
+     "n": 3
     }
    ],
    "full": null
